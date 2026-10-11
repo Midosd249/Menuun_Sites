@@ -1,0 +1,62 @@
+# Menuun Sites — Product & Delivery Plan
+
+## Objective
+Deliver a high-quality website builder as an independently deployed Menuun product. Customers can create, edit, preview, and publish professional sites; the initial vertical is salons and beauty businesses.
+
+## Architecture principles
+1. Separate repository, app runtime, CI, and deployment from Menu V3.
+2. Integrate through a versioned server-side API; never couple by reading Menu V3's database directly.
+3. Keep tenant, site, domain, page, asset, and publication models explicit.
+4. Resolve public domains to sites server-side and authorize every management action independently.
+5. Store drafts and published versions separately or use immutable publication snapshots.
+6. Render published websites from structured, validated page schemas; never execute tenant-provided code.
+7. Keep templates and design-system components differentiated by business context.
+8. Treat AI as an optional authoring assistant, never as the source of authorization or truth.
+9. Build accessibility, SEO, responsive behavior, RTL/LTR, performance, and observability into acceptance criteria.
+10. Prefer managed services and the simplest architecture that meets reliability and isolation requirements.
+
+## Milestones
+
+### M0 — Foundation
+- [x] Create repository operating contract and continuity documents.
+- [x] Document product boundary and integration principles.
+- [ ] Select framework/runtime, database, auth, object storage, and hosting based on verified requirements.
+- [ ] Add package scripts, formatting/lint/type checks, test runner, secret scan, and CI.
+- [ ] Add Playwright browser smoke tests and accessibility baseline.
+- [ ] Verify clean install/build and document environment variables.
+
+### M1 — Salon site vertical slice
+- [ ] Build a distinctive, high-quality salon website template.
+- [ ] Provide editable hero, services, team, gallery, locations/contact, and booking/contact CTA sections.
+- [ ] Deliver Arabic RTL and English LTR with separate layout verification.
+- [ ] Use local/approved assets with recorded provenance and licenses.
+- [ ] Verify 360px, 390px, 768px, 1024px, 1280px and wide desktop layouts.
+
+### M2 — Site management
+- [ ] Authentication and tenant-scoped dashboard.
+- [ ] Create site, choose template, edit content, upload assets, preview draft.
+- [ ] Schema validation, safe rich text, image validation, size limits, and rate limits.
+- [ ] Autosave/version history with explicit publish action.
+
+### M3 — Publishing and subdomains
+- [ ] Domain/subdomain reservation and collision handling.
+- [ ] Server-side hostname normalization and site resolution.
+- [ ] Preview isolation and no draft leakage.
+- [ ] Publish snapshots, cache invalidation, rollback, 404 and error states.
+- [ ] Configure wildcard DNS/TLS only after hosting and DNS ownership are verified.
+
+### M4 — Menuun integration
+- [ ] Agree on identity and tenant mapping.
+- [ ] Define versioned service-to-service API and auth (short-lived signed tokens or equivalent).
+- [ ] Add entitlement/plan mapping without duplicating billing truth.
+- [ ] Add optional menu embed/link/API integration with graceful degradation.
+- [ ] Contract tests and integration observability.
+
+### M5 — Custom domains and commercial readiness
+- [ ] Domain ownership verification and automated certificate lifecycle.
+- [ ] Canonical URLs, redirects, sitemap, robots, metadata and social previews.
+- [ ] Backup/restore, monitoring, alerts, abuse controls and incident runbook.
+- [ ] Performance, accessibility, security, privacy and release review.
+
+## Release gates
+No production release until required CI, critical Playwright journeys, tenant-isolation tests, secret scan, migration review, accessibility smoke checks, and deployment SHA verification pass.
