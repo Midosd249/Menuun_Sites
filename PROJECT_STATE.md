@@ -7,7 +7,7 @@ Standalone, production-grade multi-tenant website platform for Menuun customers,
 - Repository: `Midosd249/Menuun_Sites`
 - Active feature branch: `feature/salon-vertical-slice`
 - Current PR: [#2 — Build the first salon website vertical slice](https://github.com/Midosd249/Menuun_Sites/pull/2)
-- Current head: recorded from GitHub at the end of this session; re-check before merge.
+- Code/test head verified: `ea0280099eaddf8be5aa3ec0e3d195a1d2226988`; re-check the latest PR head before merge.
 - Framework in code: Next.js App Router, React, TypeScript.
 - Demo: fictional SIMT Barber House site with Arabic RTL / English LTR, responsive service/team/gallery/location sections, and a simulated booking wizard.
 - Booking behavior: UI-only simulation; it does not create appointments, send messages, or persist submitted details.
@@ -36,7 +36,7 @@ M1 — Salon/barbershop design vertical slice (prototype only).
 - [x] Add guided demo booking steps and explicit no-real-booking disclosure.
 - [x] Add Playwright acceptance coverage for locale direction, mobile navigation, booking path, and horizontal overflow.
 - [x] Fix CI secret-scan permission configuration and add application/browser quality jobs.
-- [ ] Verify all CI jobs pass on the current PR head.
+- [x] Verify all CI jobs pass on code/test head `ea0280099eaddf8be5aa3ec0e3d195a1d2226988`.
 - [ ] Verify visual/browser behavior at 360px, 390px, 768px, 1024px, 1280px and wide desktop.
 - [ ] Replace remote placeholder images with approved optimized local assets and record provenance.
 - [ ] Implement authentication, persistence, editor, preview, and publishing.
@@ -53,10 +53,11 @@ M1 — Salon/barbershop design vertical slice (prototype only).
 - Review the Ritunio source/license before reusing any code or assets. The current implementation uses a separate visual direction and does not copy the demo's source code.
 
 ## Verification evidence
-- GitHub Actions run `38168946607` for the initial PR head failed in the Secret scan job because the workflow token lacked permission to list pull-request commits (HTTP 403, `Resource not accessible by integration`); the Foundation completeness job passed.
-- Workflow permissions were updated to include `pull-requests: read`, and lint/typecheck/unit-test/build/browser-smoke jobs were added. Awaiting a new run on the latest head before marking checks passed.
-- No local install, build, unit test, or browser run has been performed in this session.
+- GitHub Actions run `38168946607` initially failed because the secret scanner lacked pull-request read permission (HTTP 403). Adding `pull-requests: read` fixed this: the Secret scan now passes.
+- GitHub Actions run `38170308565` completed successfully for code/test head `ea0280099eaddf8be5aa3ec0e3d195a1d2226988`: Secret scan, foundation completeness, application lint/typecheck/unit tests/production build, and Playwright desktop + mobile smoke tests all passed.
+- The first browser run found two real issues (ambiguous booking locator and iPhone device defaulting to WebKit when only Chromium was installed); both were fixed and the later browser run passed.
+- No local install/build/browser run was performed; verification was through GitHub Actions.
 - Production deployment is NOT VERIFIED.
 
 ## Handoff
-After CI completes, inspect each failed step's logs, fix confirmed issues, rerun affected checks, and update this file with the exact latest SHA and run URL. Do not merge until required checks pass. Continue next with accessibility/responsive visual review, approved assets, then the tenant-scoped editor/publishing architecture.
+The code/test head above passed all configured CI checks. Re-check the latest PR head and required checks before merge, because this continuity-file update creates a documentation-only commit. Do not merge until the latest head's required checks pass. Continue next with accessibility/responsive visual review, approved assets, then the tenant-scoped editor/publishing architecture.
