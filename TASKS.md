@@ -3,7 +3,7 @@
 ## In progress
 - [ ] M1.1 Verify the bilingual barber-site prototype with current CI and fix all confirmed failures.
 - [ ] M1.2 Run Playwright checks and inspect desktop/mobile layouts, keyboard use, locale direction, and modal behavior.
-- [ ] M1.3 Finish local media adoption: visually classify held JPGs, verify rights, optimize image/video variants, and record provenance (hero/gallery/location wiring is implemented).
+- [ ] M1.3 Finish local media release readiness: verify usage rights, inspect image/video metadata, optimize responsive image/video variants, and record provenance (all seven supplied JPGs are now assigned to demo roles).
 - [ ] M1.4 Finalize demo copy and clearly distinguish illustrative data from verified customer details.
 
 - [ ] M1.7 Verify the uploaded hero video and local photos visually in browser at desktop/mobile sizes; inspect reduced-motion behavior and network loading.
