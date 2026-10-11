@@ -63,8 +63,8 @@ test("desktop hero enhances the local poster with the supplied video when motion
   await page.goto("/");
   const film = page.locator(".hero-film");
   await expect(film).toBeVisible();
-  await expect(film.locator("source")).toHaveAttribute("src", "/assets/incoming/6686907_1791754412449871.mp4");
-  await expect(film).toHaveAttribute("poster", "/assets/incoming/1066622116_1791753577498806.jpg");
+  await expect(film.locator("source")).toHaveAttribute("src", "/assets/simt/6686907_1791754412449871.mp4");
+  await expect(film).toHaveAttribute("poster", "/assets/simt/1066622116_1791753577498806.jpg");
   const pause = page.getByRole("button", { name: "إيقاف فيديو الواجهة" });
   await expect(pause).toBeVisible();
   await pause.click();
@@ -77,7 +77,7 @@ test("hero keeps the local still on mobile and when reduced motion is requested"
   await page.goto("/");
   await expect(page.locator(".hero-film")).toHaveCount(0);
   const mobilePoster = await page.locator(".hero-cinema-visual").evaluate((node) => getComputedStyle(node).backgroundImage);
-  expect(mobilePoster).toContain("/assets/incoming/1066622116_1791753577498806.jpg");
+  expect(mobilePoster).toContain("/assets/simt/1066622116_1791753577498806.jpg");
 
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });
