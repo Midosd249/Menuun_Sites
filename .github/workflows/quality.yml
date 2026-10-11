@@ -1,0 +1,36 @@
+name: Repository quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan repository history for secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  foundation-docs:
+    name: Foundation completeness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify required project contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in AGENTS.md PROJECT_STATE.md PLAN.md TASKS.md SESSION_PROTOCOL.md README.md docs/ARCHITECTURE.md docs/SECURITY.md docs/DESIGN_QUALITY_GATE.md; do
+            test -s "$file" || { echo "Missing required project contract: $file"; exit 1; }
+          done
+          echo "Required project contracts are present."
