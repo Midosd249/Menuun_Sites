@@ -52,7 +52,7 @@ M1 — Salon/barbershop design vertical slice (prototype only).
 - Latest media-related code commits include `9d5324f27378e85903853765c955cc970df51383` (service/team media), `e239408cff47ceb9cb56dc034eb23fdd9a57ec37` (mobile photo rows), and `4acfb2720e79108dcfcfc4ea46e8b969da649a06` (palette/control polish). Playwright media acceptance tests were added in `8b5548895a587262e20dbf4acffbeb79eedd7bcb`. Review in [PR #2](https://github.com/Midosd249/Menuun_Sites/pull/2). Recent CI runs are still in progress; verify all jobs on the final head before merge.
 ## Active risks / unknowns
 - All current business details, prices, team identities, photos, address, and opening hours are illustrative; replace with client-approved content before production.
-- The demo now uses owner-supplied local media for the hero, gallery, and location sections. Some barber portraits remain remote placeholders; image optimization, rights confirmation, and visual/browser QA are still required.
+- The demo now uses owner-supplied local media for the hero, service rows, gallery, location, and one barber profile. Other illustrative barber portraits remain remote placeholders; image optimization, rights confirmation, and browser visual QA are still required.
 - Demo booking inputs are intentionally not persisted. Real booking requires a provider contract, consent/privacy design, error handling, and verified business contact details.
 - Confirm repository permissions, branch protection, and default branch settings.
 - Confirm Vercel project/team and DNS ownership before domain implementation.
