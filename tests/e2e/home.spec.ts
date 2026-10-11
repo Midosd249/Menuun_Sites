@@ -23,16 +23,17 @@ test("language switch changes content and document direction", async ({ page }) 
 test("booking journey selects a service, barber, and demo time without claiming a real booking", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: /احجز موعدًا/i }).first().click();
-  await expect(page.getByRole("dialog")).toBeVisible();
-  await page.getByRole("button", { name: /قص كلاسيكي/i }).click();
-  await page.getByRole("button", { name: /التالي/i }).click();
-  await page.getByRole("button", { name: /عمر/i }).click();
-  await page.getByRole("button", { name: /التالي/i }).click();
-  await page.getByRole("button", { name: /غدًا/i }).click();
-  await page.getByRole("button", { name: /10:00 ص/i }).click();
-  await page.getByRole("button", { name: /متابعة/i }).click();
-  await expect(page.getByText(/لا يتم إرسال حجز حقيقي/i)).toBeVisible();
-  await expect(page.getByRole("button", { name: /تأكيد تجريبي/i })).toBeVisible();
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: /قص كلاسيكي/i }).click();
+  await dialog.getByRole("button", { name: /التالي/i }).click();
+  await dialog.getByRole("button", { name: /عمر/i }).click();
+  await dialog.getByRole("button", { name: /التالي/i }).click();
+  await dialog.getByRole("button", { name: /غدًا/i }).click();
+  await dialog.getByRole("button", { name: /10:00 ص/i }).click();
+  await dialog.getByRole("button", { name: /متابعة/i }).click();
+  await expect(dialog.getByText(/لا يتم إرسال حجز حقيقي/i)).toBeVisible();
+  await expect(dialog.getByRole("button", { name: /تأكيد تجريبي/i })).toBeVisible();
 });
 
 test("mobile navigation opens and exposes section links", async ({ page, isMobile }) => {
