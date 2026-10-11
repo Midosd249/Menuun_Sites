@@ -212,8 +212,13 @@ export default function HomePage() {
         <button type="button" onClick={() => openBooking()}>{t.book}<Arrow size={16} /></button>
       </nav>
 
-      <section id="home" className="hero">
-        <div className="hero-copy">
+      <section id="home" className="hero hero-cinema">
+        <div className="hero-visual hero-cinema-visual" role="img" aria-label={isArabic ? "داخل صالون سِمت للحلاقة بإضاءة دافئة ومقاعد جلدية" : "Inside SIMT barber house, warm lighting and leather barber chairs"}>
+          <div className="hero-image-shade" />
+          <div className="hero-image-top"><span>SIMT / RIYADH</span><span>CRAFTED FOR YOU</span></div>
+          <div className="hero-image-caption"><span>THE ART OF LOOKING SHARP</span><span>01 — 04</span></div>
+        </div>
+        <div className="hero-cinema-content">
           <p className="eyebrow"><span className="eyebrow-mark" />{t.heroKicker}</p>
           <h1 dangerouslySetInnerHTML={{ __html: t.heroTitle }} />
           <p className="hero-description">{t.heroDescription}</p>
@@ -221,15 +226,10 @@ export default function HomePage() {
             <button className="button button-copper" type="button" onClick={() => openBooking()}>{t.book}<Arrow size={17} /></button>
             <a className="text-link" href="#services">{t.explore}<InlineArrow size={16} /></a>
           </div>
-          <div className="hero-note"><Sparkles size={15} /><span>{t.note}</span></div>
+          <div className="hero-proof"><span className="hero-proof-dot" /><span>{isArabic ? "تجربة حلاقة مصمّمة حولك" : "A barber experience, shaped around you"}</span></div>
         </div>
-        <div className="hero-visual" role="img" aria-label={isArabic ? "تفاصيل أدوات حلاقة في صالون رجالي" : "Barber tools and details inside a barbershop"}>
-          <div className="hero-image-shade" />
-          <div className="hero-image-top"><span>SIMT / 001</span><span>EST. FOR YOUR STYLE</span></div>
-          <div className="hero-image-caption"><span>THE CRAFT OF A GOOD CUT</span><span>01 — 03</span></div>
-          <div className="hero-stamp"><span>سِمت</span><small>YOUR TIME.<br />YOUR STYLE.</small></div>
-        </div>
-        <div className="hero-bottomline"><span>24° 49′ N — 46° 38′ E</span><span>RIYADH · SAUDI ARABIA</span></div>
+        <div className="hero-side-note"><span>SIMT BARBER HOUSE</span><span>RIYADH · KSA</span></div>
+        <a className="hero-scroll-cue" href="#services"><span>{isArabic ? "اكتشف التجربة" : "DISCOVER THE EXPERIENCE"}</span><Arrow size={16} /></a>
       </section>
 
       <section className="intro-section section-wrap">
