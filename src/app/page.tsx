@@ -134,7 +134,7 @@ export default function HomePage() {
   const selectedBarberData = barbers.find((item) => item.id === selectedBarber);
 
   useEffect(() => {
-    const motionQuery = window.matchMedia("(prefers-reduced-motion: no-preference)");
+    const motionQuery = window.matchMedia("(min-width: 768px) and (prefers-reduced-motion: no-preference)");
     setMotionAllowed(motionQuery.matches);
     const updateMotionPreference = () => setMotionAllowed(motionQuery.matches);
     motionQuery.addEventListener("change", updateMotionPreference);
