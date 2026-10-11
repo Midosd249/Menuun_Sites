@@ -28,7 +28,7 @@ test("booking journey selects a service, barber, and demo time without claiming 
   await page.getByRole("button", { name: /التالي/i }).click();
   await page.getByRole("button", { name: /عمر/i }).click();
   await page.getByRole("button", { name: /التالي/i }).click();
-  await page.getByRole("button", { name: /الثلاثاء/i }).click();
+  await page.getByRole("button", { name: /غدًا/i }).click();
   await page.getByRole("button", { name: /10:00 ص/i }).click();
   await page.getByRole("button", { name: /متابعة/i }).click();
   await expect(page.getByText(/لا يتم إرسال حجز حقيقي/i)).toBeVisible();
