@@ -1,18 +1,45 @@
 import { expect, test } from "@playwright/test";
 
-test("salon landing page presents core sections and booking action", async ({ page }) => {
+test("Arabic RTL landing page presents services, team, and booking action", async ({ page }) => {
   await page.goto("/");
-  await expect(page).toHaveTitle(/Luma Studio/);
-  await expect(page.getByRole("heading", { name: /Your moment/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /Your time/i })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Let’s make it happen/i })).toHaveAttribute("href", /wa\.me/);
+  await expect(page).toHaveTitle(/سِمت|SIMT/i);
+  await expect(page.locator("html")).toHaveAttribute("lang", "ar");
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+  await expect(page.getByRole("heading", { name: /حلاقة على مهل/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /خدمات مختارة/i })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /أصحاب الأيادي الماهرة/i })).toBeVisible();
+});
+
+test("language switch changes content and document direction", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /English/i }).click();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+  await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
+  await expect(page.getByRole("heading", { name: /A better kind of cut/i })).toBeVisible();
+  await page.getByRole("button", { name: /العربية/i }).click();
+  await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+});
+
+test("booking journey selects a service, barber, and demo time without claiming a real booking", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: /احجز موعدًا/i }).first().click();
+  await expect(page.getByRole("dialog")).toBeVisible();
+  await page.getByRole("button", { name: /قص كلاسيكي/i }).click();
+  await page.getByRole("button", { name: /التالي/i }).click();
+  await page.getByRole("button", { name: /عمر/i }).click();
+  await page.getByRole("button", { name: /التالي/i }).click();
+  await page.getByRole("button", { name: /الثلاثاء/i }).click();
+  await page.getByRole("button", { name: /10:00 ص/i }).click();
+  await page.getByRole("button", { name: /متابعة/i }).click();
+  await expect(page.getByText(/لا يتم إرسال حجز حقيقي/i)).toBeVisible();
+  await expect(page.getByRole("button", { name: /تأكيد تجريبي/i })).toBeVisible();
 });
 
 test("mobile navigation opens and exposes section links", async ({ page, isMobile }) => {
   test.skip(!isMobile, "Mobile navigation behavior is specific to mobile layout");
   await page.goto("/");
-  await page.getByRole("button", { name: "Navigation menu" }).click();
-  await expect(page.getByRole("navigation", { name: "Mobile navigation" }).getByRole("link", { name: "Treatments" })).toBeVisible();
+  await page.getByRole("button", { name: /فتح القائمة/i }).click();
+  await expect(page.getByRole("navigation", { name: /التنقل الرئيسي/i }).getByRole("link", { name: /الخدمات/i })).toBeVisible();
 });
 
 test("page has no horizontal overflow on mobile viewport", async ({ page, isMobile }) => {
