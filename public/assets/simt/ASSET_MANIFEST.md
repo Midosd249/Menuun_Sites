@@ -6,7 +6,7 @@ All source files below were uploaded by the project owner and are intentionally 
 
 | Role | Source asset | Implementation |
 |---|---|---|
-| Hero video | `6686907_1791754412449871.mp4` | Muted, looping, inline video on desktop when the visitor has not requested reduced motion. |
+| Hero video | `6686907_1791754412449871.mp4` | Muted, looping, inline video on desktop when the visitor has not requested reduced motion; a visible pause/play control is available. |
 | Hero poster / still fallback | `1066622116_1791753577498806.jpg` | Used as the hero background and the video's poster; visible on mobile and with reduced motion. |
 | Gallery image 1 | `285805423_1791753297769456.jpg` | First gallery image. |
 | Gallery image 2 | `318993460_1791752791478768.jpg` | Second gallery image. |
