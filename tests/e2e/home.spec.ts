@@ -56,3 +56,27 @@ test("page has no horizontal overflow on mobile viewport", async ({ page, isMobi
   }));
   expect(dimensions.page).toBeLessThanOrEqual(dimensions.viewport);
 });
+
+test("desktop hero enhances the local poster with the supplied video when motion is allowed", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const film = page.locator(".hero-film");
+  await expect(film).toBeVisible();
+  await expect(film.locator("source")).toHaveAttribute("src", "/assets/incoming/6686907_1791754412449871.mp4");
+  await expect(film).toHaveAttribute("poster", "/assets/incoming/1066622116_1791753577498806.jpg");
+});
+
+test("hero keeps the local still on mobile and when reduced motion is requested", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  await expect(page.locator(".hero-film")).toHaveCount(0);
+  const mobilePoster = await page.locator(".hero-cinema-visual").evaluate((node) => getComputedStyle(node).backgroundImage);
+  expect(mobilePoster).toContain("/assets/incoming/1066622116_1791753577498806.jpg");
+
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.reload();
+  await expect(page.locator(".hero-film")).toHaveCount(0);
+});
