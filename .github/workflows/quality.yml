@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   secret-scan:
@@ -34,3 +35,39 @@ jobs:
             test -s "$file" || { echo "Missing required project contract: $file"; exit 1; }
           done
           echo "Required project contracts are present."
+
+  app-quality:
+    name: Application lint, types, tests and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test
+      - name: Production build
+        run: npm run build
+
+  browser-smoke:
+    name: Browser smoke tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - name: Run desktop and mobile browser tests
+        run: npm run test:e2e
