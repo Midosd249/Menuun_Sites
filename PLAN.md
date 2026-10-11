@@ -32,6 +32,12 @@ Deliver a high-quality website builder as an independently deployed Menuun produ
 - [ ] Replace remote demo images with approved optimized local assets and record provenance/licenses.
 - [ ] Verify 360px, 390px, 768px, 1024px, 1280px and wide desktop layouts in browser runs.
 
+M1 asset follow-up:
+- [x] Wire the supplied MP4 into the desktop hero with a local poster and reduced-motion/mobile fallback.
+- [x] Replace selected hero/gallery/location stock backgrounds with owner-supplied local media and document the mapping.
+- [ ] Visually classify the two held JPGs, verify media dimensions/codec and rights, optimize assets, and compare the browser render with the user's screenshot references.
+- [ ] Complete responsive and accessibility browser QA after the media change.
+
 ### M2 — Site management
 - [ ] Authentication and tenant-scoped dashboard.
 - [ ] Create site, choose template, edit content, upload assets, preview draft.
