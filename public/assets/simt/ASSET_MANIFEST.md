@@ -14,7 +14,7 @@ All source media in `public/assets/incoming/` was supplied by the project owner.
 | Cut + beard service | `1066622116_1791753577498806.jpg` | Thumbnail for the combined service. |
 | Groom ritual service | `840786121_1791753645708515.jpg` | Thumbnail for the groom ritual service. |
 | Gallery / haircut detail | `997294713_1791753388609333.jpg` | Second gallery image. |
-| Interior / location | `318993460_1791752791478768.jpg` | Third gallery image and location/space image. |
+| Interior / location | `318993460_1791752791478768.jpg` | Location/space image. |
 | Barber profile | `84095817_1791753745029697.jpg` | Local portrait for the first illustrative barber profile. |
 
 ## Reference screenshots
