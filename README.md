@@ -19,7 +19,7 @@ The first vertical slice is a fictional barbershop concept named **سِمت / SI
 - a guided booking demo with service, barber, example date/time, and contact-detail steps;
 - an explicit demo disclaimer: no appointment is created, no message is sent, and submitted details are not stored.
 
-All business details, prices, team names, location, and hours are illustrative placeholders. Replace them with client-approved content before any real customer launch. Owner-supplied media is now used locally in the hero, gallery, and location sections; some barber portraits remain remote placeholders. See `public/assets/simt/ASSET_MANIFEST.md`. Media rights, optimization, and browser visual QA remain production follow-ups.
+All business details, prices, team names, location, and hours are illustrative placeholders. Replace them with client-approved content before any real customer launch. Owner-supplied media is now used locally in the hero, service rows, gallery, location, and one barber profile; remaining barber portraits are still illustrative remote placeholders. The nine visual reference screenshots are stored outside `public/` in `docs/design-references/`. See `public/assets/simt/ASSET_MANIFEST.md` and `docs/design-references/README.md`. Media rights, optimization, and browser visual QA remain production follow-ups.
 
 ## Engineering method
 
