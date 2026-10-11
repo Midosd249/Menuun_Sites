@@ -33,7 +33,11 @@ test("booking journey selects a service, barber, and demo time without claiming 
   await dialog.getByRole("button", { name: /10:00 ص/i }).click();
   await dialog.getByRole("button", { name: /متابعة/i }).click();
   await expect(dialog.getByText(/لا يتم إرسال حجز حقيقي/i)).toBeVisible();
-  await expect(dialog.getByRole("button", { name: /تأكيد تجريبي/i })).toBeVisible();
+  await dialog.getByLabel("الاسم").fill("عميل تجريبي");
+  await dialog.getByLabel("رقم الجوال").fill("0551234567");
+  await dialog.getByRole("button", { name: /تأكيد تجريبي/i }).click();
+  await expect(dialog.getByRole("heading", { name: /وصلت لنهاية التجربة/i })).toBeVisible();
+  await expect(dialog.getByText(/لم يتم إنشاء أي حجز/i)).toBeVisible();
 });
 
 test("mobile navigation opens and exposes section links", async ({ page, isMobile }) => {
