@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
-  ArrowLeft, ArrowRight, ArrowUpLeft, Check, Clock3, MapPin, Menu, Scissors, Sparkles, X,
+  ArrowLeft, ArrowRight, ArrowUpLeft, Check, Clock3, MapPin, Menu, Pause, Play, Scissors, Sparkles, X,
 } from "lucide-react";
 
 type Locale = "ar" | "en";
@@ -114,6 +114,8 @@ const englishTimeSlots = ["10:00 am", "11:30 am", "1:00 pm", "4:30 pm", "6:00 pm
 export default function HomePage() {
   const [locale, setLocale] = useState<Locale>("ar");
   const [motionAllowed, setMotionAllowed] = useState(false);
+  const [filmPaused, setFilmPaused] = useState(false);
+  const filmRef = useRef<HTMLVideoElement | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -154,6 +156,18 @@ export default function HomePage() {
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
   }, [bookingOpen]);
+
+  function toggleHeroFilm() {
+    const film = filmRef.current;
+    if (!film) return;
+    if (filmPaused) {
+      void film.play();
+      setFilmPaused(false);
+    } else {
+      film.pause();
+      setFilmPaused(true);
+    }
+  }
 
   function toggleLocale() {
     if (isArabic) {
@@ -223,9 +237,12 @@ export default function HomePage() {
 
       <section id="home" className="hero hero-cinema">
         <div className="hero-visual hero-cinema-visual" role="img" aria-label={isArabic ? "لقطات سينمائية من تجربة سِمت للحلاقة" : "Cinematic footage from the SIMT barber experience"}>
-          {motionAllowed && <video className="hero-film" autoPlay muted loop playsInline preload="metadata" poster="/assets/incoming/1066622116_1791753577498806.jpg" aria-hidden="true" tabIndex={-1}>
+          {motionAllowed && <video ref={filmRef} className="hero-film" autoPlay muted loop playsInline preload="metadata" poster="/assets/incoming/1066622116_1791753577498806.jpg" aria-hidden="true" tabIndex={-1}>
             <source src="/assets/incoming/6686907_1791754412449871.mp4" type="video/mp4" />
           </video>}
+          {motionAllowed && <button className="hero-film-toggle" type="button" onClick={toggleHeroFilm} aria-label={isArabic ? (filmPaused ? "تشغيل فيديو الواجهة" : "إيقاف فيديو الواجهة") : (filmPaused ? "Play hero video" : "Pause hero video")} title={isArabic ? (filmPaused ? "تشغيل الفيديو" : "إيقاف الفيديو") : (filmPaused ? "Play video" : "Pause video")}>
+            {filmPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
+          </button>}
           <div className="hero-image-shade" />
           <div className="hero-image-top"><span>SIMT / RIYADH</span><span>CRAFTED FOR YOU</span></div>
           <div className="hero-image-caption"><span>THE ART OF LOOKING SHARP</span><span>01 — 04</span></div>
