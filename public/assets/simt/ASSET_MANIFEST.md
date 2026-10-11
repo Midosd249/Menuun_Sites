@@ -1,6 +1,6 @@
 # SIMT demo media manifest
 
-All source media in `public/assets/incoming/` was supplied by the project owner. The original filenames are preserved.
+All source media was supplied by the project owner in `public/assets/incoming/`, then organized into `public/assets/simt/` for use by the demo. The original filenames are preserved.
 
 ## Media roles
 
