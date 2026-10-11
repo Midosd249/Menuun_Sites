@@ -34,8 +34,9 @@ Deliver a high-quality website builder as an independently deployed Menuun produ
 
 M1 asset follow-up:
 - [x] Wire the supplied MP4 into the desktop hero with a local poster and reduced-motion/mobile fallback.
-- [x] Replace selected hero/gallery/location stock backgrounds with owner-supplied local media and document the mapping.
-- [ ] Visually classify the two held JPGs, verify media dimensions/codec and rights, optimize assets, and compare the browser render with the user's screenshot references.
+- [x] Integrate owner-supplied media across hero, services, gallery, location, and one barber profile; document the mapping.
+- [x] Review the nine supplied MAREA screenshots and document a SIMT-specific visual direction; move reference screenshots outside `public/`.
+- [ ] Verify usage rights and media dimensions/codec, optimize responsive image/video variants, and compare browser renders with the reference screenshots.
 - [ ] Complete responsive and accessibility browser QA after the media change.
 
 ### M2 — Site management
