@@ -2,8 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import {
-  ArrowDownLeft, ArrowDownRight, ArrowLeft, ArrowRight, ArrowUpLeft,
-  ArrowUpRight, Check, Clock3, MapPin, Menu, Scissors, Sparkles, X,
+  ArrowLeft, ArrowRight, ArrowUpLeft, Check, Clock3, MapPin, Menu, Scissors, Sparkles, X,
 } from "lucide-react";
 
 type Locale = "ar" | "en";
@@ -58,7 +57,7 @@ const copy = {
     bookingTitle: "احجز تجربتك", step: "الخطوة", of: "من", step1: "الخدمة", step2: "الحلاق", step3: "الموعد", step4: "التفاصيل",
     selectService: "ما الخدمة التي تناسبك؟", selectBarber: "من تفضّل؟", anyBarber: "أي حلاق متاح", anyBarberDetail: "نختار لك من يناسب الموعد التجريبي.",
     selectDate: "اختر يومًا تجريبيًا", selectTime: "الأوقات المعروضة أمثلة وليست توفرًا مباشرًا.",
-    today: "اليوم", tomorrow: "الثلاثاء", thursday: "الخميس",
+    today: "اليوم", tomorrow: "غدًا", thursday: "الخميس",
     next: "التالي", back: "رجوع", continue: "متابعة", detailsTitle: "أكمل بيانات العرض",
     name: "الاسم", namePlaceholder: "اكتب اسمًا تجريبيًا", phone: "رقم الجوال", phonePlaceholder: "05X XXX XXXX",
     demoWarning: "لا يتم إرسال حجز حقيقي، ولا تُحفظ بياناتك. هذه خطوة توضيحية فقط.",
@@ -99,7 +98,7 @@ const copy = {
     bookingTitle: "Book your demo visit", step: "Step", of: "of", step1: "Service", step2: "Barber", step3: "Time", step4: "Details",
     selectService: "What would you like today?", selectBarber: "Who would you prefer?", anyBarber: "Any available barber", anyBarberDetail: "We'll choose a match for this demo slot.",
     selectDate: "Choose a demo day", selectTime: "These example times do not reflect live availability.",
-    today: "Today", tomorrow: "Tuesday", thursday: "Thursday",
+    today: "Today", tomorrow: "Tomorrow", thursday: "Thursday",
     next: "Next", back: "Back", continue: "Continue", detailsTitle: "Complete the demo details",
     name: "Name", namePlaceholder: "Enter a demo name", phone: "Mobile number", phonePlaceholder: "05X XXX XXXX",
     demoWarning: "No real booking is sent and your details are not saved. This is an illustrative step only.",
@@ -147,6 +146,16 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [bookingOpen]);
 
+  function toggleLocale() {
+    if (isArabic) {
+      setLocale("en");
+      setSelectedTime((current) => { const index = timeSlots.indexOf(current); return index >= 0 ? englishTimeSlots[index] : current; });
+    } else {
+      setLocale("ar");
+      setSelectedTime((current) => { const index = englishTimeSlots.indexOf(current); return index >= 0 ? timeSlots[index] : current; });
+    }
+  }
+
   function openBooking(serviceId?: string) {
     if (serviceId) setSelectedService(serviceId);
     setStep(0);
@@ -193,7 +202,7 @@ export default function HomePage() {
           <a href="#services">{t.navServices}</a><a href="#team">{t.navTeam}</a><a href="#place">{t.navPlace}</a>
         </nav>
         <div className="header-actions">
-          <button className="language-switch" type="button" onClick={() => setLocale(isArabic ? "en" : "ar")} aria-label={isArabic ? "English" : "العربية"}>{isArabic ? "EN" : "عربي"}</button>
+          <button className="language-switch" type="button" onClick={toggleLocale} aria-label={isArabic ? "English" : "العربية"}>{isArabic ? "EN" : "عربي"}</button>
           <button className="header-book" type="button" onClick={() => openBooking()}>{t.book}<Arrow size={16} /></button>
           <button className="mobile-menu" type="button" aria-label={t.menu} aria-expanded={menuOpen} onClick={() => setMenuOpen((open) => !open)}><Menu size={22} /></button>
         </div>
