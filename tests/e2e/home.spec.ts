@@ -65,6 +65,10 @@ test("desktop hero enhances the local poster with the supplied video when motion
   await expect(film).toBeVisible();
   await expect(film.locator("source")).toHaveAttribute("src", "/assets/incoming/6686907_1791754412449871.mp4");
   await expect(film).toHaveAttribute("poster", "/assets/incoming/1066622116_1791753577498806.jpg");
+  const pause = page.getByRole("button", { name: "إيقاف فيديو الواجهة" });
+  await expect(pause).toBeVisible();
+  await pause.click();
+  await expect(page.getByRole("button", { name: "تشغيل فيديو الواجهة" })).toBeVisible();
 });
 
 test("hero keeps the local still on mobile and when reduced motion is requested", async ({ page }) => {
