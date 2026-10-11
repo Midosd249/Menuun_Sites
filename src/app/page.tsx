@@ -138,7 +138,11 @@ export default function HomePage() {
   useEffect(() => {
     const motionQuery = window.matchMedia("(min-width: 768px) and (prefers-reduced-motion: no-preference)");
     setMotionAllowed(motionQuery.matches);
-    const updateMotionPreference = () => setMotionAllowed(motionQuery.matches);
+    const updateMotionPreference = () => {
+      const allowed = motionQuery.matches;
+      setMotionAllowed(allowed);
+      if (!allowed) setFilmPaused(false);
+    };
     motionQuery.addEventListener("change", updateMotionPreference);
     return () => motionQuery.removeEventListener("change", updateMotionPreference);
   }, []);
