@@ -1,7 +1,7 @@
 # Task Queue
 
 ## In progress
-- [ ] M1.1 Verify the bilingual barber-site prototype with current CI and fix all confirmed failures.
+- [x] M1.1 Verify the bilingual barber-site prototype with CI and fix confirmed failures (run `38179926660` passed all jobs on code/test head `7af6f26bf0794125774b7ea899d6981eda9f24c4`; see [PR #2](https://github.com/Midosd249/Menuun_Sites/pull/2)).
 - [ ] M1.2 Run Playwright checks and inspect desktop/mobile layouts, keyboard use, locale direction, and modal behavior.
 - [ ] M1.3 Finish local media release readiness: verify usage rights, inspect image/video metadata, optimize responsive image/video variants, and record provenance (all seven supplied JPGs are now assigned to demo roles).
 - [ ] M1.4 Finalize demo copy and clearly distinguish illustrative data from verified customer details.
