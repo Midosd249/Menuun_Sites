@@ -48,6 +48,7 @@ M1 — Salon/barbershop design vertical slice (prototype only).
 - Added `public/assets/simt/ASSET_MANIFEST.md` documenting the applied media roles and held files.
 - Two JPGs remain unused because their visual content could not be reliably classified from filenames through the text-only repository connector.
 - No claim is made that the media is licensed, visually approved, optimized into WebP/AVIF, or browser-verified. Current branch CI must be checked after these commits; production deployment is not verified.
+- Implementation commit for the hero/media wiring and acceptance tests: `8f4a211f106d50c05f43dd2966d0391b730f631f`. Review in [PR #2](https://github.com/Midosd249/Menuun_Sites/pull/2). CI run `38179093738` was still in progress at the last check. Re-check CI on the latest documentation head before merge. Production deployment remains unverified.
 
 ## Active risks / unknowns
 - All current business details, prices, team identities, photos, address, and opening hours are illustrative; replace with client-approved content before production.
