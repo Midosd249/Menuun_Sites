@@ -113,6 +113,7 @@ const englishTimeSlots = ["10:00 am", "11:30 am", "1:00 pm", "4:30 pm", "6:00 pm
 
 export default function HomePage() {
   const [locale, setLocale] = useState<Locale>("ar");
+  const [motionAllowed, setMotionAllowed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -131,6 +132,14 @@ export default function HomePage() {
   const times = isArabic ? timeSlots : englishTimeSlots;
   const selectedServiceData = services.find((item) => item.id === selectedService) ?? services[0];
   const selectedBarberData = barbers.find((item) => item.id === selectedBarber);
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: no-preference)");
+    setMotionAllowed(motionQuery.matches);
+    const updateMotionPreference = () => setMotionAllowed(motionQuery.matches);
+    motionQuery.addEventListener("change", updateMotionPreference);
+    return () => motionQuery.removeEventListener("change", updateMotionPreference);
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = locale;
@@ -213,7 +222,10 @@ export default function HomePage() {
       </nav>
 
       <section id="home" className="hero hero-cinema">
-        <div className="hero-visual hero-cinema-visual" role="img" aria-label={isArabic ? "داخل صالون سِمت للحلاقة بإضاءة دافئة ومقاعد جلدية" : "Inside SIMT barber house, warm lighting and leather barber chairs"}>
+        <div className="hero-visual hero-cinema-visual" role="img" aria-label={isArabic ? "لقطات سينمائية من تجربة سِمت للحلاقة" : "Cinematic footage from the SIMT barber experience"}>
+          {motionAllowed && <video className="hero-film" autoPlay muted loop playsInline preload="metadata" poster="/assets/incoming/1066622116_1791753577498806.jpg" aria-hidden="true" tabIndex={-1}>
+            <source src="/assets/incoming/6686907_1791754412449871.mp4" type="video/mp4" />
+          </video>}
           <div className="hero-image-shade" />
           <div className="hero-image-top"><span>SIMT / RIYADH</span><span>CRAFTED FOR YOU</span></div>
           <div className="hero-image-caption"><span>THE ART OF LOOKING SHARP</span><span>01 — 04</span></div>
@@ -283,9 +295,9 @@ export default function HomePage() {
 
       <section className="gallery-section">
         <div className="gallery-intro"><div className="section-label"><span>04</span><span>{t.galleryLabel}</span></div><h2>{t.galleryTitle}</h2><p>{t.galleryText}</p></div>
-        <div className="gallery-image gallery-image-one" role="img" aria-label={isArabic ? "تفاصيل داخلية دافئة" : "Warm, considered interior details"} />
-        <div className="gallery-image gallery-image-two" role="img" aria-label={isArabic ? "أدوات حلاقة احترافية" : "Professional barber tools"} />
-        <div className="gallery-image gallery-image-three" role="img" aria-label={isArabic ? "كرسي حلاقة كلاسيكي" : "Classic barber chair"} />
+        <div className="gallery-image gallery-image-one" role="img" aria-label={isArabic ? "تفاصيل من مجموعة الصور الخاصة بسِمت" : "A detail from the SIMT photo collection"} />
+        <div className="gallery-image gallery-image-two" role="img" aria-label={isArabic ? "لقطة من أصول سِمت المصوّرة" : "A frame from the supplied SIMT imagery"} />
+        <div className="gallery-image gallery-image-three" role="img" aria-label={isArabic ? "تفاصيل إضافية من مساحة سِمت" : "Additional details from the SIMT space"} />
         <span className="gallery-index">THE SPACE / 04—06</span>
       </section>
 
