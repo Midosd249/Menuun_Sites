@@ -10,7 +10,7 @@
 
 ## Next
 - [ ] M1.5 Add accessibility checks for keyboard focus, dialog focus management, color contrast, and form errors.
-- [ ] M1.6 Decide deployment provider/project and verify preview deployment only after CI is green.
+- [x] M1.6 Verify the Vercel preview after CI passed: [preview](https://menuun-sites-7kys5107n-midosd2s-projects.vercel.app/) is `READY` for PR head `479ad8abcb8ee89148ea5251c154cdc270f6400b`; production deployment remains unverified.
 - [ ] M2.1 Choose authentication, database, and object storage providers.
 - [ ] M2.2 Build a tenant-scoped dashboard, structured editor, draft preview, and version history.
 - [ ] M3.1 Design safe site publishing snapshots and tenant/subdomain routing.
