@@ -41,9 +41,17 @@ M1 — Salon/barbershop design vertical slice (prototype only).
 - [ ] Replace remote placeholder images with approved optimized local assets and record provenance.
 - [ ] Implement authentication, persistence, editor, preview, and publishing.
 
+## Latest asset integration — 2026-10-12
+- Confirmed owner-uploaded media in `public/assets/incoming/`: seven JPG files and one MP4.
+- Wired `6686907_1791754412449871.mp4` into the hero as a muted, looping desktop enhancement; the local poster remains visible on mobile and when reduced motion is requested.
+- Replaced the hero poster, three gallery images, and location image with local uploaded JPGs.
+- Added `public/assets/simt/ASSET_MANIFEST.md` documenting the applied media roles and held files.
+- Two JPGs remain unused because their visual content could not be reliably classified from filenames through the text-only repository connector.
+- No claim is made that the media is licensed, visually approved, optimized into WebP/AVIF, or browser-verified. Current branch CI must be checked after these commits; production deployment is not verified.
+
 ## Active risks / unknowns
 - All current business details, prices, team identities, photos, address, and opening hours are illustrative; replace with client-approved content before production.
-- Images are currently remote Unsplash-hosted URLs; local optimization and an asset manifest are still required.
+- The demo now uses owner-supplied local media for the hero, gallery, and location sections. Some barber portraits remain remote placeholders; image optimization, rights confirmation, and visual/browser QA are still required.
 - Demo booking inputs are intentionally not persisted. Real booking requires a provider contract, consent/privacy design, error handling, and verified business contact details.
 - Confirm repository permissions, branch protection, and default branch settings.
 - Confirm Vercel project/team and DNS ownership before domain implementation.
