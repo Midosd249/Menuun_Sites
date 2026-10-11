@@ -20,17 +20,17 @@ Deliver a high-quality website builder as an independently deployed Menuun produ
 ### M0 — Foundation
 - [x] Create repository operating contract and continuity documents.
 - [x] Document product boundary and integration principles.
-- [ ] Select framework/runtime, database, auth, object storage, and hosting based on verified requirements.
-- [ ] Add package scripts, formatting/lint/type checks, test runner, secret scan, and CI.
-- [ ] Add Playwright browser smoke tests and accessibility baseline.
-- [ ] Verify clean install/build and document environment variables.
+- [x] Select and bootstrap a minimal Next.js/React/TypeScript runtime (database, auth, object storage, and hosting remain undecided).
+- [x] Add package scripts, lint/type checks, unit test runner, secret scan, and CI workflow.
+- [x] Add Playwright desktop/mobile smoke coverage for core prototype behavior.
+- [ ] Verify clean install/build and all CI jobs; document environment variables.
 
 ### M1 — Salon site vertical slice
-- [ ] Build a distinctive, high-quality salon website template.
-- [ ] Provide editable hero, services, team, gallery, locations/contact, and booking/contact CTA sections.
-- [ ] Deliver Arabic RTL and English LTR with separate layout verification.
-- [ ] Use local/approved assets with recorded provenance and licenses.
-- [ ] Verify 360px, 390px, 768px, 1024px, 1280px and wide desktop layouts.
+- [x] Build a distinctive Arabic-first barbershop prototype with services, team, gallery, location, FAQ, and booking CTA.
+- [ ] Convert static prototype sections into tenant-editable structured content.
+- [x] Add Arabic RTL and English LTR switching and Playwright acceptance coverage.
+- [ ] Replace remote demo images with approved optimized local assets and record provenance/licenses.
+- [ ] Verify 360px, 390px, 768px, 1024px, 1280px and wide desktop layouts in browser runs.
 
 ### M2 — Site management
 - [ ] Authentication and tenant-scoped dashboard.
