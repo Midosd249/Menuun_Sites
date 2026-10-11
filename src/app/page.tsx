@@ -126,7 +126,7 @@ export default function HomePage() {
   const [complete, setComplete] = useState(false);
   const t = copy[locale];
   const isArabic = locale === "ar";
-  const Arrow = isArabic ? ArrowUpLeft : ArrowUpRight;
+  const Arrow = isArabic ? ArrowUpLeft : ArrowRight;
   const InlineArrow = isArabic ? ArrowLeft : ArrowRight;
   const times = isArabic ? timeSlots : englishTimeSlots;
   const selectedServiceData = services.find((item) => item.id === selectedService) ?? services[0];
