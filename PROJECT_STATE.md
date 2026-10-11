@@ -42,7 +42,7 @@ M1 — Salon/barbershop design vertical slice (prototype only).
 - [ ] Implement authentication, persistence, editor, preview, and publishing.
 
 ## Latest asset integration — 2026-10-12
-- Confirmed and visually reviewed seven owner-uploaded JPG photos and one MP4 in `public/assets/incoming/`.
+- Confirmed and visually reviewed seven owner-uploaded JPG photos and one MP4 originally uploaded to `public/assets/incoming/`, then moved with original names into `public/assets/simt/` for site use.
 - Wired `6686907_1791754412449871.mp4` into the desktop hero with muted looping playback, a pause/play control, and a still-first fallback for mobile and reduced-motion visitors.
 - Local photos now appear in the hero poster, image-led service rows, gallery, location/space section, and one illustrative barber profile.
 - Reviewed all nine MAREA mobile reference screenshots and moved them, preserving filenames, from `public/assets/` to `docs/design-references/` so they are not served as customer-facing media. The design synthesis is recorded in `docs/design-references/README.md`.
