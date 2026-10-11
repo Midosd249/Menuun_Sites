@@ -42,14 +42,14 @@ M1 — Salon/barbershop design vertical slice (prototype only).
 - [ ] Implement authentication, persistence, editor, preview, and publishing.
 
 ## Latest asset integration — 2026-10-12
-- Confirmed owner-uploaded media in `public/assets/incoming/`: seven JPG files and one MP4.
-- Wired `6686907_1791754412449871.mp4` into the hero as a muted, looping desktop enhancement; the local poster remains visible on mobile and when reduced motion is requested.
-- Replaced the hero poster, three gallery images, and location image with local uploaded JPGs.
-- Added `public/assets/simt/ASSET_MANIFEST.md` documenting the applied media roles and held files.
-- Two JPGs remain unused because their visual content could not be reliably classified from filenames through the text-only repository connector.
-- No claim is made that the media is licensed, visually approved, optimized into WebP/AVIF, or browser-verified. Current branch CI must be checked after these commits; production deployment is not verified.
-- Latest media implementation and acceptance-test commit: `8b5548895a587262e20dbf4acffbeb79eedd7bcb` (includes desktop video, reduced-motion/mobile still fallback, accessible pause/play control, local photos, and Playwright coverage). Review in [PR #2](https://github.com/Midosd249/Menuun_Sites/pull/2). CI was still in progress for recent branch commits at the last check; verify the final head's complete CI before merge. Production deployment remains unverified.
-
+- Confirmed and visually reviewed seven owner-uploaded JPG photos and one MP4 in `public/assets/incoming/`.
+- Wired `6686907_1791754412449871.mp4` into the desktop hero with muted looping playback, a pause/play control, and a still-first fallback for mobile and reduced-motion visitors.
+- Local photos now appear in the hero poster, image-led service rows, gallery, location/space section, and one illustrative barber profile.
+- Reviewed all nine MAREA mobile reference screenshots and moved them, preserving filenames, from `public/assets/` to `docs/design-references/` so they are not served as customer-facing media. The design synthesis is recorded in `docs/design-references/README.md`.
+- Added `public/assets/simt/ASSET_MANIFEST.md` with media mapping, rights notes, and remaining release gates.
+- Design direction now adapts the references' forest-green contrast, warm ivory canvas, teal booking action, restrained gold details, and photo-led service discovery while keeping SIMT's own identity.
+- Image/video rights, technical metadata, modern-format optimization, and browser visual QA are not verified. Production deployment is not verified.
+- Latest media-related code commits include `9d5324f27378e85903853765c955cc970df51383` (service/team media), `e239408cff47ceb9cb56dc034eb23fdd9a57ec37` (mobile photo rows), and `4acfb2720e79108dcfcfc4ea46e8b969da649a06` (palette/control polish). Playwright media acceptance tests were added in `8b5548895a587262e20dbf4acffbeb79eedd7bcb`. Review in [PR #2](https://github.com/Midosd249/Menuun_Sites/pull/2). Recent CI runs are still in progress; verify all jobs on the final head before merge.
 ## Active risks / unknowns
 - All current business details, prices, team identities, photos, address, and opening hours are illustrative; replace with client-approved content before production.
 - The demo now uses owner-supplied local media for the hero, gallery, and location sections. Some barber portraits remain remote placeholders; image optimization, rights confirmation, and visual/browser QA are still required.
