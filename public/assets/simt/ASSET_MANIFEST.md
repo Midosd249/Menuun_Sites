@@ -30,7 +30,7 @@ The nine screenshots of the MAREA Barber Club site were visually reviewed and mo
 
 ## Delivery and rights notes
 
-- Incoming original filenames are not renamed or deleted.
+- All media filenames and file contents were preserved while moving from the upload inbox to the final SIMT asset directory.
 - Media content has been visually inspected for role assignment, but image dimensions, video duration/codec, color profile, and file optimization have not been independently validated with a media-processing tool.
 - Owner-supplied provenance is recorded; commercial usage rights are not independently verified.
 - Some barber portraits remain remote placeholders because only one supplied asset is clearly a portrait.
