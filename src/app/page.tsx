@@ -10,15 +10,15 @@ type Service = { id: string; ar: string; en: string; detailAr: string; detailEn:
 type Barber = { id: string; ar: string; en: string; roleAr: string; roleEn: string; image: string };
 
 const services: Service[] = [
-  { id: "classic", number: "01", ar: "قص كلاسيكي", en: "The classic cut", detailAr: "قصة متقنة تبدأ باستشارة قصيرة وتنتهي بتصفيف يناسبك.", detailEn: "A considered cut, from a quick consultation to a finish that feels like you.", duration: "30", price: "60", image: "/assets/incoming/997294713_1791753388609333.jpg" },
-  { id: "fade", number: "02", ar: "فيد وتدرّج", en: "Fade & texture", detailAr: "تدرّج نظيف وتفاصيل دقيقة بتوازن محسوب.", detailEn: "A clean fade with precise detail and considered texture.", duration: "40", price: "75", image: "/assets/incoming/285805423_1791753297769456.jpg" },
-  { id: "beard", number: "03", ar: "تهذيب اللحية", en: "Beard sculpt", detailAr: "تحديد متوازن، منشفة دافئة، ولمسة نهائية هادئة.", detailEn: "Balanced shaping, a warm towel, and a clean finish.", duration: "20", price: "50", image: "/assets/incoming/663714582_1791753491635583.jpg" },
-  { id: "combo", number: "04", ar: "قص ولحية", en: "Cut + beard", detailAr: "جلسة متكاملة للشعر واللحية في موعد واحد.", detailEn: "A complete hair and beard reset in one appointment.", duration: "45", price: "95", image: "/assets/incoming/1066622116_1791753577498806.jpg" },
-  { id: "groom", number: "05", ar: "طقس العريس", en: "The groom ritual", detailAr: "عناية متكاملة قبل يومك الكبير، بتفاصيل تستحقها.", detailEn: "A considered grooming ritual for the day that matters.", duration: "90", price: "250", image: "/assets/incoming/840786121_1791753645708515.jpg" },
+  { id: "classic", number: "01", ar: "قص كلاسيكي", en: "The classic cut", detailAr: "قصة متقنة تبدأ باستشارة قصيرة وتنتهي بتصفيف يناسبك.", detailEn: "A considered cut, from a quick consultation to a finish that feels like you.", duration: "30", price: "60", image: "/assets/simt/997294713_1791753388609333.jpg" },
+  { id: "fade", number: "02", ar: "فيد وتدرّج", en: "Fade & texture", detailAr: "تدرّج نظيف وتفاصيل دقيقة بتوازن محسوب.", detailEn: "A clean fade with precise detail and considered texture.", duration: "40", price: "75", image: "/assets/simt/285805423_1791753297769456.jpg" },
+  { id: "beard", number: "03", ar: "تهذيب اللحية", en: "Beard sculpt", detailAr: "تحديد متوازن، منشفة دافئة، ولمسة نهائية هادئة.", detailEn: "Balanced shaping, a warm towel, and a clean finish.", duration: "20", price: "50", image: "/assets/simt/663714582_1791753491635583.jpg" },
+  { id: "combo", number: "04", ar: "قص ولحية", en: "Cut + beard", detailAr: "جلسة متكاملة للشعر واللحية في موعد واحد.", detailEn: "A complete hair and beard reset in one appointment.", duration: "45", price: "95", image: "/assets/simt/1066622116_1791753577498806.jpg" },
+  { id: "groom", number: "05", ar: "طقس العريس", en: "The groom ritual", detailAr: "عناية متكاملة قبل يومك الكبير، بتفاصيل تستحقها.", detailEn: "A considered grooming ritual for the day that matters.", duration: "90", price: "250", image: "/assets/simt/840786121_1791753645708515.jpg" },
 ];
 
 const barbers: Barber[] = [
-  { id: "omar", ar: "عمر", en: "Omar", roleAr: "الكلاسيك والمقص", roleEn: "Classic cuts & scissors", image: "/assets/incoming/84095817_1791753745029697.jpg" },
+  { id: "omar", ar: "عمر", en: "Omar", roleAr: "الكلاسيك والمقص", roleEn: "Classic cuts & scissors", image: "/assets/simt/84095817_1791753745029697.jpg" },
   { id: "yousef", ar: "يوسف", en: "Yousef", roleAr: "الفيد والتصفيف", roleEn: "Fades & styling", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80" },
   { id: "kareem", ar: "كريم", en: "Kareem", roleAr: "اللحية والعناية", roleEn: "Beard & grooming", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=700&q=80" },
 ];
@@ -237,8 +237,8 @@ export default function HomePage() {
 
       <section id="home" className="hero hero-cinema">
         <div className="hero-visual hero-cinema-visual" role="img" aria-label={isArabic ? "لقطات سينمائية من تجربة سِمت للحلاقة" : "Cinematic footage from the SIMT barber experience"}>
-          {motionAllowed && <video ref={filmRef} className="hero-film" autoPlay muted loop playsInline preload="metadata" poster="/assets/incoming/1066622116_1791753577498806.jpg" aria-hidden="true" tabIndex={-1}>
-            <source src="/assets/incoming/6686907_1791754412449871.mp4" type="video/mp4" />
+          {motionAllowed && <video ref={filmRef} className="hero-film" autoPlay muted loop playsInline preload="metadata" poster="/assets/simt/1066622116_1791753577498806.jpg" aria-hidden="true" tabIndex={-1}>
+            <source src="/assets/simt/6686907_1791754412449871.mp4" type="video/mp4" />
           </video>}
           {motionAllowed && <button className="hero-film-toggle" type="button" onClick={toggleHeroFilm} aria-label={isArabic ? (filmPaused ? "تشغيل فيديو الواجهة" : "إيقاف فيديو الواجهة") : (filmPaused ? "Play hero video" : "Pause hero video")} title={isArabic ? (filmPaused ? "تشغيل الفيديو" : "إيقاف الفيديو") : (filmPaused ? "Play video" : "Pause video")}>
             {filmPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
