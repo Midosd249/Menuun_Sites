@@ -6,19 +6,19 @@ import {
 } from "lucide-react";
 
 type Locale = "ar" | "en";
-type Service = { id: string; ar: string; en: string; detailAr: string; detailEn: string; duration: string; price: string; number: string };
+type Service = { id: string; ar: string; en: string; detailAr: string; detailEn: string; duration: string; price: string; number: string; image: string };
 type Barber = { id: string; ar: string; en: string; roleAr: string; roleEn: string; image: string };
 
 const services: Service[] = [
-  { id: "classic", number: "01", ar: "قص كلاسيكي", en: "The classic cut", detailAr: "قصة متقنة تبدأ باستشارة قصيرة وتنتهي بتصفيف يناسبك.", detailEn: "A considered cut, from a quick consultation to a finish that feels like you.", duration: "30", price: "60" },
-  { id: "fade", number: "02", ar: "فيد وتدرّج", en: "Fade & texture", detailAr: "تدرّج نظيف وتفاصيل دقيقة بتوازن محسوب.", detailEn: "A clean fade with precise detail and considered texture.", duration: "40", price: "75" },
-  { id: "beard", number: "03", ar: "تهذيب اللحية", en: "Beard sculpt", detailAr: "تحديد متوازن، منشفة دافئة، ولمسة نهائية هادئة.", detailEn: "Balanced shaping, a warm towel, and a clean finish.", duration: "20", price: "50" },
-  { id: "combo", number: "04", ar: "قص ولحية", en: "Cut + beard", detailAr: "جلسة متكاملة للشعر واللحية في موعد واحد.", detailEn: "A complete hair and beard reset in one appointment.", duration: "45", price: "95" },
-  { id: "groom", number: "05", ar: "طقس العريس", en: "The groom ritual", detailAr: "عناية متكاملة قبل يومك الكبير، بتفاصيل تستحقها.", detailEn: "A considered grooming ritual for the day that matters.", duration: "90", price: "250" },
+  { id: "classic", number: "01", ar: "قص كلاسيكي", en: "The classic cut", detailAr: "قصة متقنة تبدأ باستشارة قصيرة وتنتهي بتصفيف يناسبك.", detailEn: "A considered cut, from a quick consultation to a finish that feels like you.", duration: "30", price: "60", image: "/assets/incoming/997294713_1791753388609333.jpg" },
+  { id: "fade", number: "02", ar: "فيد وتدرّج", en: "Fade & texture", detailAr: "تدرّج نظيف وتفاصيل دقيقة بتوازن محسوب.", detailEn: "A clean fade with precise detail and considered texture.", duration: "40", price: "75", image: "/assets/incoming/285805423_1791753297769456.jpg" },
+  { id: "beard", number: "03", ar: "تهذيب اللحية", en: "Beard sculpt", detailAr: "تحديد متوازن، منشفة دافئة، ولمسة نهائية هادئة.", detailEn: "Balanced shaping, a warm towel, and a clean finish.", duration: "20", price: "50", image: "/assets/incoming/663714582_1791753491635583.jpg" },
+  { id: "combo", number: "04", ar: "قص ولحية", en: "Cut + beard", detailAr: "جلسة متكاملة للشعر واللحية في موعد واحد.", detailEn: "A complete hair and beard reset in one appointment.", duration: "45", price: "95", image: "/assets/incoming/1066622116_1791753577498806.jpg" },
+  { id: "groom", number: "05", ar: "طقس العريس", en: "The groom ritual", detailAr: "عناية متكاملة قبل يومك الكبير، بتفاصيل تستحقها.", detailEn: "A considered grooming ritual for the day that matters.", duration: "90", price: "250", image: "/assets/incoming/840786121_1791753645708515.jpg" },
 ];
 
 const barbers: Barber[] = [
-  { id: "omar", ar: "عمر", en: "Omar", roleAr: "الكلاسيك والمقص", roleEn: "Classic cuts & scissors", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=700&q=80" },
+  { id: "omar", ar: "عمر", en: "Omar", roleAr: "الكلاسيك والمقص", roleEn: "Classic cuts & scissors", image: "/assets/incoming/84095817_1791753745029697.jpg" },
   { id: "yousef", ar: "يوسف", en: "Yousef", roleAr: "الفيد والتصفيف", roleEn: "Fades & styling", image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80" },
   { id: "kareem", ar: "كريم", en: "Kareem", roleAr: "اللحية والعناية", roleEn: "Beard & grooming", image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=700&q=80" },
 ];
@@ -282,6 +282,7 @@ export default function HomePage() {
             {services.map((service) => (
               <article className="service-row" key={service.id}>
                 <span className="service-number">{service.number}</span>
+                <img className="service-thumb" src={service.image} alt="" loading="lazy" />
                 <div className="service-copy"><h3>{isArabic ? service.ar : service.en}</h3><p>{isArabic ? service.detailAr : service.detailEn}</p></div>
                 <span className="service-duration"><Clock3 size={14} />{service.duration} {t.minutes}</span>
                 <span className="service-price"><small>{t.from}</small>{service.price} <small>{t.sar}</small></span>
