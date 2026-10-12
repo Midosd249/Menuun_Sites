@@ -5,7 +5,7 @@ Updated: 2026-10-12
 ## Preview
 
 Current branch: `feat/menuun-site-platform-foundation`  
-Current Vercel Preview observed at this revision: `https://menuun-sites-7zt91rqt2-midosd2s-projects.vercel.app/owner/`
+Stable branch preview for the current branch: `https://menuun-sites-git-feat-menuun-site-plat-982423-midosd2s-projects.vercel.app/owner/`
 
 The root route remains the existing ATELIER 09 salon page. The owner UI is isolated under `owner/index.html`; the existing `index.html` was not rewritten in this change. `.vercelignore` keeps internal documentation, SQL migrations, SQL tests and helper scripts out of the static deployment output.
 
