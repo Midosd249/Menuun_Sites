@@ -1,21 +1,31 @@
 # Tasks
 
 ## Active task
-**Verify public marketing application build and routing** — IN_PROGRESS (build/tests pass; Vercel preview blocked)
+**Verify the Next.js public-platform migration** — IN_PROGRESS.
 
-Acceptance criteria:
-- [x] `npm test` passes — GitHub Actions run 38305351474.
-- [x] `npm run build` passes — GitHub Actions run 38305351474.
-- [ ] Vercel preview build for `feat/public-platform-foundation` is inspected — BLOCKED by HTTP 402 daily deployment API limit (>100, retry after 24 hours).
-- [ ] Root route and `/login/`, `/signup/` resolve to the React app.
-- [ ] `/owner/` and `/templates/atelier-09/` remain accessible — copy script is covered by source test, but deployed routing remains unverified.
-- [ ] No claims of working authentication or live bookings appear on the new public homepage.
-- [x] Unknowns and evidence are recorded in `PROJECT_STATE.md`.
+### Acceptance criteria
+- [x] Next.js App Router replaces Vite as the active framework.
+- [x] Existing marketing UI remains in the new app entry.
+- [x] Arabic RTL and English LTR behavior is retained.
+- [x] Root metadata, robots and sitemap are defined.
+- [x] Owner and Atelier 09 template sources are preserved; build copies them into `public/`.
+- [x] Architecture, repository audit and session handoff are committed with the migration.
+- [ ] `npm test` passes on the migration commit.
+- [ ] `npm run typecheck` passes on the migration commit.
+- [ ] `npm run build` passes on the migration commit.
+- [ ] Real-browser QA confirms `/`, `/login`, `/signup`, `/owner/`, and `/templates/atelier-09/`.
+- [ ] RTL/LTR visual QA at mobile, tablet and desktop.
+- [ ] Vercel preview is inspected after quota availability is verified.
 
 ## Backlog
-- [ ] Port and test the relevant Menu V3 Better Auth server/client patterns after a full auth and database audit.
-- [ ] Confirm persistent database integration and environment requirements before production signup.
-- [ ] Build protected customer workspace and server-authorized business onboarding.
-- [ ] Define template contract and convert Atelier 09 into a reusable template.
-- [ ] Design and test scheduling data model and server-side booking transaction.
-- [ ] Add CI, browser tests, responsive visual review, SEO and accessibility quality gates.
+- [ ] Audit Supabase live migration history and reconcile branch-specific continuity records.
+- [ ] Select and implement server-side authentication with official Next.js/Supabase SSR guidance.
+- [ ] Add deterministic authorization, tenant memberships and RLS tests.
+- [ ] Design and migrate the salon scheduling data model.
+- [ ] Add public tenant routes and QR link contract.
+- [ ] Build business workspace, template registry and publication lifecycle.
+- [ ] Add E2E, accessibility, performance and SEO quality gates.
+- [ ] Restore Refero access and create a source-backed visual reference lock before major redesign.
+
+## Guardrails
+No production deploy, domain mutation, paid resource, auth enablement, schema migration, data migration or PR merge without explicit authorization and evidence.

@@ -37,3 +37,28 @@
 - Keyboard-only navigation and focus-state review.
 - Actual Vercel build/deployment evidence.
 - Product and customer interviews before freezing marketing claims or pricing.
+
+
+## Next.js migration and research update — 2026-10-13
+
+### Repository evidence
+- `Menuun_Sites` now targets Next.js App Router for server-renderable marketing content, built-in metadata, sitemap/robots and future public tenant routes.
+- The initial marketing page remains a client component because the Arabic/English switch, FAQ accordion and mobile navigation use browser interaction. The pathname is read with Next navigation APIs rather than accessing `window` during server rendering.
+- Static owner/template source is preserved and copied into `public/` during the build. Route rewrites preserve legacy directory-index URLs; this must be verified against a real Next.js deployment before declaring compatibility complete.
+
+### Architecture research
+- Official Next.js documentation is the authority for App Router, route metadata and deployment conventions: https://nextjs.org/docs.
+- Vercel migration skills provide a useful checklist for converting a React SPA, but their CRA-specific details must not be applied blindly to this Vite source: https://github.com/vercel-labs/migration-skills.
+- Supabase's official Next.js SSR guidance and RLS guidance are the baseline for any later auth/database work: https://supabase.com/docs/guides/auth/server-side/nextjs and https://supabase.com/docs/guides/database/postgres/row-level-security.
+- The migration deliberately does not configure authentication, add database migrations, create paid resources or deploy to production.
+
+### Visual-reference status
+- Refero style and dashboard-screen searches were attempted but returned `NO_SUBSCRIPTION`. No screenshots or style records were inspected.
+- Existing visual direction remains provisional: deep forest green, restrained lime accent, generous spacing, and Arabic-first typography. It is not claimed to be externally reference-validated.
+- Before a major redesign, restore Refero access, inspect 3–4 distinct styles and concrete dashboard/booking screens, write a reference lock, then perform screenshot-based visual QA.
+
+### Acceptance still pending
+- GitHub Actions test/typecheck/build evidence for the Next.js migration.
+- Browser verification for `/`, `/login`, `/signup`, `/owner/`, and `/templates/atelier-09/`.
+- Desktop/tablet/mobile review in Arabic RTL and English LTR, including keyboard focus and reduced motion.
+- Vercel deployment quota and custom-domain linkage remain unverified.

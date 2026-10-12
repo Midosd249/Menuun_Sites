@@ -1,13 +1,20 @@
 import { cpSync, existsSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 
-const output = resolve("dist");
-mkdirSync(output, { recursive: true });
+const copies = [
+  ["owner", "public/owner"],
+  ["templates", "public/templates"],
+  ["assets/brand/menuun", "public/assets/brand/menuun"]
+];
 
-for (const directory of ["owner", "templates", "assets"]) {
-  const source = resolve(directory);
-  if (existsSync(source)) {
-    cpSync(source, resolve(output, directory), { recursive: true, force: true });
-    process.stdout.write(`Copied ${directory}/ into dist/\n`);
+for (const [sourceRelative, destinationRelative] of copies) {
+  const source = resolve(sourceRelative);
+  const destination = resolve(destinationRelative);
+  if (!existsSync(source)) {
+    process.stdout.write(`Skipped missing optional asset source: ${sourceRelative}\n`);
+    continue;
   }
+  mkdirSync(resolve(destination, ".."), { recursive: true });
+  cpSync(source, destination, { recursive: true, force: true });
+  process.stdout.write(`Prepared ${sourceRelative} → ${destinationRelative}\n`);
 }

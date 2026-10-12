@@ -126,3 +126,31 @@ Only Phase 0 and Phase 1 are authorized in this batch. Do not implement or imply
 - Created branch `feat/public-platform-foundation`.
 - Preserved the existing root page at `templates/atelier-09/index.html`.
 - Next task: replace the root experience with the React/TypeScript public marketing application and establish its build/test contract.
+
+
+## 11. Next.js migration update — 2026-10-13
+
+### Decision
+The application foundation is moving from Vite to **Next.js App Router** before authentication and the tenant data model are implemented. This avoids designing future public tenant pages and metadata around a client-only root entry, while keeping the existing React/TypeScript UI and preserving legacy static experiences.
+
+### Scope of the migration commit
+- Move the existing marketing UI into `app/page.tsx` and shared CSS into `app/globals.css`.
+- Add the root App Router layout and metadata, robots and sitemap handlers.
+- Replace Vite build scripts/configuration with Next.js build scripts/configuration.
+- Copy `owner/`, `templates/` and the Menuun brand SVGs into Next.js `public/` at build time without overwriting the existing `public/assets/images/` library.
+- Add rewrites for the legacy `/owner/` and `/templates/atelier-09/` directory-index URLs.
+- Keep the staged login/signup experience honest.
+- Add CI typecheck and Next.js contract checks.
+- Document the architecture, repo audit, decisions and handoff.
+
+### Explicitly out of scope
+No real authentication, tenant provisioning, booking API, schema changes, Storage policy changes, AI provider, domain change, Vercel project setting change, production deployment or PR merge is part of this migration.
+
+### Acceptance
+1. `npm test`, `npm run typecheck` and `npm run build` pass in GitHub Actions.
+2. Browser QA confirms the root page and compatibility routes load without console errors.
+3. Arabic RTL and English LTR are reviewed at mobile, tablet and desktop sizes.
+4. Deployment evidence is recorded from Vercel after the daily deployment limit is confirmed clear.
+5. The PR remains unmerged until the above checks are evidenced.
+
+**Only Phase 1 is authorized in this migration.** Authentication and data changes require a separate implementation pass after the existing Supabase migration history is reconciled.

@@ -16,9 +16,11 @@ jobs:
           node-version: 22
       - name: Install app dependencies
         run: npm install --no-audit --no-fund
-      - name: Test public site contracts
+      - name: Test platform contracts
         run: npm test
-      - name: Build public application
+      - name: Typecheck Next.js application
+        run: npm run typecheck
+      - name: Build Next.js application
         run: npm run build
 
   inline-js-and-assets:

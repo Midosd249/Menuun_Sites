@@ -1,36 +1,40 @@
-# Project State — Menuun Sites
+# Project State — Menuun
 
-**Updated:** 2026-10-12  
-**Implementation status:** IMPLEMENTATION_IN_PROGRESS — source tests/build verified in GitHub Actions; Vercel preview blocked by daily API quota  
-**Active branch:** `feat/public-platform-foundation`
+**Updated:** 2026-10-13  
+**Implementation status:** IMPLEMENTATION_IN_PROGRESS — Next.js App Router migration prepared; CI and deployment verification pending  
+**Active branch:** `feat/public-platform-foundation`  
+**Open PR:** [#5](https://github.com/Midosd249/Menuun_Sites/pull/5) (draft)
 
-## Current milestone
-Phase 1 — Public marketing website.
+## Active milestone
+Phase 1 — Next.js public-platform foundation.
 
-## Verified
-- The former root `index.html` salon-template page was preserved at `templates/atelier-09/index.html`.
-- The root entry now uses a React + TypeScript + Vite app shell.
-- The new public app includes Arabic RTL default, English LTR switch, responsive marketing sections, and staged login/signup routes that explicitly state auth is not implemented yet.
-- The roadmap and research log document the planned phases and current unknowns.
-- Refero connector calls were blocked by `NO_SUBSCRIPTION`; no Refero screens or styles were inspected.
+## VERIFIED repository facts
+- The active source branch previously used React + TypeScript + Vite for the public marketing site.
+- The existing Atelier 09 page is preserved at `templates/atelier-09/index.html`; the owner workspace lives under `owner/`.
+- The marketing UI supports Arabic RTL by default and English LTR; login/signup are staged screens, not real auth.
+- Relevant references inspected: `Midosd249/ai-agent-foundation`, `Midosd249/Menu_V3`, `Midosd249/Demo_Site`, and `Midosd249/Menu-V2-Sandbox`. Findings are in `docs/repository-audit.md`.
+- The current Vercel configuration previously targeted Vite's `dist/`; Next.js requires framework-native build output.
+- The Refero connector returned `NO_SUBSCRIPTION`; no visual references were retrieved.
+- Previous Vercel API attempts returned HTTP 402 for the daily deployment quota. A new deployment has not been verified.
 
-## Unknown / pending verification
-- **VERIFIED by GitHub Actions run 38305351474:** `npm test` and `npm run build` passed on Node 22; existing inline-JS/assets and Supabase config checks also passed.
-- **BLOCKED:** Vercel API returned HTTP 402 (`api-deployments-free-per-day`, >100 deployments, retry after 24 hours). A fresh preview build cannot be verified until the quota resets or the team resolves the plan limit.
-- Domain `www.menuun.com` linkage is unknown.
-- Durable database integration and production authentication are not implemented.
-- No browser screenshots or end-to-end account flow have been verified.
+## Migration scope
+- Next.js App Router, metadata, robots and sitemap.
+- Preserve static owner/template assets through build-time copying and explicit rewrites.
+- Keep the marketing page's language toggle, mobile menu and FAQ behavior.
+- Add tests for Next routing/configuration and CI typecheck.
+- Keep the migration reversible; leave the old `src/` and `index.html` source intact as rollback/reference material.
 
-## Files introduced/updated
-- `AGENTS.md`
-- `README.md`
-- `docs/roadmap/public-platform-foundation.md`
-- `docs/design-research-log.md`
-- `package.json`, `tsconfig.json`, `vercel.json`
-- `index.html`
-- `src/main.tsx`, `src/App.tsx`, `src/styles.css`
-- `tests/public-site-contract.test.mjs`
-- `templates/atelier-09/index.html`
+## UNKNOWN / BLOCKED
+- **PENDING:** GitHub Actions results for the migration commit; inspect the exact commit workflow.
+- **BLOCKED:** Vercel preview deployment until the quota is rechecked.
+- **UNKNOWN:** Whether `www.menuun.com` is configured and verified in the Vercel project.
+- **UNKNOWN:** Exact live Supabase migration history across the legacy and active branches. Older continuity documents conflict about applied migrations; do not change schema/Auth/Storage until reconciled.
+- **NOT IMPLEMENTED:** Production authentication, protected business workspace, tenant provisioning, live booking, five production-ready templates, AI provider integration and platform admin.
 
-## Exactly one next task
-After the Vercel deployment API limit resets, deploy the current PR head as a preview and verify public routing, asset preservation, and mobile/RTL/LTR rendering without promoting it to production.
+## Current quality evidence
+- The previous Vite baseline passed `npm test` and `npm run build` in GitHub Actions run 38305351474.
+- This baseline does **not** prove the Next.js migration passes. New CI evidence is required.
+- No browser screenshots or end-to-end route checks have been verified for the Next.js version.
+
+## Single next task
+Inspect GitHub Actions for the current branch head; fix typecheck/build/test failures. Once CI passes, recheck Vercel quota and perform preview/browser QA for `/`, `/login`, `/signup`, `/owner/`, and `/templates/atelier-09/`. Do not merge or deploy production until evidence is recorded.

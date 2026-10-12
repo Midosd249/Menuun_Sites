@@ -1,7 +1,7 @@
 # Menuun Sites — Agent Operating Contract
 
 ## Mission
-Build Menuun as a professional Arabic-first, bilingual SaaS platform for appointment-led businesses. Treat Menu V3 as an architectural reference, not as a codebase to clone blindly. The current milestone is the public marketing site; customer accounts, workspaces, and reusable templates are later phases.
+Build Menuun as a professional Arabic-first, bilingual SaaS platform for appointment-led businesses. Use Next.js App Router, React and TypeScript as the active web foundation. Treat Menu V3 and AI Agent Foundation as read-only architecture/process references, not codebases to clone blindly. The active milestone is the reversible Next.js public-platform foundation; auth, workspaces, tenant booking and publishing remain later phases.
 
 ## Startup and evidence
 - Before meaningful changes, inspect this file, `docs/roadmap/public-platform-foundation.md`, relevant source, tests, configuration, Git branch/history, and Vercel evidence when available.
@@ -10,7 +10,7 @@ Build Menuun as a professional Arabic-first, bilingual SaaS platform for appoint
 - Read the AI Agent Foundation's `AGENTS.md` and `docs/AI_SECURITY.md` when planning specialist or AI-enabled workflows.
 
 ## Architecture
-- Prefer React + TypeScript and a production build over a collection of independent HTML applications.
+- Prefer Next.js App Router + React + TypeScript and a production build over a collection of independent HTML applications.
 - Port patterns from Menu V3 only after inspecting source contracts, tests, and dependencies.
 - Keep business logic for scheduling distinct from restaurant menu/order logic.
 - Use same-origin server endpoints for auth and sensitive operations. Never store password hashes, session secrets, provider credentials, or database credentials in client code.
@@ -27,9 +27,14 @@ Build Menuun as a professional Arabic-first, bilingual SaaS platform for appoint
 ## Engineering
 - Use tests-first for behavior changes. Discover existing commands before choosing test commands.
 - Test state and user outcomes; prefer real implementations over excessive mocks.
-- For browser-facing work, use real-browser evidence when available. Source inspection and HTTP 200 do not prove visual quality.
+- For browser-facing work, use real-browser evidence when available. Source inspection and HTTP 200 do not prove visual quality. Preserve legacy owner/template routes through explicit Next.js public-asset handling and verify them in a browser.
 - Keep changes scoped, reversible, and documented. Do not weaken security to make tests pass.
 - Do not deploy, change Vercel project settings, create paid resources, or migrate existing data without explicit authorization.
+
+## Active architecture references
+- Read `docs/architecture/nextjs-platform-architecture.md` before route, auth, tenant, booking, template or AI-boundary changes.
+- Read `docs/repository-audit.md` before reusing code from adjacent repositories.
+- Read `docs/SESSION_HANDOFF.md` at the start of a new chat and verify current Git/CI/Vercel state before acting.
 
 ## Completion
 - Report exact files/commits, test/build results, deployment status, remaining unknowns, and next task.

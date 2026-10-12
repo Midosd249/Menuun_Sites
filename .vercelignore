@@ -1,6 +1,6 @@
-# Keep engineering notes, database migrations, tests and CI sources out of static deployment output.
-# These files remain in GitHub and are applied/reviewed separately.
+# Next.js build needs scripts/copy-static.mjs to preserve the legacy owner and template routes.
+# Keep internal documentation, CI configuration, tests, and database source out of deployment uploads.
 .github/
 docs/
-scripts/
+tests/
 supabase/
