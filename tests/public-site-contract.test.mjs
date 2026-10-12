@@ -72,3 +72,12 @@ test("the documented product boundary keeps authentication and booking honest", 
   assert.match(plan, /Phase 2 — Authentication and identity/);
   assert.match(plan, /Only Phase 1 is authorized/);
 });
+
+test("the public brand uses the complete Menuun logo and offers exactly three templates", () => {
+  assert.match(app, /menuun-logo-ar\.svg/);
+  assert.match(app, /menuun-logo-en\.svg/);
+  assert.match(app, /templateNames: \["Essential", "Editorial", "Atelier"\]/);
+  assert.doesNotMatch(app, /"Heritage", "Gallery"/);
+  assert.match(styles, /template-grid\{display:grid;grid-template-columns:repeat\(3,/);
+  assert.match(styles, /@keyframes menuun-rise/);
+});
