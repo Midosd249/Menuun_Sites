@@ -27,19 +27,25 @@ Prepare the first production-capable slice of an independent salon website SaaS.
 - Confirm whether the preferred preview is accessible and whether video, poster, and images return usable responses.
 - Do not change the existing template or deploy during this inventory.
 
-### S1 — Technical design and data/security contract
-- Produce the salon ERD, roles, allowed appointment transitions, publishing model, RLS policies and Storage path policy.
-- Select server-side transaction boundary for booking conflict prevention.
-- Verify current Supabase Auth/Storage guidance.
-- Review SQL before applying it to `kphypflbkbcvgcaupxxm`.
+### S1 — Technical design and data/security contract (FOUNDATION IMPLEMENTED; end-to-end tests pending)
+- [x] Define initial salon ERD, roles, allowed appointment transitions, publishing model and RLS policy approach.
+- [x] Add database exclusion constraint for overlapping active appointments per barber/salon.
+- [x] Apply private authorization helpers, safe invoker RPC wrappers, explicit grants and RLS.
+- [x] Verify security advisor reports no lint findings.
+- [ ] Test onboarding and tenant isolation using controlled auth users; confirm booking status events and conflict rejection.
+- [ ] Design and test Storage upload path/bucket policies.
 
-### S2 — Foundation schema
-- Add first versioned migration under project-owned migration history.
-- Create tenant, membership, services, barbers, business hours, appointments, events, media and published site settings/revisions as required by the agreed minimal slice.
-- Enable RLS and add grants/policies intentionally; run security/performance advisors and direct SQL smoke checks.
+### S2 — Foundation schema (APPLIED)
+- [x] Three versioned migrations are applied and their source files are stored under `supabase/migrations/`.
+- [x] Created 12 tables for tenants/memberships, services, barbers, hours, appointments/events, media metadata, site draft/published state/revisions, and notifications.
+- [x] Enabled RLS on all 12 tables; security advisor is clean.
+- [x] Added FK indexes; remaining unused-index notices are informational until workload exists.
+- [x] Confirmed the migration history and zero application rows.
+- [ ] Run controlled auth/tenant and booking behavior tests before production use.
 - Never target Menu V3 project ref `ublxptcqefujkbeepylc`.
 
-### S3 — Owner authentication and operations shell
+### S3 — Owner authentication and operations shell (NEXT IMPLEMENTATION)
+- Add the app build/runtime foundation without discarding the current HTML visual reference.
 - Login/session guard; owner workspace responsive shell; tenant selection from server-verified membership.
 - Basic inbox list and detail; no demo UI pretending to be connected to live data.
 
