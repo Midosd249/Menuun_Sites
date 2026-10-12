@@ -1,7 +1,7 @@
 # Menuun Site — الخطة الرئيسية وسياق المشروع الدائم
 
 > آخر تحديث: 2026-10-12  
-> الحالة: **DATABASE FOUNDATION IMPLEMENTED / OWNER WORKSPACE PREVIEW DEPLOYED / BROWSER QA PENDING**  
+> الحالة: **DATABASE FOUNDATION + BOOKING API IMPLEMENTED / OWNER WORKSPACE PREVIEW DEPLOYED / PUBLIC UI + BROWSER QA PENDING**  
 > الهدف: تحويل قالب الصالون الحالي إلى منصة SaaS مستقلة لإطلاق وإدارة مواقع المحلات، بدءًا بالصالونات الرجالية، مع تجربة عميل عامة ولوحة تشغيل لصاحب النشاط ولوحة إدارة للمنصة.
 
 ## 1. لماذا هذا المستند موجود؟
@@ -229,8 +229,9 @@
 - [x] تطبيق ثلاث migrations في مشروع `Menuun_Site` فقط.
 - [x] تفعيل RLS على الجداول الـ12، وفصل المساعدات الأمنية في `private`، وإضافة منع تداخل المواعيد وانتقالات الحالة وسجل الأحداث.
 - [x] التحقق من migration history ونتيجة security advisor (لا توجد lint findings بعد hardening).
-- [ ] اختبار onboarding الموثق، عزل صالونين، transitions، تعارض حجز فعلي، Storage policies.
-- [ ] إضافة Storage bucket/policies بعد اعتماد مسارات الرفع وحدود الملفات.
+- [x] اختبار onboarding الموثق، عزل صالونين، transitions، تعارض حجز فعلي، وسجل الأحداث ضمن معاملات تراجعت.
+- [x] إضافة private Storage bucket باسم `salon-media` مع حد 100 MiB، أنواع MIME مسموحة وسياسات وصول مبنية على عضوية الصالون ومسار التخزين.
+- [x] إضافة `public.request_salon_appointment` كواجهة RPC بأمان invoker، مع منطق privileged داخل `private`، والتحقق من الصالون المنشور والخدمة والحلاق والدوام والأفق الزمني، وإنشاء الحجز والأحداث وإشعارات المالك.
 
 ### المرحلة 3: المصادقة والتأسيس
 - تسجيل/دخول واستعادة وصول آمنة.
@@ -304,9 +305,11 @@
 - **VERIFIED:** الرابط المعتمد والملف MP4 والبوستر وصورة حجز أعادت HTTP 200 عبر تكامل Vercel.
 - **UNKNOWN:** تشغيل الفيديو داخل متصفح حقيقي، الترخيص/الملكية النهائية لبعض الوسائط الخارجية، إعدادات Vercel الكاملة خارج بيانات النشر، وQA على أجهزة فعلية.
 - **VERIFIED:** تمت إضافة مساحة تشغيل أولية في `owner/index.html`، مع تسجيل الدخول/إنشاء الحساب، إنشاء مساحة الصالون، عرض المواعيد وتغيير الحالات، إضافة الخدمات والحلاقين وتحديث معلومات الصالون. هذا Preview فقط؛ اختبار المتصفح/المصادقة الفعلية ما زال pending.
-- **VERIFIED:** اختبارات SQL transaction passed لعزل المستأجرين ومنع تعارض الموعد وانتقالات الحالة وسجل الأحداث، مع rollback لبيانات الاختبار.
-- **NOT DONE:** لا يوجد Storage bucket/policies أو حجز عام حقيقي أو رفع وسائط/QR أو ربط القالب بالبيانات المنشورة أو لوحة إدارة المنصة.
-- **NEXT TASK:** إجراء QA متصفح فعلي للوحة `/owner/` إن توفر Playwright/Browser، والتحقق من إعدادات Auth redirect. ثم إنشاء Storage bucket وسياساته، وربط بيانات الصالون المنشورة بالقالب، وإضافة booking RPC عامة ذرية قبل إعلان استقبال الحجوزات. لا تلمس مشروع Menu V3 أو رابط المعاينة المعتمد.
+- **VERIFIED:** Supabase migration history reports four applied migrations, latest `20261012184720 booking_and_media`; security advisor has zero findings.
+- **VERIFIED:** rollback-only SQL smoke test passed for public booking creation, database-derived service snapshots, appointment event and owner notification creation, overlap rejection and invalid service rejection. Test rows/users were rolled back.
+- **VERIFIED:** the `salon-media` bucket exists and is private; storage policy and appointment overlap constraint exist. No test salon, test user or test appointment rows remain.
+- **NOT DONE:** the public website wizard is still demo-only and is not wired to the booking RPC; live availability querying, signed media URL delivery, owner upload/editor UI, published-template data binding, QR flow and platform admin UI remain incomplete. Storage upload permissions have not yet been exercised through real browser sessions.
+- **NEXT TASK:** connect the public booking wizard to live service/barber/availability queries and `request_salon_appointment`; then build signed media URL delivery and owner upload/editor flows. Test Supabase Auth redirect/email confirmation and run browser QA in Arabic/English. Keep deployment Preview-only and do not touch Menu V3 or the user-approved media preview.
 
 ## 15. قواعد لا يجوز تجاوزها
 
