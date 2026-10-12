@@ -31,6 +31,9 @@ Do not silently switch to `https://menuun-sites.vercel.app/`; the user reported 
 6. Video and images have relied on external Vercel asset URLs. Confirm asset availability, ownership/licensing, poster fallback, MIME type and playback after every media-related deployment.
 7. A dedicated branch `feat/menuun-site-platform-foundation` was created from `feat/barber-atelier-experience` and documentation was started there to avoid disrupting the user's preferred preview branch.
 8. No new database schema, auth integration, storage bucket, Edge Function, real booking workflow, or deployment was implemented during this audit.
+9. Full Git tree inventory is recorded in `docs/AUDIT_2026-10-12.md`: 24 tree entries, 13 file blobs, core `index.html`, no `package.json` or `vercel.json` in the inspected branch.
+10. Vercel connector verified HTTP 200 for the approved preview, MP4 hero video, JPEG poster, and a booking image. This is HTTP-level proof only; no browser autoplay/device QA was run.
+11. The master plan, active plan, and audit report are committed on `feat/menuun-site-platform-foundation`.
 
 ## Product architecture agreed in principle
 
