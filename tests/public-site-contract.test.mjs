@@ -48,6 +48,8 @@ test("Next.js is the build framework and legacy static routes are preserved", ()
   assert.ok(pkg.dependencies.next, "Next.js dependency is required");
   assert.equal("vite" in pkg.dependencies, false, "Vite must not remain the active build framework");
   assert.match(pkg.scripts.build, /next build/);
+  const tsconfig = JSON.parse(readFileSync(new URL("../tsconfig.json", import.meta.url), "utf8"));
+  assert.ok(tsconfig.exclude.includes("vite.config.ts"), "legacy Vite config must not be part of Next.js typecheck");
   assert.match(staticCopy, /"owner", "public\/owner"/);
   assert.match(staticCopy, /"templates", "public\/templates"/);
   assert.match(staticCopy, /assets\/brand\/menuun/);
