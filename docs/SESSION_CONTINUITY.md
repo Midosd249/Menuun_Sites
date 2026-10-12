@@ -21,6 +21,13 @@ Use this as the currently preferred reference because the user explicitly confir
 
 Do not silently switch to `https://menuun-sites.vercel.app/`; the user reported its hero video was missing. Previous Vercel MCP URL fetch returned 404 despite an earlier deployment listing READY, so deployment/browser state needs direct re-verification before making claims.
 
+## Current development preview
+
+- Latest stable branch preview for `feat/menuun-site-platform-foundation`: `https://menuun-sites-git-feat-menuun-site-plat-982423-midosd2s-projects.vercel.app/`
+- Owner workspace: append `/owner/` to that preview URL.
+- Verified HTTP 200 for `/`, `/owner/`, and `/owner/config.js`; SQL migration and internal docs paths return 404 after `.vercelignore`.
+- Latest GitHub Actions Static Quality run for the current commit completed with `success`.
+
 ## What has been verified
 
 1. `Menuun_Site` Supabase project exists and reports `ACTIVE_HEALTHY`, region `ap-northeast-2`.
