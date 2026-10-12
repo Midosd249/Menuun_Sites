@@ -34,3 +34,13 @@
 
 ## Closure requirements
 Every task marked done must link to a PR/commit and list actual verification commands/results. The code and workflow configuration are in PR #2; the latest CI result still must be inspected before marking quality verification complete. Do not mark tasks complete from code inspection alone.
+
+
+## SIMT visual polish follow-up — 2026-10-12
+- [x] Add a focused visual polish branch based on the existing barbershop slice.
+- [x] Add Arabic font hierarchy, restrained hero motion, interaction feedback, and focus/input refinements without a new animation dependency.
+- [x] Document the design decisions and unverified items in [SIMT-POLISH-REVIEW.md](docs/design-references/SIMT-POLISH-REVIEW.md).
+- [ ] Verify CI (lint, typecheck, unit tests, production build, Playwright) for the final branch commit.
+- [ ] Perform visual and keyboard QA at 360, 390, 768, 1024, 1280, and wide desktop widths.
+- [ ] Verify media rights, optimize images/video, and replace the remaining remote demo barber portraits before customer launch.
+- [ ] Keep the PR unmerged until required checks pass and review comments are resolved.
