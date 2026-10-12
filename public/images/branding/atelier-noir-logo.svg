@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Atelier Noir — Grooming Club</title>
+  <desc id="desc">An elegant brass monogram combining A and N above the Atelier Noir wordmark.</desc>
+  <defs>
+    <pattern id="grain" width="150" height="150" patternUnits="userSpaceOnUse">
+      <circle cx="11" cy="17" r=".7" fill="#D9C49A" opacity=".11"/>
+      <circle cx="91" cy="39" r=".55" fill="#D9C49A" opacity=".09"/>
+      <circle cx="43" cy="112" r=".65" fill="#D9C49A" opacity=".08"/>
+      <circle cx="132" cy="133" r=".5" fill="#D9C49A" opacity=".1"/>
+    </pattern>
+    <linearGradient id="brass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E5D1A7"/>
+      <stop offset=".48" stop-color="#B9975B"/>
+      <stop offset="1" stop-color="#8D6C38"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="#0B0B0A"/>
+  <rect width="1200" height="1200" fill="url(#grain)"/>
+  <rect x="74" y="74" width="1052" height="1052" fill="none" stroke="#B9975B" stroke-opacity=".45" stroke-width="1.5"/>
+  <rect x="91" y="91" width="1018" height="1018" fill="none" stroke="#B9975B" stroke-opacity=".18" stroke-width="1"/>
+  <g fill="none" stroke="url(#brass)" stroke-width="5" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M600 214 L430 526 L484 526 L600 315 L716 526 L770 526 Z"/>
+    <path d="M515 448 L685 448"/>
+    <path d="M507 554 L507 380 L693 554 L693 380"/>
+    <path d="M600 185 L600 148 M582 166 L618 166" stroke-width="2.5" opacity=".8"/>
+  </g>
+  <path d="M345 606 H855" stroke="#B9975B" stroke-opacity=".65" stroke-width="1.5"/>
+  <circle cx="600" cy="606" r="4" fill="#D9C49A"/>
+  <text x="600" y="706" fill="#F1E9DA" font-family="Georgia, 'Times New Roman', serif" font-size="78" letter-spacing="13" text-anchor="middle">ATELIER NOIR</text>
+  <text x="600" y="770" fill="#B9975B" font-family="Arial, Helvetica, sans-serif" font-size="23" letter-spacing="10" text-anchor="middle">G R O O M I N G  C L U B</text>
+  <path d="M490 838 H710" stroke="#B9975B" stroke-opacity=".55" stroke-width="1"/>
+  <text x="600" y="888" fill="#B8AD9B" font-family="Arial, Helvetica, sans-serif" font-size="14" letter-spacing="6" text-anchor="middle">CRAFTED WITH INTENTION</text>
+</svg>
