@@ -7,9 +7,9 @@
 - [x] Add React + TypeScript + Vite app shell and bilingual public homepage.
 - [x] Add honest staged login/signup destinations.
 - [x] Add initial public-site contract tests.
-- [ ] Execute tests and production build.
-- [ ] Verify Vercel branch deployment and public routing.
-- [ ] Perform browser responsive/RTL/LTR QA when browser tooling is available.
+- [x] Execute tests and production build (GitHub Actions run 38305351474 passed).
+- [ ] Verify Vercel branch deployment and public routing (BLOCKED by Vercel HTTP 402 daily deployment API limit; retry after 24 hours).
+- [ ] Perform browser responsive/RTL/LTR QA when Vercel preview/browser tooling is available; no visual-success claim yet.
 
 ## Later — not started
 1. Secure same-origin Better Auth integration and durable database configuration.
