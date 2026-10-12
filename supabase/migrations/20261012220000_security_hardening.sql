@@ -154,6 +154,35 @@ drop policy notifications_update_recipient on public.notifications;
 create policy notifications_update_recipient on public.notifications for update to authenticated
 using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
 
+-- Rebind all remaining manager policies before removing public helpers.
+drop policy salons_update_manager on public.salons;
+create policy salons_update_manager on public.salons for update to authenticated
+using (private.is_salon_manager(id)) with check (private.is_salon_manager(id));
+
+drop policy services_manage_manager on public.services;
+create policy services_manage_manager on public.services for all to authenticated
+using (private.is_salon_manager(salon_id)) with check (private.is_salon_manager(salon_id));
+
+drop policy barbers_manage_manager on public.barbers;
+create policy barbers_manage_manager on public.barbers for all to authenticated
+using (private.is_salon_manager(salon_id)) with check (private.is_salon_manager(salon_id));
+
+drop policy barber_services_manage_manager on public.barber_services;
+create policy barber_services_manage_manager on public.barber_services for all to authenticated
+using (private.is_salon_manager(salon_id)) with check (private.is_salon_manager(salon_id));
+
+drop policy business_hours_manage_manager on public.business_hours;
+create policy business_hours_manage_manager on public.business_hours for all to authenticated
+using (private.is_salon_manager(salon_id)) with check (private.is_salon_manager(salon_id));
+
+drop policy media_assets_manage_manager on public.media_assets;
+create policy media_assets_manage_manager on public.media_assets for all to authenticated
+using (private.is_salon_manager(salon_id)) with check (private.is_salon_manager(salon_id));
+
+drop policy site_settings_update_manager on public.site_settings;
+create policy site_settings_update_manager on public.site_settings for update to authenticated
+using (private.is_salon_manager(salon_id)) with check (private.is_salon_manager(salon_id));
+
 -- Move privileged routines out of the exposed public schema.
 alter function public.guard_appointment_update() set schema private;
 alter function public.record_appointment_event() set schema private;
