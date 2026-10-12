@@ -41,6 +41,7 @@ Do not silently switch to `https://menuun-sites.vercel.app/`; the user reported 
 9. Full Git tree inventory is recorded in `docs/AUDIT_2026-10-12.md`: 24 tree entries, 13 file blobs, core `index.html`, no `package.json` or `vercel.json` in the inspected branch.
 10. Vercel connector verified HTTP 200 for the approved preview, MP4 hero video, JPEG poster, and a booking image. This is HTTP-level proof only; no browser autoplay/device QA was run.
 11. The master plan, active plan, and audit report are committed on `feat/menuun-site-platform-foundation`.
+12. Migration `20261012184720 booking_and_media` is now applied to the new Menuun Site Supabase project: private `salon-media` bucket (100 MiB cap and allowlisted image/video MIME types), tenant-scoped Storage policies, and a public booking RPC with server-side salon/service/barber/hour/time validation, database-enforced overlap protection, appointment event logging and owner notifications. The privileged implementation function lives in `private`; the public RPC wrapper uses invoker security.
 
 ## Product architecture agreed in principle
 
@@ -75,10 +76,12 @@ The user supplied a Supabase publishable key in chat. Treat it as a public-clien
 4. [x] Verify the preferred preview, hero MP4, poster JPEG and one booking image return HTTP 200 through Vercel integration.
 5. [x] Draft initial tenant/data/security design and apply the first three schema migrations to `kphypflbkbcvgcaupxxm` only; all 12 app tables have RLS.
 6. [x] Add a responsive static owner workspace at `owner/index.html` and public browser config at `owner/config.js`; root salon `index.html` is unchanged. Preview route verified HTTP 200, but interactive browser QA remains pending.
-7. [x] SQL transaction tests passed for cross-tenant RLS, onboarding RPC, appointment overlap exclusion, status transition guard and event log. [ ] Test real Supabase Auth signup/login in a browser; then implement the real public booking path.
-8. [ ] Add Storage bucket/policies, media editor, publish flow and QR route.
-9. [ ] Add automated tests and responsive Arabic/English browser checks before declaring a phase complete.
-10. Keep the current Vercel deployment as a Preview only. Do not promote to production until browser QA, Auth redirect settings, Storage policies and public booking are complete.
+7. [x] SQL transaction tests passed for cross-tenant RLS, onboarding RPC, appointment overlap exclusion, status transition guard and event log.
+8. [x] Apply `booking_and_media`: private Storage bucket and salon-scoped policies; public booking RPC validates published salon, active service/barber, business hours, time horizon and overlap, and writes appointment event + owner notifications.
+9. [x] Run a rollback-only transactional smoke test for a successful booking, snapshot values, event/notification creation, overlap rejection and invalid service rejection; security advisor remains clean.
+10. [ ] Wire the public ATELIER 09 booking wizard to this RPC and live availability; implement signed media URLs and owner upload/editor UI.
+11. [ ] Test real Supabase Auth signup/login, Storage upload permissions, and responsive Arabic/English browser journeys.
+12. Keep the current Vercel deployment as Preview only. Do not promote to production until browser QA, Auth redirect settings, public booking UI and media management are complete.
 
 ## Status vocabulary
 
@@ -89,4 +92,4 @@ The user supplied a Supabase publishable key in chat. Treat it as a public-clien
 - `DEPLOYED`: direct Vercel evidence plus URL verification exists.
 - `BLOCKED`: dependency/permission/runtime limitation is named explicitly.
 
-Current overall state: `DATABASE_FOUNDATION_IMPLEMENTED / OWNER_UI_PREVIEW_DEPLOYED / BROWSER_QA_PENDING`. Supabase security advisor: clean at the latest check. SQL smoke tests passed for owner onboarding, overlap rejection, status transitions/event log, and cross-tenant RLS isolation using temporary users in a rolled-back transaction. Performance advisor still reports informational unused indexes because tables are empty. The owner workspace has an HTTP-200 preview route, but no browser automation/auth interaction test has been run.
+Current overall state: `DATABASE_FOUNDATION_AND_BOOKING_API_IMPLEMENTED / OWNER_UI_PREVIEW_DEPLOYED / PUBLIC_UI_AND_BROWSER_QA_PENDING`. Supabase migration history contains four migrations, including `20261012184720 booking_and_media`. Security advisor returned no findings. Transactional smoke test passed for public booking creation, service/price/duration snapshots, event/owner-notification creation, overlap rejection and invalid-service rejection; all temporary data rolled back. Performance advisor reports informational unused indexes because tables remain empty. The owner workspace has an HTTP-200 preview route, but browser automation/auth interaction has not been run. The booking RPC is implemented in the database but is not yet wired into the public website.
