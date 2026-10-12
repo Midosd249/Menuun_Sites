@@ -5,6 +5,22 @@ on:
   pull_request:
 
 jobs:
+  app-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install app dependencies
+        run: npm install --no-audit --no-fund
+      - name: Test public site contracts
+        run: npm test
+      - name: Build public application
+        run: npm run build
+
   inline-js-and-assets:
     runs-on: ubuntu-latest
     steps:
