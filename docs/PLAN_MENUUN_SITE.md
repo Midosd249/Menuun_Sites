@@ -44,16 +44,24 @@ Prepare the first production-capable slice of an independent salon website SaaS.
 - [ ] Run controlled auth/tenant and booking behavior tests before production use.
 - Never target Menu V3 project ref `ublxptcqefujkbeepylc`.
 
-### S3 — Owner authentication and operations shell (NEXT IMPLEMENTATION)
-- Add the app build/runtime foundation without discarding the current HTML visual reference.
+### S3 — Owner authentication and operations shell (INITIAL PREVIEW DEPLOYED; browser QA pending)
+- [x] Add an isolated `/owner/` route without changing the root salon HTML or its video source.
+- [x] Add responsive Arabic/English owner UI for sign-in/sign-up, salon onboarding, appointment list/status changes, services, barbers and salon settings.
+- [x] Configure the browser with the project's publishable key only; no service-role secret is present.
+- [x] Add a `.vercelignore` so migrations, tests and internal docs are not served as static files.
+- [x] Add dependency-free GitHub Actions checks for inline JavaScript syntax and local assets (workflow is committed; execution status still needs checking).
+- [x] Verify the Vercel preview returns HTTP 200 for `/owner/` and the root salon page; confirm migration/docs paths return 404.
+- [ ] Test real signup/login and owner flows in a browser; no Playwright/DevTools connector was available in this session.
 - Login/session guard; owner workspace responsive shell; tenant selection from server-verified membership.
 - Basic inbox list and detail; no demo UI pretending to be connected to live data.
 
-### S4 — Real appointment workflow
-- Public submit endpoint validates fields, service, time and business hours.
-- Atomic conflict prevention; pending status only after persistence succeeds.
-- Owner confirms/rejects/reschedules/completes; append audit events.
-- Idempotency and rate limiting; tests for concurrent conflicting requests and tenant isolation.
+### S4 — Real appointment workflow (DATABASE GUARDS READY; PUBLIC SUBMISSION NOT BUILT)
+- [x] Database exclusion constraint prevents overlapping active appointments for the same salon/barber.
+- [x] Status-transition guard and appointment event trigger are active.
+- [x] SQL smoke tests pass for overlap rejection, status transitions/event history, and cross-tenant RLS isolation.
+- [ ] Public submit RPC/API validates active service/barber, opening hours, duration and available slot, then creates a pending appointment atomically.
+- [ ] Add idempotency/rate limiting and end-to-end booking tests.
+- [ ] Add notifications/customer response channel after the booking path is reliable.
 
 ### S5 — Content and media management
 - Services, prices, barbers, opening hours, logo/gallery/video/poster.
