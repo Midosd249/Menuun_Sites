@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpLeft, Check, ChevronDown, CirclePlay, Menu, MoveUpLeft, Sparkles, X } from "lucide-react";
+import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpLeft, Check, ChevronDown, CirclePlay, Menu, Sparkles, X } from "lucide-react";
 import "./styles.css";
 
 type Language = "ar" | "en";
@@ -63,7 +63,7 @@ const copy = {
     finalText: "ابدأ بالتعرّف على Menuun، واكتشف كيف يمكن لحضور رقمي أفضل أن يخدم عملك.",
     finalCta: "تعرّف على المنصة",
     footerText: "تجربة رقمية أفضل، تبدأ من هنا.",
-    footerLinks: ["المنصة", "القوالب", "الخصوصية"],
+    footerLinks: ["المنصة", "القوالب", "الأسئلة الشائعة"],
     stagedTitle: "مساحة الحسابات قيد البناء",
     stagedText: "نجهّز تجربة دخول وتسجيل آمنة مرتبطة بمساحة عملك. لم يتم إنشاء حساب أو إرسال بيانات في هذه المرحلة.",
     backHome: "العودة إلى الصفحة الرئيسية",
@@ -131,7 +131,7 @@ const copy = {
     finalText: "Discover Menuun and see how a better digital presence can support your business.",
     finalCta: "Explore the platform",
     footerText: "A better digital experience starts here.",
-    footerLinks: ["Platform", "Templates", "Privacy"],
+    footerLinks: ["Platform", "Templates", "FAQs"],
     stagedTitle: "The account workspace is in progress",
     stagedText: "We are preparing a secure sign-in and registration experience connected to your workspace. No account has been created and no data has been submitted at this stage.",
     backHome: "Back to the homepage",
@@ -272,6 +272,6 @@ export default function App() {
       <section className="final-cta section-wrap"><div className="final-cta-inner"><span className="final-star">✳</span><div><p className="eyebrow">{lang === "ar" ? "خطوتك التالية" : "YOUR NEXT STEP"}</p><h2>{t.finalTitle}</h2><p>{t.finalText}</p></div><a className="button button-lime" href="/signup/">{t.finalCta}<ArrowUpLeft size={17} /></a></div></section>
     </main>
 
-    <footer className="footer"><div className="section-wrap footer-main"><div className="footer-brand"><Logo /><p>{t.footerText}</p></div><div className="footer-links">{t.footerLinks.map((label, i) => <a key={label} href={i === 0 ? "#main" : i === 1 ? "#templates" : "#privacy"}>{label}</a>)}</div><a className="back-top" href="#main" aria-label={lang === "ar" ? "العودة للأعلى" : "Back to top"}><ArrowRight size={17} /></a></div><div className="section-wrap footer-bottom"><span>© {new Date().getFullYear()} Menuun</span><span>{lang === "ar" ? "صُنع بعناية." : "Made with care."}</span></div></footer>
+    <footer className="footer"><div className="section-wrap footer-main"><div className="footer-brand"><Logo /><p>{t.footerText}</p></div><div className="footer-links">{t.footerLinks.map((label, i) => <a key={label} href={i === 0 ? "#main" : i === 1 ? "#templates" : "#faq"}>{label}</a>)}</div><a className="back-top" href="#main" aria-label={lang === "ar" ? "العودة للأعلى" : "Back to top"}><ArrowRight size={17} /></a></div><div className="section-wrap footer-bottom"><span>© {new Date().getFullYear()} Menuun</span><span>{lang === "ar" ? "صُنع بعناية." : "Made with care."}</span></div></footer>
   </div>;
 }
