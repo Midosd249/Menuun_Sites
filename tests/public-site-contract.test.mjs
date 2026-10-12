@@ -9,6 +9,7 @@ const plan = readFileSync(new URL("../docs/roadmap/public-platform-foundation.md
 const staticCopy = readFileSync(new URL("../scripts/copy-static.mjs", import.meta.url), "utf8");
 const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
 const nextConfig = readFileSync(new URL("../next.config.ts", import.meta.url), "utf8");
+const vercelConfig = JSON.parse(readFileSync(new URL("../vercel.json", import.meta.url), "utf8"));
 
 test("public homepage includes the main product story and core sections", () => {
   for (const phrase of ["hero", "benefits", "how-it-works", "templates", "faq", "final-cta"]) {
@@ -42,10 +43,12 @@ test("responsive, focus-visible, and reduced-motion styles exist", () => {
   assert.match(styles, /@media\(max-width:780px\)/);
   assert.match(styles, /prefers-reduced-motion/);
   assert.match(styles, /:focus-visible/);
+  assert.doesNotMatch(styles, /align-items:end/, "avoid unsupported CSS end alignment values");
 });
 
 test("Next.js is the build framework and legacy static routes are preserved", () => {
   assert.ok(pkg.dependencies.next, "Next.js dependency is required");
+  assert.equal(vercelConfig.framework, "nextjs", "Vercel must use the Next.js framework adapter");
   assert.equal("vite" in pkg.dependencies, false, "Vite must not remain the active build framework");
   assert.match(pkg.scripts.build, /next build/);
   const tsconfig = JSON.parse(readFileSync(new URL("../tsconfig.json", import.meta.url), "utf8"));

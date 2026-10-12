@@ -154,3 +154,10 @@ No real authentication, tenant provisioning, booking API, schema changes, Storag
 5. The PR remains unmerged until the above checks are evidenced.
 
 **Only Phase 1 is authorized in this migration.** Authentication and data changes require a separate implementation pass after the existing Supabase migration history is reconciled.
+
+
+### Deployment configuration finding — 2026-10-13
+- The first Vercel deployment for the Next.js implementation reached `READY` and its logs showed a successful Next.js build, but HTTP checks still served the legacy Vite root HTML and returned 404 for the new Next.js routes and SEO endpoints.
+- Vercel deployment metadata showed the project framework preset as `null`. This is not sufficient evidence of a working Next.js deployment.
+- The repository configuration now explicitly sets `"framework": "nextjs"` in `vercel.json`, using Vercel's documented file-based override for the Framework Preset. The next preview must verify the change; no dashboard setting or production domain was changed.
+- CSS build warnings for `align-items: end` were removed by using `flex-end`.

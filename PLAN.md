@@ -9,8 +9,9 @@
 - [x] Preserve owner/template assets through a build-time copy script and compatibility rewrites.
 - [x] Add architecture, repository audit, design research and new-session handoff documentation.
 - [x] Add Next.js contract tests and a CI typecheck step.
-- [ ] Verify `npm test`, `npm run typecheck`, and `npm run build` on the migration commit.
-- [ ] Verify root, login, signup, owner and Atelier 09 template routes in a real browser.
+- [x] Verify `npm test`, `npm run typecheck`, and `npm run build` on implementation commit `e9d97f4` (GitHub Actions run 38321925258 passed).
+- [ ] Re-run CI after the Vercel framework-preset fix.
+- [ ] Verify root, login, signup, owner and Atelier 09 template routes in a real browser. First preview exposed a Vercel framework-preset mismatch; `vercel.json` now explicitly selects Next.js.
 - [ ] Verify desktop/tablet/mobile rendering, Arabic RTL, English LTR, keyboard focus and reduced motion.
 - [ ] Recheck Vercel quota and record direct preview deployment evidence.
 

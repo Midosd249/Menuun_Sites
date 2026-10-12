@@ -10,12 +10,11 @@
 - [x] Root metadata, robots and sitemap are defined.
 - [x] Owner and Atelier 09 template sources are preserved; build copies them into `public/`.
 - [x] Architecture, repository audit and session handoff are committed with the migration.
-- [ ] `npm test` passes on the migration commit.
-- [ ] `npm run typecheck` passes on the migration commit.
-- [ ] `npm run build` passes on the migration commit.
+- [x] `npm test`, `npm run typecheck` and `npm run build` passed on implementation commit `e9d97f4` (GitHub Actions run 38321925258).
+- [ ] Re-run all CI checks after setting the Vercel framework preset to Next.js.
 - [ ] Real-browser QA confirms `/`, `/login`, `/signup`, `/owner/`, and `/templates/atelier-09/`.
 - [ ] RTL/LTR visual QA at mobile, tablet and desktop.
-- [ ] Vercel preview is inspected after quota availability is verified.
+- [ ] Vercel preview is inspected after quota availability is verified. The first READY preview still served Vite HTML and returned 404 for Next.js routes; verify the new `framework: nextjs` configuration before calling routing complete.
 
 ## Backlog
 - [ ] Audit Supabase live migration history and reconcile branch-specific continuity records.
