@@ -19,8 +19,10 @@ Prepare the first production-capable slice of an independent salon website SaaS.
 
 ## Work queue
 
-### S0 — Repository and deployment inventory (IN_PROGRESS / next)
-- Inspect all paths and branch refs; identify build framework, static entry points, assets, media sources, and Vercel settings.
+### S0 — Repository and deployment inventory (MOSTLY VERIFIED; browser QA pending)
+- [x] Inspect all paths and branch refs; identify build framework, static entry points, assets, media sources, and Vercel settings.
+- [x] Confirm the approved preview returns HTTP 200 and video/poster/image URLs return HTTP 200 through the Vercel connector.
+- [ ] Browser/video playback QA remains pending; actual autoplay and mobile browser behavior are not verified.
 - Inspect current branch diffs and Vercel deployment state.
 - Confirm whether the preferred preview is accessible and whether video, poster, and images return usable responses.
 - Do not change the existing template or deploy during this inventory.
@@ -64,7 +66,7 @@ Prepare the first production-capable slice of an independent salon website SaaS.
 
 ## Acceptance criteria for S0
 
-- A written inventory of real source files and deployment settings.
+- [x] Written inventory of real source files and deployment/deployment-record evidence in `docs/AUDIT_2026-10-12.md`.
 - No assumed framework or invented build/test results.
 - Verified status for preferred preview, video and poster; limitations recorded if external tools cannot verify them.
 - Next task narrowed to one atomic change, with rollback and test strategy.
