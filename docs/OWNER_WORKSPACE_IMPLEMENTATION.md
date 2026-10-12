@@ -24,15 +24,15 @@ The root route remains the existing ATELIER 09 salon page. The owner UI is isola
 
 ## Explicitly not implemented yet
 
-- Public booking submission and live availability.
+- Public booking wizard integration with the database RPC and live availability. The database endpoint `public.request_salon_appointment` now exists and has passed a rollback-only SQL smoke test, but the root template still uses its demo booking behavior.
 - Dynamic binding of the root ATELIER 09 template to a published salon record.
-- Media uploads / video editing / gallery management and Storage policies.
+- Media upload/editor UI, signed-URL delivery and gallery management. The private `salon-media` bucket and tenant-scoped Storage policies now exist in Supabase, but authenticated upload flows have not been browser-tested.
 - Public QR creation and stable public salon route.
 - Customer notifications / reply channel.
 - Platform administrator console, team invitation UI, subscription/billing.
 - Browser-based E2E tests or physical-device visual QA.
 
-The UI intentionally does not claim that booking, media upload, QR or publishing is ready. The database already has appointment state constraints and event logging, but no public appointment submission endpoint exists yet.
+The UI intentionally does not claim that booking, media upload, QR or publishing is ready. A database-side public booking RPC now validates salon publication state, service/barber ownership, business hours and time horizon; database exclusion constraints reject overlaps, and successful requests create an appointment event and owner notifications. The website wizard is not wired to the RPC yet.
 
 ## Configuration
 
