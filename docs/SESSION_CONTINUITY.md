@@ -41,7 +41,10 @@ Do not silently switch to `https://menuun-sites.vercel.app/`; the user reported 
 9. Full Git tree inventory is recorded in `docs/AUDIT_2026-10-12.md`: 24 tree entries, 13 file blobs, core `index.html`, no `package.json` or `vercel.json` in the inspected branch.
 10. Vercel connector verified HTTP 200 for the approved preview, MP4 hero video, JPEG poster, and a booking image. This is HTTP-level proof only; no browser autoplay/device QA was run.
 11. The master plan, active plan, and audit report are committed on `feat/menuun-site-platform-foundation`.
-12. Migration `20261012184720 booking_and_media` is now applied to the new Menuun Site Supabase project: private `salon-media` bucket (100 MiB cap and allowlisted image/video MIME types), tenant-scoped Storage policies, and a public booking RPC with server-side salon/service/barber/hour/time validation, database-enforced overlap protection, appointment event logging and owner notifications. The privileged implementation function lives in `private`; the public RPC wrapper uses invoker security.
+12. Migration `20261012184720 booking_and_media` is applied: private `salon-media` bucket, tenant-scoped Storage policies and validated public booking-request RPC.
+13. Migration `20261012190458 public_booking_availability` is applied: public availability RPC returns only available start times and an eligible barber, never appointment/customer records.
+14. Copied official Menuun logo SVGs (transparent, English, Arabic, monochrome) from Menu V3 into `assets/brand/menuun/`. Source Menu V3 repository and its database were not modified.
+15. Wired the public booking wizard to live salon/service/barber reads, the availability RPC and the booking-request RPC. The UI no longer displays hard-coded service/time options or a fake booking-success state.
 
 ## Product architecture agreed in principle
 
@@ -79,9 +82,10 @@ The user supplied a Supabase publishable key in chat. Treat it as a public-clien
 7. [x] SQL transaction tests passed for cross-tenant RLS, onboarding RPC, appointment overlap exclusion, status transition guard and event log.
 8. [x] Apply `booking_and_media`: private Storage bucket and salon-scoped policies; public booking RPC validates published salon, active service/barber, business hours, time horizon and overlap, and writes appointment event + owner notifications.
 9. [x] Run a rollback-only transactional smoke test for a successful booking, snapshot values, event/notification creation, overlap rejection and invalid service rejection; security advisor remains clean.
-10. [ ] Wire the public ATELIER 09 booking wizard to this RPC and live availability; implement signed media URLs and owner upload/editor UI.
-11. [ ] Test real Supabase Auth signup/login, Storage upload permissions, and responsive Arabic/English browser journeys.
-12. Keep the current Vercel deployment as Preview only. Do not promote to production until browser QA, Auth redirect settings, public booking UI and media management are complete.
+10. [x] Wire the public ATELIER 09 booking wizard to live services/barbers, `get_public_booking_slots`, and `request_salon_appointment`; handle conflicts and never show success without a returned appointment ID.
+11. [ ] Build signed media URL delivery and owner upload/editor UI; bind published site content to the template.
+12. [ ] Test real Supabase Auth signup/login, Storage upload and cross-tenant permissions, and responsive Arabic/English browser journeys.
+13. Keep the current Vercel deployment as Preview only. Do not promote to production until browser QA, Auth redirect settings, media management and a full real-tenant booking journey are complete.
 
 ## Status vocabulary
 
