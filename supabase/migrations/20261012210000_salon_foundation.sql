@@ -240,7 +240,7 @@ create or replace function public.guard_appointment_update()
 returns trigger
 language plpgsql
 set search_path = ''
-as $
+as $function$
 begin
   if new.salon_id is distinct from old.salon_id
     or new.service_id is distinct from old.service_id
@@ -273,14 +273,14 @@ begin
 
   return new;
 end;
-$;
+$function$;
 
 create or replace function public.record_appointment_event()
 returns trigger
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $function$
 begin
   if tg_op = 'INSERT' then
     insert into public.appointment_events
@@ -298,7 +298,7 @@ begin
   end if;
   return new;
 end;
-$;
+$function$;
 
 create trigger appointments_guard_update
 before update on public.appointments
