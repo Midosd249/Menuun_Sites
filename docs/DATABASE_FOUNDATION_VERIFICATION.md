@@ -23,8 +23,10 @@ Internal authorization and privileged routines are in `private`; public RPC wrap
 - VERIFIED: table listing reports all 12 tables and `rls_enabled: true`; all are empty (zero rows).
 - VERIFIED: security advisor returned no lint findings after hardening.
 - VERIFIED: performance advisor no longer reports unindexed foreign keys, auth initplan warnings, or multiple permissive SELECT policies. It still reports 20 informational unused-index notices because the application tables are empty and have not served real workloads; retain/reevaluate indexes after realistic usage rather than deleting them blindly.
-- NOT RUN: live authenticated onboarding, owner/member cross-tenant negative tests, appointment insert/concurrency test, Storage upload tests, and browser tests. These require a controlled test user/data harness and are mandatory before production use.
-- NOT DONE: Storage bucket/policies, Auth UI, real public booking RPC, owner dashboard, platform admin UI, site template data binding, QR flow, deployment.
+- VERIFIED: transactional SQL smoke test passed for the owner-onboarding RPC, service/barber creation, active-appointment overlap rejection, status transition rules and appointment event log. The test ran inside a transaction and rolled back.
+- VERIFIED: transactional RLS isolation test passed using two temporary Auth users under the `authenticated` role; each user could read its own salon but could not read the other salon or its services. Temporary users/data were rolled back; post-test checks returned zero test rows.
+- NOT RUN: real GoTrue signup/email-confirmation/session flow, Storage upload tests, browser-based owner interactions, and mobile browser QA.
+- NOT DONE: Storage bucket/policies, public booking RPC, media editor, published-template data binding, QR flow, platform admin UI. The initial owner workspace UI now exists and is preview-deployed; its browser/auth interactions are not yet verified.
 
 ## Important schema naming clarification
 
