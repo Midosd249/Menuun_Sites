@@ -161,3 +161,9 @@ No real authentication, tenant provisioning, booking API, schema changes, Storag
 - Vercel deployment metadata showed the project framework preset as `null`. This is not sufficient evidence of a working Next.js deployment.
 - The repository configuration now explicitly sets `"framework": "nextjs"` in `vercel.json`, using Vercel's documented file-based override for the Framework Preset. The next preview must verify the change; no dashboard setting or production domain was changed.
 - CSS build warnings for `align-items: end` were removed by using `flex-end`.
+
+
+### Output-directory correction — 2026-10-13
+- The first `framework: "nextjs"` override made Vercel compile Next.js and generate all App Router pages, but deployment packaging still failed because the project's configured Output Directory remained the Vite-era output.
+- Vercel build logs reported `/vercel/path0/routes-manifest.json` missing and explicitly identified an Output Directory mismatch. The repo now sets `outputDirectory: ".next"` alongside `framework: "nextjs"` to override that legacy setting at the deployment-config layer.
+- This does not change the Vercel dashboard or production domain. Validate the next preview before marking routing complete.

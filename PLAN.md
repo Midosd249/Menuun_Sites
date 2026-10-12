@@ -10,7 +10,8 @@
 - [x] Add architecture, repository audit, design research and new-session handoff documentation.
 - [x] Add Next.js contract tests and a CI typecheck step.
 - [x] Verify `npm test`, `npm run typecheck`, and `npm run build` on implementation commit `e9d97f4` (GitHub Actions run 38321925258 passed).
-- [ ] Re-run CI after the Vercel framework-preset fix.
+- [x] Re-run CI after setting the Vercel framework preset to Next.js (run 38322300996 passed).
+- [ ] Verify the explicit `.next` output-directory override in CI and Vercel preview.
 - [ ] Verify root, login, signup, owner and Atelier 09 template routes in a real browser. First preview exposed a Vercel framework-preset mismatch; `vercel.json` now explicitly selects Next.js.
 - [ ] Verify desktop/tablet/mobile rendering, Arabic RTL, English LTR, keyboard focus and reduced motion.
 - [ ] Recheck Vercel quota and record direct preview deployment evidence.

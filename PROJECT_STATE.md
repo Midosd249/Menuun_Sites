@@ -1,7 +1,7 @@
 # Project State — Menuun
 
 **Updated:** 2026-10-13  
-**Implementation status:** IMPLEMENTATION_IN_PROGRESS — Next.js migration CI passed on `e9d97f4`; preview routing fix added after Vercel served stale Vite output  
+**Implementation status:** IMPLEMENTATION_IN_PROGRESS — Next.js CI passed on `e9d97f4`; Vercel preview build exposed an Output Directory override that is being corrected in repository config  
 **Active branch:** `feat/public-platform-foundation`  
 **Open PR:** [#5](https://github.com/Midosd249/Menuun_Sites/pull/5) (draft)
 
@@ -16,8 +16,9 @@ Phase 1 — Next.js public-platform foundation.
 - The current Vercel configuration previously targeted Vite's `dist/`; Next.js requires framework-native build output.
 - The Refero connector returned `NO_SUBSCRIPTION`; no visual references were retrieved.
 - **VERIFIED:** Vercel deployment `dpl_2gHCZQNGUqyxKvDxwnp8FDmsVYGV` reached READY for commit `e9d97f4`, but HTTP checks returned the old Vite `index.html` at `/` and 404 for `/login/`, `/signup/`, `/robots.txt`, and `/sitemap.xml`. Deployment metadata reported project framework `null`; build logs showed Next.js compilation succeeded. The root cause was framework routing/preset mismatch, not a Next.js compile failure.
-- **FIX APPLIED:** `vercel.json` now sets `framework: "nextjs"`, which Vercel documents as overriding the project Framework Preset. A new preview must prove that this corrects routing.
-- **VERIFIED:** GitHub Actions run `38321925258` passed tests, typecheck, build and static checks for implementation commit `e9d97f4`. The framework-preset fix has a new CI run pending.
+- **VERIFIED:** The follow-up deployment for `d6e3aa2` compiled Next.js and generated routes, but Vercel failed after build because the Project Settings Output Directory still pointed at the old Vite output; logs reported missing `/vercel/path0/routes-manifest.json`.
+- **FIX APPLIED:** `vercel.json` now sets `framework: "nextjs"` and `outputDirectory: ".next"`, using Vercel's documented file-based overrides. No dashboard/project setting or production domain was changed. A fresh preview must prove the override is honored.
+- **VERIFIED:** GitHub Actions run `38322300996` passed tests, typecheck, build and static checks for commit `d6e3aa2`; the new output-directory override is pending CI.
 
 ## Migration scope
 - Next.js App Router, metadata, robots and sitemap.
@@ -27,7 +28,7 @@ Phase 1 — Next.js public-platform foundation.
 - Keep the migration reversible; leave the old `src/` and `index.html` source intact as rollback/reference material.
 
 ## UNKNOWN / BLOCKED
-- **PENDING:** GitHub Actions results for the follow-up framework-preset fix; inspect the exact current-head workflow.
+- **PENDING:** GitHub Actions results for the output-directory override; inspect the exact current-head workflow.
 - **BLOCKED:** Vercel preview deployment until the quota is rechecked.
 - **UNKNOWN:** Whether `www.menuun.com` is configured and verified in the Vercel project.
 - **UNKNOWN:** Exact live Supabase migration history across the legacy and active branches. Older continuity documents conflict about applied migrations; do not change schema/Auth/Storage until reconciled.

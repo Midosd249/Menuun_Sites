@@ -49,6 +49,7 @@ test("responsive, focus-visible, and reduced-motion styles exist", () => {
 test("Next.js is the build framework and legacy static routes are preserved", () => {
   assert.ok(pkg.dependencies.next, "Next.js dependency is required");
   assert.equal(vercelConfig.framework, "nextjs", "Vercel must use the Next.js framework adapter");
+  assert.equal(vercelConfig.outputDirectory, ".next", "Vercel output directory must match the Next.js build directory");
   assert.equal("vite" in pkg.dependencies, false, "Vite must not remain the active build framework");
   assert.match(pkg.scripts.build, /next build/);
   const tsconfig = JSON.parse(readFileSync(new URL("../tsconfig.json", import.meta.url), "utf8"));
