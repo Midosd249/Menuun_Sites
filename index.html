@@ -129,6 +129,7 @@ function paintSlots(){
 }
 function selectSlot(index){bookingState.slot=bookingState.slots[index]||null;wizardTime.value=bookingState.slot?String(index):'';paintSlots();message(bookingState.slot?(lang==='ar'?'الوقت متاح الآن. سيتم إعادة التحقق عند إرسال الطلب.':'This time is currently available. It will be checked again when submitted.'):(lang==='ar'?'اختر وقتاً متاحاً.':'Choose an available time.'))}
 async function loadSalonData(){
+ bookingState.salon=null;
  if(!apiKey||!publicConfig.supabaseUrl){message('إعداد الاتصال غير مكتمل.','Booking connection is not configured.');return false}
  if(!/^[a-z0-9][a-z0-9-]{0,62}$/.test(salonSlug)){message('رابط الصالون غير صالح.','Invalid salon link.');return false}
  message('جارٍ تحميل الخدمات والحلاقين...','Loading services and barbers...');
@@ -156,7 +157,7 @@ async function openWizard(){sheet.classList.add('open');sheet.setAttribute('aria
 function closeWizard(){sheet.classList.remove('open');sheet.setAttribute('aria-hidden','true');document.body.style.overflow='';document.getElementById('openBooking').focus()}
 document.getElementById('openBooking').addEventListener('click',openWizard);document.getElementById('closeBooking').addEventListener('click',closeWizard);sheet.addEventListener('click',e=>{if(e.target===sheet)closeWizard()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&sheet.classList.contains('open'))closeWizard()});
 document.querySelectorAll('a[href="#booking"]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();openWizard()}));
-wizardDate.addEventListener('change',loadSlots);wizardTime.addEventListener('change',e=>{selectSlot(Number(e.target.value))});
+wizardDate.addEventListener('change',loadSlots);wizardTime.addEventListener('change',e=>{if(e.target.value===''){bookingState.slot=null;paintSlots();message('اختر وقتاً متاحاً.','Choose an available time.');return}selectSlot(Number(e.target.value))});
 backBtn.addEventListener('click',()=>setStep(Math.max(0,bookingState.step-1)));
 async function submitBooking(){
  const name=document.getElementById('wizardName').value.trim(),phone=document.getElementById('wizardPhone').value.trim();
