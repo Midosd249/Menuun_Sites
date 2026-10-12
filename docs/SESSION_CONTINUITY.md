@@ -67,11 +67,11 @@ The user supplied a Supabase publishable key in chat. Treat it as a public-clien
 3. [x] Record the actual runtime/build baseline: one HTML/CSS/JS page; no package.json or vercel.json in the inspected branch.
 4. [x] Verify the preferred preview, hero MP4, poster JPEG and one booking image return HTTP 200 through Vercel integration.
 5. [x] Draft initial tenant/data/security design and apply the first three schema migrations to `kphypflbkbcvgcaupxxm` only; all 12 app tables have RLS.
-6. [ ] Build the web app foundation and owner workspace incrementally without replacing the approved salon design.
-7. [ ] Test Auth onboarding, cross-tenant access, appointment status transitions and concurrent bookings; then implement the real public booking path.
+6. [x] Add a responsive static owner workspace at `owner/index.html` and public browser config at `owner/config.js`; root salon `index.html` is unchanged. Preview route verified HTTP 200, but interactive browser QA remains pending.
+7. [x] SQL transaction tests passed for cross-tenant RLS, onboarding RPC, appointment overlap exclusion, status transition guard and event log. [ ] Test real Supabase Auth signup/login in a browser; then implement the real public booking path.
 8. [ ] Add Storage bucket/policies, media editor, publish flow and QR route.
 9. [ ] Add automated tests and responsive Arabic/English browser checks before declaring a phase complete.
-10. Do not deploy until the code and configuration are verified; report the real URL/state and evidence.
+10. Keep the current Vercel deployment as a Preview only. Do not promote to production until browser QA, Auth redirect settings, Storage policies and public booking are complete.
 
 ## Status vocabulary
 
@@ -82,4 +82,4 @@ The user supplied a Supabase publishable key in chat. Treat it as a public-clien
 - `DEPLOYED`: direct Vercel evidence plus URL verification exists.
 - `BLOCKED`: dependency/permission/runtime limitation is named explicitly.
 
-Current overall state: `DATABASE_FOUNDATION_IMPLEMENTED / OWNER_UI_NOT_STARTED`. Supabase security advisor: clean at the latest check. Performance advisor still reports informational unused indexes because tables are empty; no real appointment or tenant-isolation E2E has been run yet.
+Current overall state: `DATABASE_FOUNDATION_IMPLEMENTED / OWNER_UI_PREVIEW_DEPLOYED / BROWSER_QA_PENDING`. Supabase security advisor: clean at the latest check. SQL smoke tests passed for owner onboarding, overlap rejection, status transitions/event log, and cross-tenant RLS isolation using temporary users in a rolled-back transaction. Performance advisor still reports informational unused indexes because tables are empty. The owner workspace has an HTTP-200 preview route, but no browser automation/auth interaction test has been run.
