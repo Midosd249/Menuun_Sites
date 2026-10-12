@@ -1,0 +1,70 @@
+# Menuun Site — Active Plan
+
+> Updated: 2026-10-12  
+> Full scope and decisions: `docs/MASTER_PLAN_MENUUN_SITE.md`  
+> Handoff for a new chat: `docs/SESSION_CONTINUITY.md`
+
+## Current objective
+
+Prepare the first production-capable slice of an independent salon website SaaS. ATELIER 09 remains the first visual template. Keep the user's preferred preview intact while creating a separate owner operations area and a dedicated Supabase backend.
+
+## Verified baseline
+
+- Current salon page is HTML/CSS/JS, with Arabic RTL and English LTR, video/images, and a multi-step booking demo.
+- The booking demo does not persist or transmit requests.
+- Supabase `Menuun_Site` ref `kphypflbkbcvgcaupxxm` is active and showed no app tables, migration records, or Edge Functions at audit time.
+- Menu V3 uses its own separate project and `menu_v3` schema; it is reference-only.
+- Preferred visual reference: `https://menuun-sites-pybbjgxyb-midosd2s-projects.vercel.app/`.
+- Work is on `feat/menuun-site-platform-foundation`, created from `feat/barber-atelier-experience`.
+
+## Work queue
+
+### S0 — Repository and deployment inventory (IN_PROGRESS / next)
+- Inspect all paths and branch refs; identify build framework, static entry points, assets, media sources, and Vercel settings.
+- Inspect current branch diffs and Vercel deployment state.
+- Confirm whether the preferred preview is accessible and whether video, poster, and images return usable responses.
+- Do not change the existing template or deploy during this inventory.
+
+### S1 — Technical design and data/security contract
+- Produce the salon ERD, roles, allowed appointment transitions, publishing model, RLS policies and Storage path policy.
+- Select server-side transaction boundary for booking conflict prevention.
+- Verify current Supabase Auth/Storage guidance.
+- Review SQL before applying it to `kphypflbkbcvgcaupxxm`.
+
+### S2 — Foundation schema
+- Add first versioned migration under project-owned migration history.
+- Create tenant, membership, services, barbers, business hours, appointments, events, media and published site settings/revisions as required by the agreed minimal slice.
+- Enable RLS and add grants/policies intentionally; run security/performance advisors and direct SQL smoke checks.
+- Never target Menu V3 project ref `ublxptcqefujkbeepylc`.
+
+### S3 — Owner authentication and operations shell
+- Login/session guard; owner workspace responsive shell; tenant selection from server-verified membership.
+- Basic inbox list and detail; no demo UI pretending to be connected to live data.
+
+### S4 — Real appointment workflow
+- Public submit endpoint validates fields, service, time and business hours.
+- Atomic conflict prevention; pending status only after persistence succeeds.
+- Owner confirms/rejects/reschedules/completes; append audit events.
+- Idempotency and rate limiting; tests for concurrent conflicting requests and tenant isolation.
+
+### S5 — Content and media management
+- Services, prices, barbers, opening hours, logo/gallery/video/poster.
+- Private upload authorization; explicit preview/publish; public site reads only published version.
+- Preserve the current video-first experience with image fallback.
+
+### S6 — First salon pilot
+- Configure only owner-confirmed salon information.
+- Public slug, QR generation, share metadata and contact actions.
+- Full tests at small phone, tablet and desktop widths in Arabic and English.
+- Deployment evidence and URL checks before declaring ready.
+
+### S7 — Platformization
+- Tenant admin, template registry, plans/usage, support audit trail and later billing.
+- Only after first salon lifecycle works reliably.
+
+## Acceptance criteria for S0
+
+- A written inventory of real source files and deployment settings.
+- No assumed framework or invented build/test results.
+- Verified status for preferred preview, video and poster; limitations recorded if external tools cannot verify them.
+- Next task narrowed to one atomic change, with rollback and test strategy.
