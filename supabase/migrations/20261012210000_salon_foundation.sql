@@ -236,6 +236,78 @@ for each row execute function public.set_updated_at();
 
 -- These helpers are intentionally narrow. SECURITY DEFINER is used only to
 -- avoid recursive membership RLS evaluation; auth.uid() remains the authority.
+create or replace function public.guard_appointment_update()
+returns trigger
+language plpgsql
+set search_path = ''
+as $
+begin
+  if new.salon_id is distinct from old.salon_id
+    or new.service_id is distinct from old.service_id
+    or new.customer_name is distinct from old.customer_name
+    or new.customer_phone is distinct from old.customer_phone
+    or new.service_name_ar_snapshot is distinct from old.service_name_ar_snapshot
+    or new.service_name_en_snapshot is distinct from old.service_name_en_snapshot
+    or new.price_sar_snapshot is distinct from old.price_sar_snapshot
+    or new.duration_minutes_snapshot is distinct from old.duration_minutes_snapshot
+    or new.source is distinct from old.source then
+    raise exception 'APPOINTMENT_IDENTITY_FIELDS_IMMUTABLE' using errcode = '22023';
+  end if;
+
+  if new.status is distinct from old.status then
+    if not (
+      (old.status = 'pending' and new.status in ('confirmed','cancelled','reschedule_requested'))
+      or (old.status = 'confirmed' and new.status in ('completed','cancelled','no_show','reschedule_requested'))
+      or (old.status = 'reschedule_requested' and new.status in ('confirmed','cancelled'))
+    ) then
+      raise exception 'INVALID_APPOINTMENT_STATUS_TRANSITION' using errcode = '22023';
+    end if;
+  end if;
+
+  if (new.starts_at is distinct from old.starts_at
+      or new.ends_at is distinct from old.ends_at
+      or new.barber_id is distinct from old.barber_id)
+      and not (new.status = 'confirmed' and old.status in ('confirmed','reschedule_requested')) then
+    raise exception 'RESCHEDULE_REQUIRES_CONFIRMED_STATUS' using errcode = '22023';
+  end if;
+
+  return new;
+end;
+$;
+
+create or replace function public.record_appointment_event()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  if tg_op = 'INSERT' then
+    insert into public.appointment_events
+      (salon_id, appointment_id, actor_user_id, from_status, to_status, reason)
+    values
+      (new.salon_id, new.id, auth.uid(), null, new.status, 'appointment_created');
+    return new;
+  end if;
+
+  if new.status is distinct from old.status then
+    insert into public.appointment_events
+      (salon_id, appointment_id, actor_user_id, from_status, to_status, reason)
+    values
+      (new.salon_id, new.id, auth.uid(), old.status, new.status, null);
+  end if;
+  return new;
+end;
+$;
+
+create trigger appointments_guard_update
+before update on public.appointments
+for each row execute function public.guard_appointment_update();
+
+create trigger appointments_record_event
+after insert or update on public.appointments
+for each row execute function public.record_appointment_event();
+
 create or replace function public.is_salon_member(p_salon_id uuid)
 returns boolean
 language sql
@@ -462,13 +534,15 @@ grant update (name_ar, name_en, tagline_ar, tagline_en, description_ar, descript
 grant select on public.salon_members, public.appointments, public.appointment_events,
   public.site_revisions, public.notifications to authenticated;
 
-grant insert, update, delete on public.salon_members, public.services, public.barbers,
+grant insert, update, delete on public.services, public.barbers,
   public.barber_services, public.business_hours, public.media_assets to authenticated;
 grant update (draft_content) on public.site_settings to authenticated;
 grant update (read_at) on public.notifications to authenticated;
 grant update (status, customer_note, starts_at, ends_at, barber_id) on public.appointments to authenticated;
 
 revoke all on function public.set_updated_at() from public, anon, authenticated;
+revoke all on function public.guard_appointment_update() from public, anon, authenticated;
+revoke all on function public.record_appointment_event() from public, anon, authenticated;
 revoke all on function public.is_salon_member(uuid) from public;
 revoke all on function public.is_salon_manager(uuid) from public;
 grant execute on function public.is_salon_member(uuid) to anon, authenticated;
