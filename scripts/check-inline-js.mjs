@@ -10,24 +10,24 @@ let failures = 0;
 try {
   for (const file of htmlFiles) {
     const html = readFileSync(resolve(file), "utf8");
-    const scripts = [...html.matchAll(/<script\\b([^>]*)>([\\s\\S]*?)<\\/script>/gi)];
+    const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
     let inlineIndex = 0;
 
     for (const match of scripts) {
       const attributes = match[1] || "";
       const body = match[2] || "";
-      if (/\\bsrc\\s*=/.test(attributes) || !body.trim()) continue;
+      if (/\bsrc\s*=/.test(attributes) || !body.trim()) continue;
 
-      const isModule = /\\btype\\s*=\\s*["']module["']/i.test(attributes);
+      const isModule = /\btype\s*=\s*["']module["']/i.test(attributes);
       const tempFile = join(tempDir, file.replace(/[^a-z0-9]/gi, "-") + "-" + inlineIndex++ + (isModule ? ".mjs" : ".js"));
       writeFileSync(tempFile, body, "utf8");
       const result = spawnSync(process.execPath, ["--check", tempFile], { encoding: "utf8" });
 
       if (result.status !== 0) {
         failures++;
-        process.stderr.write("\\n[syntax error] " + file + "\\n" + result.stderr + result.stdout);
+        process.stderr.write("\n[syntax error] " + file + "\n" + result.stderr + result.stdout);
       } else {
-        process.stdout.write("[syntax ok] " + file + " inline script " + inlineIndex + "\\n");
+        process.stdout.write("[syntax ok] " + file + " inline script " + inlineIndex + "\n");
       }
     }
   }
@@ -39,9 +39,9 @@ try {
   for (const [source, reference, target] of localAssets) {
     if (!existsSync(resolve(target))) {
       failures++;
-      process.stderr.write("[missing local asset] " + source + " references " + reference + " but " + target + " does not exist\\n");
+      process.stderr.write("[missing local asset] " + source + " references " + reference + " but " + target + " does not exist\n");
     } else {
-      process.stdout.write("[asset ok] " + source + " -> " + target + "\\n");
+      process.stdout.write("[asset ok] " + source + " -> " + target + "\n");
     }
   }
 } finally {
@@ -49,4 +49,4 @@ try {
 }
 
 if (failures) process.exit(1);
-process.stdout.write("Static quality checks passed.\\n");
+process.stdout.write("Static quality checks passed.\n");
