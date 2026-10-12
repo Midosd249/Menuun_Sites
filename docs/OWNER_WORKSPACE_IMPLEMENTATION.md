@@ -40,7 +40,7 @@ The UI intentionally does not claim that booking, media upload, QR or publishing
 
 The static page imports a pinned Supabase JS v2 client from `esm.sh`. This is a deliberate low-infrastructure first slice because the inspected repository has no package manifest or build system. Before expanding to a larger app, evaluate moving to a package-managed TypeScript build while preserving the root salon page as the first template.
 
-## Verification
+## Branding update\n\n- Copied the official Menuun SVG logo variants (transparent, English, Arabic, monochrome) from `Midosd249/Menu_V3` into `assets/brand/menuun/` in this repository. The source repository was not modified.\n- The owner workspace header now uses `../assets/brand/menuun/menuun-logo.svg`; the public ATELIER 09 salon identity remains separate from the Menuun platform brand.\n\n## Verification
 
 - GitHub Actions `Static Quality` run for commit `0ec0a02c8c3070bbc80391df938e38f31d8fcb12`: SUCCESS. It checked inline JavaScript syntax and expected local assets, and parsed `owner/config.js`.
 - Vercel preview checks returned HTTP 200 for root `/`, `/owner/`, and `/owner/config.js`.
