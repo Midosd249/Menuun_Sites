@@ -1,0 +1,6 @@
+# Keep engineering notes, database migrations, tests and CI sources out of static deployment output.
+# These files remain in GitHub and are applied/reviewed separately.
+.github/
+docs/
+scripts/
+supabase/
