@@ -167,3 +167,11 @@ No real authentication, tenant provisioning, booking API, schema changes, Storag
 - The first `framework: "nextjs"` override made Vercel compile Next.js and generate all App Router pages, but deployment packaging still failed because the project's configured Output Directory remained the Vite-era output.
 - Vercel build logs reported `/vercel/path0/routes-manifest.json` missing and explicitly identified an Output Directory mismatch. The repo now sets `outputDirectory: ".next"` alongside `framework: "nextjs"` to override that legacy setting at the deployment-config layer.
 - This does not change the Vercel dashboard or production domain. Validate the next preview before marking routing complete.
+
+
+### Verified preview routing — 2026-10-13
+- GitHub Actions run `38322471413` passed on implementation commit `25d06d6`.
+- Vercel preview `dpl_464sbkcgdRteY7wyJoFXjppGLu81` reached READY after `vercel.json` explicitly set the Next.js framework and `.next` output directory.
+- HTTP smoke checks returned 200 for the root page, both login/signup paths (with and without trailing slash), `/owner/`, `/templates/atelier-09/`, `/robots.txt` and `/sitemap.xml`.
+- The homepage response contains Next.js markup and no longer references `/src/main.tsx`.
+- Browser-based visual QA is still pending. Do not infer mobile, keyboard or interaction correctness from HTTP responses.

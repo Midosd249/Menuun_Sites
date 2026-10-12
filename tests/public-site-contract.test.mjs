@@ -31,6 +31,8 @@ test("the Next.js page is safe to render on the server", () => {
   assert.doesNotMatch(app, /window\.location\.pathname/);
   assert.match(layout, /metadataBase/);
   assert.match(layout, /lang="ar" dir="rtl"/);
+  assert.match(readFileSync(new URL("../app/login/page.tsx", import.meta.url), "utf8"), /robots: \{ index: false, follow: false \}/);
+  assert.match(readFileSync(new URL("../app/signup/page.tsx", import.meta.url), "utf8"), /robots: \{ index: false, follow: false \}/);
 });
 
 test("Arabic RTL and English LTR are explicit in the client experience", () => {

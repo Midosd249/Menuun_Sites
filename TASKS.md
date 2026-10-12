@@ -12,7 +12,8 @@
 - [x] Architecture, repository audit and session handoff are committed with the migration.
 - [x] `npm test`, `npm run typecheck` and `npm run build` passed on implementation commit `e9d97f4` (GitHub Actions run 38321925258).
 - [x] Re-run all CI checks after setting the Vercel framework preset to Next.js (run 38322300996 passed).
-- [ ] Verify the `.next` output-directory override on the next CI run.
+- [x] Verify the `.next` output-directory override on CI run 38322471413 and Vercel preview `dpl_464sbkcgdRteY7wyJoFXjppGLu81`.
+- [ ] Re-run CI after the latest account-route metadata refinement.
 - [ ] Real-browser QA confirms `/`, `/login`, `/signup`, `/owner/`, and `/templates/atelier-09/`.
 - [ ] RTL/LTR visual QA at mobile, tablet and desktop.
 - [ ] Vercel preview is inspected after quota availability is verified. The first READY preview still served Vite HTML and returned 404 for Next.js routes; verify the new `framework: nextjs` configuration before calling routing complete.

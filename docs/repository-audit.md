@@ -27,7 +27,7 @@ Findings:
 
 ## 2. `Midosd249/ai-agent-foundation` — process and security reference
 
-**Status: VERIFIED.** Reviewed `AGENTS.md`, `README.md`, and `docs/AI_SECURITY.md`.
+**Status: VERIFIED.** Reviewed `AGENTS.md`, `README.md`, `docs/AI_SECURITY.md`, `PROJECT_STATE.md`, `PLAN.md`, `TASKS.md`, and `SESSION_PROTOCOL.md`.
 
 Transfer:
 - Keep deterministic business rules and authorization in code.
@@ -41,11 +41,11 @@ Do not:
 - Let an agent/model approve permissions, bookings, pricing or tenant ownership.
 - Copy the foundation as a runtime subsystem without a concrete feature requirement.
 
-A requested `docs/automatic-specialist-routing.md` path was not found in this repository; the README and security contract were inspected instead.
+The requested `docs/automatic-specialist-routing.md` path was not found in the AI Agent Foundation repository; its root continuity files and security contract were inspected instead.
 
 ## 3. `Midosd249/Menu_V3` — read-only engineering reference
 
-**Status: VERIFIED.** Reviewed `AGENTS.md`, `package.json`, `docs/automatic-specialist-routing.md`, `src/lib/auth/server.ts`, and `src/lib/auth/client.ts`.
+**Status: VERIFIED.** Reviewed `AGENTS.md`, `package.json`, `PROJECT_STATE.md`, `PLAN.md`, `TASKS.md`, `SESSION_PROTOCOL.md`, `docs/automatic-specialist-routing.md`, `docs/release-only-vercel-workflow.md`, `src/lib/auth/server.ts`, and `src/lib/auth/client.ts`.
 
 Transfer:
 - Release-only Vercel workflow; local checks and browser QA before one coherent deployment.
@@ -109,3 +109,11 @@ Boundary:
 - No full code-level audit was performed on every file in the adjacent repositories; inspection was targeted to mission, architecture, package and security entry points.
 - Vercel's previous daily deployment API quota block must be rechecked before preview work.
 - Supabase schema/migration status must be reconciled across branches and the live project before changing auth or data.
+
+
+## 10. Vercel migration verification
+
+- **VERIFIED:** Vercel deployment for commit `d6e3aa2` compiled Next.js but failed during packaging because the project still had the legacy Vite output directory. The build log explicitly reported missing `routes-manifest.json`.
+- **FIXED:** Repository-level `vercel.json` now sets `framework: "nextjs"` and `outputDirectory: ".next"` to override the old framework/output settings without changing the dashboard.
+- **VERIFIED:** Deployment `dpl_464sbkcgdRteY7wyJoFXjppGLu81` for commit `25d06d6` reached READY. HTTP checks returned 200 for the marketing page, login/signup, owner, Atelier 09 template, robots and sitemap routes.
+- **UNKNOWN:** Visual browser behavior, client-side interaction, mobile/desktop rendering and real-device QA. HTTP 200 is not a substitute for browser QA.
