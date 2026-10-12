@@ -175,3 +175,10 @@ No real authentication, tenant provisioning, booking API, schema changes, Storag
 - HTTP smoke checks returned 200 for the root page, both login/signup paths (with and without trailing slash), `/owner/`, `/templates/atelier-09/`, `/robots.txt` and `/sitemap.xml`.
 - The homepage response contains Next.js markup and no longer references `/src/main.tsx`.
 - Browser-based visual QA is still pending. Do not infer mobile, keyboard or interaction correctness from HTTP responses.
+
+
+### Final migration checkpoint — 2026-10-13
+- GitHub Actions run `38322706018` passed tests, typecheck, build and static checks on commit `1d84263`.
+- Vercel preview `dpl_2to2zUtiik8GebE5c3xpWuc13hRB` reached READY; HTTP checks returned 200 for marketing, login, signup, owner, Atelier 09, robots and sitemap paths.
+- Account routes have distinct metadata and are excluded from indexing.
+- Remaining acceptance gap is real-browser visual and interaction QA; no screenshots or mobile-device behavior are claimed as verified.

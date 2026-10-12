@@ -12,7 +12,8 @@
 - [x] Verify `npm test`, `npm run typecheck`, and `npm run build` on implementation commit `e9d97f4` (GitHub Actions run 38321925258 passed).
 - [x] Re-run CI after setting the Vercel framework preset to Next.js (run 38322300996 passed).
 - [x] Verify the explicit `.next` output-directory override: GitHub Actions run 38322471413 passed and the preview HTTP smoke checks returned 200 for all nine target paths.
-- [ ] Re-run CI after the account-route metadata and audit-document refinement commit.
+- [x] Re-run CI after account-route metadata refinement (GitHub Actions run 38322706018 passed).
+- [ ] Inspect CI for the current documentation-only evidence refresh commit before merge.
 - [ ] Verify root, login, signup, owner and Atelier 09 template routes in a real browser. First preview exposed a Vercel framework-preset mismatch; `vercel.json` now explicitly selects Next.js.
 - [ ] Verify desktop/tablet/mobile rendering, Arabic RTL, English LTR, keyboard focus and reduced motion.
 - [ ] Recheck Vercel quota and record direct preview deployment evidence.

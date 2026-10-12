@@ -1,7 +1,7 @@
 # Project State — Menuun
 
 **Updated:** 2026-10-13  
-**Implementation status:** IMPLEMENTATION_IN_PROGRESS — Next.js build and preview HTTP routing verified on `25d06d6`; account-route metadata refinement added in this commit, final CI pending  
+**Implementation status:** IMPLEMENTATION_IN_PROGRESS — Next.js migration CI and preview HTTP routing verified; browser visual QA pending  
 **Active branch:** `feat/public-platform-foundation`  
 **Open PR:** [#5](https://github.com/Midosd249/Menuun_Sites/pull/5) (draft)
 
@@ -42,4 +42,4 @@ Phase 1 — Next.js public-platform foundation.
 - HTTP route smoke checks are verified for the Next.js preview; no browser screenshots, real interaction tests, or responsive visual review have been verified.
 
 ## Single next task
-Inspect GitHub Actions for the current branch head; fix typecheck/build/test failures. Once CI passes, recheck Vercel quota and perform preview/browser QA for `/`, `/login`, `/signup`, `/owner/`, and `/templates/atelier-09/`. Do not merge or deploy production until evidence is recorded.
+Inspect GitHub Actions for the current HEAD, then run browser-based visual QA at mobile/tablet/desktop for Arabic RTL and English LTR, including keyboard focus, reduced motion, console/network errors and actual language/FAQ/mobile-menu interactions. HTTP routing is verified, but HTTP 200 is not visual QA. Do not merge PR #5 until current-head CI and browser QA are evidenced.
