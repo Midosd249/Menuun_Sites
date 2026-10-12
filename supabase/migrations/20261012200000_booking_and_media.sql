@@ -85,7 +85,7 @@ using (
   )
 );
 
-create or replace function public.request_salon_appointment(
+create or replace function private.request_salon_appointment_internal(
   p_salon_slug text,
   p_service_id uuid,
   p_barber_id uuid,
@@ -223,6 +223,31 @@ begin
   return v_appointment_id;
 end;
 $function$;
+
+revoke all on function private.request_salon_appointment_internal(text, uuid, uuid, text, text, timestamptz, text) from public;
+grant execute on function private.request_salon_appointment_internal(text, uuid, uuid, text, text, timestamptz, text) to anon, authenticated;
+
+-- Keep the PostgREST-facing RPC invoker-security. Privileged work lives in the
+-- non-exposed private schema, with input validation inside the internal function.
+create or replace function public.request_salon_appointment(
+  p_salon_slug text,
+  p_service_id uuid,
+  p_barber_id uuid,
+  p_customer_name text,
+  p_customer_phone text,
+  p_starts_at timestamptz,
+  p_customer_note text default null
+)
+returns uuid
+language sql
+security invoker
+set search_path = ''
+as $wrapper$
+  select private.request_salon_appointment_internal(
+    p_salon_slug, p_service_id, p_barber_id, p_customer_name,
+    p_customer_phone, p_starts_at, p_customer_note
+  );
+$wrapper$;
 
 revoke all on function public.request_salon_appointment(text, uuid, uuid, text, text, timestamptz, text) from public;
 grant execute on function public.request_salon_appointment(text, uuid, uuid, text, text, timestamptz, text) to anon, authenticated;
