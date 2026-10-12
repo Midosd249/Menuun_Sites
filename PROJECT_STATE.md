@@ -70,3 +70,12 @@ M1 — Salon/barbershop design vertical slice (prototype only).
 
 ## Handoff
 The code/test head above passed all configured CI checks. Re-check the latest PR head and required checks before merge, because this continuity-file update creates a documentation-only commit. Do not merge until the latest head's required checks pass. Continue next with accessibility/responsive visual review, approved assets, then the tenant-scoped editor/publishing architecture.
+
+
+## SIMT visual polish follow-up — 2026-10-12
+- Working branch: `feat/simt-premium-motion-polish`, based on `feature/salon-vertical-slice`; changes are not merged.
+- Source changes: Arabic typography updated to Alexandria with fallbacks; CSS motion and interaction polish added; reduced-motion overrides retained; demo contact inputs gained native required semantics and telephone input type.
+- Design/verification report: [SIMT Premium Polish Review](docs/design-references/SIMT-POLISH-REVIEW.md).
+- Research: Exa search used for current barber-site and accessible-motion patterns. Refero could not be used because its connector returned `NO_SUBSCRIPTION`; no Refero evidence is claimed.
+- Validation: source changes are committed to the working branch. Local lint/typecheck/unit/build/Playwright and browser visual QA have NOT been run in this workflow. Check CI against the final branch head before declaring success.
+- Deployment: NOT VERIFIED. Do not merge or represent this branch as production-ready.

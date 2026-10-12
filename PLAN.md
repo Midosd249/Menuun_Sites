@@ -31,6 +31,8 @@ Deliver a high-quality website builder as an independently deployed Menuun produ
 - [x] Add Arabic RTL and English LTR switching and Playwright acceptance coverage.
 - [ ] Replace remote demo images with approved optimized local assets and record provenance/licenses.
 - [ ] Verify 360px, 390px, 768px, 1024px, 1280px and wide desktop layouts in browser runs.
+- [x] Add a focused SIMT visual-polish pass for Arabic typography, motion, interaction feedback, and form semantics; see [SIMT polish review](docs/design-references/SIMT-POLISH-REVIEW.md).
+- [ ] Validate the polish branch through CI and browser-based responsive/accessibility checks before merge.
 
 M1 asset follow-up:
 - [x] Wire the supplied MP4 into the desktop hero with a local poster and reduced-motion/mobile fallback.
