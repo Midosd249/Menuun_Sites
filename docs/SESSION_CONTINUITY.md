@@ -30,7 +30,7 @@ Do not silently switch to `https://menuun-sites.vercel.app/`; the user reported 
 5. The booking wizard is explicitly a demo. It uses hard-coded services/barbers/times and tells the user no information is transmitted or stored. It is not a live booking service.
 6. Video and images have relied on external Vercel asset URLs. Confirm asset availability, ownership/licensing, poster fallback, MIME type and playback after every media-related deployment.
 7. A dedicated branch `feat/menuun-site-platform-foundation` was created from `feat/barber-atelier-experience` and documentation was started there to avoid disrupting the user's preferred preview branch.
-8. No new database schema, auth integration, storage bucket, Edge Function, real booking workflow, or deployment was implemented during this audit.
+8. The first three database migrations have now been applied to `Menuun_Site`: salon foundation, security hardening, and policy cleanup. Details are in `docs/DATABASE_FOUNDATION_VERIFICATION.md`.
 9. Full Git tree inventory is recorded in `docs/AUDIT_2026-10-12.md`: 24 tree entries, 13 file blobs, core `index.html`, no `package.json` or `vercel.json` in the inspected branch.
 10. Vercel connector verified HTTP 200 for the approved preview, MP4 hero video, JPEG poster, and a booking image. This is HTTP-level proof only; no browser autoplay/device QA was run.
 11. The master plan, active plan, and audit report are committed on `feat/menuun-site-platform-foundation`.
@@ -64,12 +64,14 @@ The user supplied a Supabase publishable key in chat. Treat it as a public-clien
 
 1. Continue on `feat/menuun-site-platform-foundation`.
 2. Inspect the full repository tree, current branch and history, media assets, deployment config, existing booking code, and current Vercel deployment records.
-3. Record which runtime/build stack is actually present before choosing an app architecture.
-4. Audit the preferred preview's video/image URLs and establish a stable media strategy without breaking the current site.
-5. Draft the salon domain ERD, RLS/Storage policies and booking concurrency contract.
-6. Implement the first schema migration in the new `Menuun_Site` project only, after reviewing exact SQL and grants. Do not touch `ublxptcqefujkbeepylc`.
-7. Add automated tests and responsive Arabic/English browser checks before declaring a phase complete.
-8. Do not deploy until the code and configuration are verified; report the real URL/state and evidence.
+3. [x] Record the actual runtime/build baseline: one HTML/CSS/JS page; no package.json or vercel.json in the inspected branch.
+4. [x] Verify the preferred preview, hero MP4, poster JPEG and one booking image return HTTP 200 through Vercel integration.
+5. [x] Draft initial tenant/data/security design and apply the first three schema migrations to `kphypflbkbcvgcaupxxm` only; all 12 app tables have RLS.
+6. [ ] Build the web app foundation and owner workspace incrementally without replacing the approved salon design.
+7. [ ] Test Auth onboarding, cross-tenant access, appointment status transitions and concurrent bookings; then implement the real public booking path.
+8. [ ] Add Storage bucket/policies, media editor, publish flow and QR route.
+9. [ ] Add automated tests and responsive Arabic/English browser checks before declaring a phase complete.
+10. Do not deploy until the code and configuration are verified; report the real URL/state and evidence.
 
 ## Status vocabulary
 
@@ -80,4 +82,4 @@ The user supplied a Supabase publishable key in chat. Treat it as a public-clien
 - `DEPLOYED`: direct Vercel evidence plus URL verification exists.
 - `BLOCKED`: dependency/permission/runtime limitation is named explicitly.
 
-Current overall state: `DISCOVERY_VERIFIED / IMPLEMENTATION_NOT_STARTED`.
+Current overall state: `DATABASE_FOUNDATION_IMPLEMENTED / OWNER_UI_NOT_STARTED`. Supabase security advisor: clean at the latest check. Performance advisor still reports informational unused indexes because tables are empty; no real appointment or tenant-isolation E2E has been run yet.
