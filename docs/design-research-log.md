@@ -62,3 +62,10 @@
 - Browser verification for `/`, `/login`, `/signup`, `/owner/`, and `/templates/atelier-09/`.
 - Desktop/tablet/mobile review in Arabic RTL and English LTR, including keyboard focus and reduced motion.
 - Vercel deployment quota and custom-domain linkage remain unverified.
+
+## Brand and interface exploration — 2026-10-13
+- **Brand source of truth:** imported the complete Arabic and English SVG wordmarks from `Midosd249/Menu_V3/assets/brand/menuun/final/` at commit `b71b88954988303a258054236b56fff08a29f65b`. The source vector paths are preserved; these are not re-created text approximations.
+- **Open-source motion/UI research:** reviewed the Motion for React accessibility guidance at https://motion.dev/docs/react-accessibility and public projects including https://github.com/ColorlibHQ/velora-ui and https://github.com/RMahammad/motiq.
+- **Applied selectively:** kept the current dependency footprint and used small CSS entrance/hover transitions rather than adding a large animation dependency before browser profiling. `prefers-reduced-motion` disables the new movement.
+- **Template scope decision:** the public page now presents exactly three curated starting points: Essential, Editorial, and Atelier. This is a public-facing set of three, not a promise that every future template is already implemented.
+- **Still required:** real-browser visual QA at desktop, tablet, and mobile sizes in Arabic RTL and English LTR, including keyboard/focus and console/network checks. No claim of visual QA is made by this source-level update.

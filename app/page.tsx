@@ -50,8 +50,8 @@ const copy = {
     templatesLabel: "مصممة لتناسب هويتك",
     templatesTitle: "أسلوبك أولاً. والقالب يتبعه.",
     templatesText: "نعمل على مجموعة قوالب متنوعة، من الهادئ والبسيط إلى التحريري والجريء، لتبدأ من تصميم مناسب لطبيعة عملك.",
-    templateNames: ["Essential", "Editorial", "Noir", "Heritage", "Gallery"],
-    templateTaglines: ["واضح ومتوازن", "تحريري وأنيق", "جريء ومعاصر", "أصيل ودافئ", "بصري وتعبيري"],
+    templateNames: ["Essential", "Editorial", "Atelier"],
+    templateTaglines: ["واضح ومتوازن", "تحريري وأنيق", "حرفية معاصرة"],
     templateNote: "معاينة القوالب ستكون متاحة ضمن مساحة العميل.",
     faqLabel: "أسئلة شائعة",
     faqTitle: "قبل أن تبدأ.",
@@ -118,8 +118,8 @@ const copy = {
     templatesLabel: "Made to fit your identity",
     templatesTitle: "Your style comes first.",
     templatesText: "We are building a varied template collection, from quiet minimalism to expressive editorial styles, so your business can start with the right feel.",
-    templateNames: ["Essential", "Editorial", "Noir", "Heritage", "Gallery"],
-    templateTaglines: ["Clear & balanced", "Editorial & refined", "Bold & contemporary", "Warm & rooted", "Visual & expressive"],
+    templateNames: ["Essential", "Editorial", "Atelier"],
+    templateTaglines: ["Clear & balanced", "Editorial & refined", "Contemporary craft"],
     templateNote: "Template previews will be available in the customer workspace.",
     faqLabel: "Frequently asked questions",
     faqTitle: "Before you begin.",
@@ -145,14 +145,22 @@ const copy = {
   }
 } as const;
 
-function Logo() {
-  return <a className="brand" href="/" aria-label="Menuun home"><span className="brand-mark">m<span>.</span></span><span className="brand-word">menuun</span></a>;
+function Logo({ lang = "ar" }: { lang?: Language }) {
+  const isArabic = lang === "ar";
+  return <a className="brand" href="/" aria-label={isArabic ? "الصفحة الرئيسية Menuun" : "Menuun home"}>
+    <img
+      src={isArabic ? "/assets/brand/menuun/final/menuun-logo-ar.svg" : "/assets/brand/menuun/final/menuun-logo-en.svg"}
+      alt={isArabic ? "شعار Menuun" : "Menuun"}
+      width={160}
+      height={58}
+    />
+  </a>;
 }
 
 function AccountPage({ lang, mode }: { lang: Language; mode: "login" | "signup" }) {
   const t = copy[lang];
   return <main className="account-stage">
-    <Logo />
+    <Logo lang={lang} />
     <div className="account-card">
       <div className="account-icon"><Sparkles size={22} /></div>
       <p className="eyebrow">{t.stagedLabel}</p>
@@ -192,7 +200,7 @@ export default function App() {
   return <div className="site-shell">
     <a className="skip-link" href="#main">{lang === "ar" ? "تجاوز إلى المحتوى" : "Skip to content"}</a>
     <header className="topbar">
-      <Logo />
+      <Logo lang={lang} />
       <nav className={menuOpen ? "nav-links open" : "nav-links"} aria-label={lang === "ar" ? "التنقل الرئيسي" : "Main navigation"}>
         {t.nav.map((label, i) => <a key={label} href={"#" + navIds[i]} onClick={() => setMenuOpen(false)}>{label}</a>)}
       </nav>
@@ -262,7 +270,7 @@ export default function App() {
       <section className="templates-section section-wrap section-pad" id="templates">
         <div className="templates-heading"><div><p className="eyebrow">{t.templatesLabel}</p><h2>{t.templatesTitle}</h2></div><p className="section-description">{t.templatesText}</p></div>
         <div className="template-grid">
-          {t.templateNames.map((name, i) => <article className={"template-card template-" + i} key={name}><div className="template-art"><div className="template-paper"><span className="paper-brand">{i === 2 ? "N." : i === 3 ? "H /" : "m."}</span><span className="paper-title">{["Essential", "Editorial", "NOIR", "Heritage", "Gallery"][i]}</span><span className="paper-line" /><span className="paper-line short" /><span className="paper-shape" /></div><span className="template-number">0{i + 1}</span></div><div className="template-meta"><div><h3>{name}</h3><p>{t.templateTaglines[i]}</p></div><ArrowUpLeft size={17} /></div></article>)}
+          {t.templateNames.map((name, i) => <article className={"template-card template-" + i} key={name}><div className="template-art"><div className="template-paper"><span className="paper-brand">{i === 2 ? "N." : i === 3 ? "H /" : "m."}</span><span className="paper-title">{["Essential", "Editorial", "ATELIER"][i]}</span><span className="paper-line" /><span className="paper-line short" /><span className="paper-shape" /></div><span className="template-number">0{i + 1}</span></div><div className="template-meta"><div><h3>{name}</h3><p>{t.templateTaglines[i]}</p></div><ArrowUpLeft size={17} /></div></article>)}
         </div>
         <p className="template-note"><Sparkles size={16} />{t.templateNote}</p>
       </section>
@@ -274,6 +282,6 @@ export default function App() {
       <section className="final-cta section-wrap"><div className="final-cta-inner"><span className="final-star">✳</span><div><p className="eyebrow">{lang === "ar" ? "خطوتك التالية" : "YOUR NEXT STEP"}</p><h2>{t.finalTitle}</h2><p>{t.finalText}</p></div><a className="button button-lime" href="/signup/">{t.finalCta}<ArrowUpLeft size={17} /></a></div></section>
     </main>
 
-    <footer className="footer"><div className="section-wrap footer-main"><div className="footer-brand"><Logo /><p>{t.footerText}</p></div><div className="footer-links">{t.footerLinks.map((label, i) => <a key={label} href={i === 0 ? "#main" : i === 1 ? "#templates" : "#faq"}>{label}</a>)}</div><a className="back-top" href="#main" aria-label={lang === "ar" ? "العودة للأعلى" : "Back to top"}><ArrowRight size={17} /></a></div><div className="section-wrap footer-bottom"><span>© {new Date().getFullYear()} Menuun</span><span>{lang === "ar" ? "صُنع بعناية." : "Made with care."}</span></div></footer>
+    <footer className="footer"><div className="section-wrap footer-main"><div className="footer-brand"><Logo lang={lang} /><p>{t.footerText}</p></div><div className="footer-links">{t.footerLinks.map((label, i) => <a key={label} href={i === 0 ? "#main" : i === 1 ? "#templates" : "#faq"}>{label}</a>)}</div><a className="back-top" href="#main" aria-label={lang === "ar" ? "العودة للأعلى" : "Back to top"}><ArrowRight size={17} /></a></div><div className="section-wrap footer-bottom"><span>© {new Date().getFullYear()} Menuun</span><span>{lang === "ar" ? "صُنع بعناية." : "Made with care."}</span></div></footer>
   </div>;
 }
