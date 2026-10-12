@@ -23,8 +23,8 @@ test("account entry points are honest and do not fake account creation", () => {
 
 test("Arabic RTL and English LTR are both explicit", () => {
   assert.match(app, /dir = lang === "ar" \? "rtl" : "ltr"/);
-  assert.match(app, /"ar":/);
-  assert.match(app, /"en":/);
+  assert.match(app, /^  ar:/m);
+  assert.match(app, /^  en:/m);
   assert.match(html, /lang="ar" dir="rtl"/);
 });
 
