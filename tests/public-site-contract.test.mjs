@@ -6,6 +6,7 @@ const app = readFileSync(new URL("../src/App.tsx", import.meta.url), "utf8");
 const styles = readFileSync(new URL("../src/styles.css", import.meta.url), "utf8");
 const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 const plan = readFileSync(new URL("../docs/roadmap/public-platform-foundation.md", import.meta.url), "utf8");
+const staticCopy = readFileSync(new URL("../scripts/copy-static.mjs", import.meta.url), "utf8");
 
 test("public homepage includes core sections and clear platform positioning", () => {
   for (const phrase of ["hero", "benefits", "how-it-works", "templates", "faq", "final-cta"]) {
@@ -32,6 +33,10 @@ test("responsive and reduced-motion styles exist", () => {
   assert.match(styles, /@media\(max-width:780px\)/);
   assert.match(styles, /prefers-reduced-motion/);
   assert.match(styles, /:focus-visible/);
+});
+
+test("legacy owner, template, and brand assets are copied into the Vite output", () => {
+  for (const directory of ["owner", "templates", "assets"]) assert.ok(staticCopy.includes(`"${directory}"`));
 });
 
 test("the implementation boundary and phased roadmap are documented", () => {
