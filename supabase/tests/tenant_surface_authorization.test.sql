@@ -61,6 +61,11 @@ insert into public.media_assets (
   '22000000-0000-4000-8000-000000000001',
   'gallery', '22000000-0000-4000-8000-000000000001/gallery/existing.webp',
   'image/webp', 1024, true, false
+), (
+  '82000000-0000-4000-8000-000000000002',
+  '22000000-0000-4000-8000-000000000002',
+  'gallery', '22000000-0000-4000-8000-000000000002/gallery/existing.webp',
+  'image/webp', 1024, true, false
 )
 on conflict (id) do nothing;
 
@@ -103,7 +108,7 @@ select is_empty(
 );
 select is_empty(
   $$update public.media_assets set is_public = true
-    where id = '82000000-0000-4000-8000-000000000001' returning id$$,
+    where id = '82000000-0000-4000-8000-000000000002' returning id$,
   'owner A cannot mutate a media record in another tenant'
 );
 
@@ -145,12 +150,11 @@ select is_empty(
       and name = '22000000-0000-4000-8000-000000000001/gallery/rls-test.webp'$$,
   'owner B cannot read a storage object belonging to salon A'
 );
-select is_empty(
-  $$delete from storage.objects
-    where bucket_id = 'salon-media'
-      and name = '22000000-0000-4000-8000-000000000001/gallery/rls-test.webp'
-    returning id$$,
-  'owner B cannot delete a storage object belonging to salon A'
+select throws_ok(
+  $insert into storage.objects (bucket_id, name)
+    values ('salon-media', '22000000-0000-4000-8000-000000000001/gallery/forbidden.webp')$,
+  '42501', null,
+  'owner B cannot upload into salon A storage path'
 );
 
 set local request.jwt.claim.sub = '12000000-0000-4000-8000-000000000001';
