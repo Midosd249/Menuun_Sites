@@ -1,6 +1,6 @@
 begin;
 
-select plan(10);
+select plan(11);
 
 -- Deterministic users and two isolated salons. All fixture writes run as the
 -- local database owner before switching into the application roles.
@@ -95,9 +95,9 @@ select is(
 set local role anon;
 select throws_ok(
   $$select public.create_salon_with_owner('anonymous-attempt', 'اختبار', '')$$,
-  '28000',
+  '42501',
   null,
-  'anonymous caller cannot provision a salon'
+  'anonymous caller cannot execute the salon provisioning RPC'
 );
 
 select * from finish();
