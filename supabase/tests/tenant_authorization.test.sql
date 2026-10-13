@@ -1,6 +1,6 @@
 begin;
 
-select plan(13);
+select plan(17);
 
 -- Deterministic users and two isolated salons. All fixture writes run as the
 -- local database owner before switching into the application roles.
@@ -75,6 +75,24 @@ select lives_ok(
     values ('20000000-0000-4000-8000-000000000001', 'خدمة جديدة', 'New Service', 25, 15)$$,
   'active manager can create a service for their salon'
 );
+select lives_ok(
+  $$update public.services set name_en = 'Service A updated'
+    where id = '30000000-0000-4000-8000-000000000001'$$,
+  'active manager can update a service in their salon'
+);
+select throws_ok(
+  $$update public.services
+       set salon_id = '20000000-0000-4000-8000-000000000002'
+     where id = '30000000-0000-4000-8000-000000000001'$$,
+  '42501',
+  null,
+  'WITH CHECK prevents moving a service into another tenant'
+);
+select results_eq(
+  $$select salon_id from public.services where id = '30000000-0000-4000-8000-000000000001'$$,
+  $$values ('20000000-0000-4000-8000-000000000001'::uuid)$$,
+  'failed cross-tenant reassignment leaves service in its original salon'
+);
 
 set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000003';
 select throws_ok(
@@ -91,14 +109,25 @@ select is_empty(
        set name_en = 'cross-tenant mutation'
      where id = '30000000-0000-4000-8000-000000000001'
      returning id$$,
-  'manager of salon B cannot mutate a salon A service'
+  'owner of salon B cannot mutate a salon A service'
+);
+select is_empty(
+  $$delete from public.services
+       where id = '30000000-0000-4000-8000-000000000001'
+     returning id$$,
+  'owner of salon B cannot delete a salon A service'
 );
 
 reset role;
 select is(
+  (select salon_id from public.services where id = '30000000-0000-4000-8000-000000000001'),
+  '20000000-0000-4000-8000-000000000001'::uuid,
+  'cross-tenant write attempts leave service ownership unchanged'
+);
+select is(
   (select name_en from public.services where id = '30000000-0000-4000-8000-000000000001'),
-  'Service A',
-  'cross-tenant update leaves the target row unchanged'
+  'Service A updated',
+  'cross-tenant update leaves the service contents unchanged'
 );
 
 set local role anon;
