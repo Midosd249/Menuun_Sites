@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpLeft, Check, ChevronDown, CirclePlay, Menu, Sparkles, X } from "lucide-react";
@@ -237,7 +237,7 @@ function AccountPage({ lang, mode }: { lang: Language; mode: "login" | "signup" 
   </main>;
 }
 
-export default function App() {
+function AppContent() {
   const [lang, setLang] = useState<Language>("ar");
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -349,4 +349,9 @@ export default function App() {
 
     <footer className="footer"><div className="section-wrap footer-main"><div className="footer-brand"><Logo lang={lang} /><p>{t.footerText}</p></div><div className="footer-links">{t.footerLinks.map((label, i) => <a key={label} href={i === 0 ? "#main" : i === 1 ? "#templates" : "#faq"}>{label}</a>)}</div><a className="back-top" href="#main" aria-label={lang === "ar" ? "العودة للأعلى" : "Back to top"}><ArrowRight size={17} /></a></div><div className="section-wrap footer-bottom"><span>© {new Date().getFullYear()} Menuun</span><span>{lang === "ar" ? "صُنع بعناية." : "Made with care."}</span></div></footer>
   </div>;
+}
+
+
+export default function App() {
+  return <Suspense fallback={<main className="account-stage"><div className="account-card" role="status">Loading Menuun…</div></main>}><AppContent /></Suspense>;
 }
