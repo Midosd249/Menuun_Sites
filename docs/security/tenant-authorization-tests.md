@@ -13,7 +13,7 @@ stack. They do not connect to the hosted project and do not require project secr
 
 ```sh
 supabase start
-supabase test db --local supabase/tests/tenant_authorization.test.sql supabase/tests/security_surface.test.sql
+supabase test db --local supabase/tests/tenant_authorization.test.sql supabase/tests/security_surface.test.sql supabase/tests/appointment_authorization.test.sql
 supabase stop --no-backup
 ```
 
@@ -31,12 +31,13 @@ with hosted project credentials.
 - `security_surface.test.sql`: RLS enabled on all twelve tenant-owned public
   tables and `storage.objects`, private media bucket configuration, privileged
   helper-function grants, and intended public booking RPC grants.
+- `appointment_authorization.test.sql`: cross-tenant appointment read/write
+  denial, same-tenant receptionist confirmation, and appointment-event auditing.
 
 This is a regression baseline, not a complete authorization sign-off. It does
-not yet prove every CRUD operation on every tenant-owned table, appointment
-status-transition rules, all Storage object paths, or every function's
-security properties. Expand the suite before treating tenant authorization as
-production-ready.
+not yet prove every CRUD operation on every tenant-owned table, all Storage
+object paths, or every function's security properties. Expand the suite before
+treating tenant authorization as production-ready.
 
 Public published content intentionally has different visibility from private
 workspace data. Tests should use unpublished fixture salons when asserting
