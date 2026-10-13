@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { safeRedirectPath } from "@/lib/auth/redirect";
+import { safeRedirectPath } from "@/lib/auth/redirect.mjs";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
