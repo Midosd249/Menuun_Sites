@@ -1,6 +1,6 @@
 begin;
 
-select plan(11);
+select plan(13);
 
 -- Deterministic users and two isolated salons. All fixture writes run as the
 -- local database owner before switching into the application roles.
@@ -40,6 +40,14 @@ on conflict (id) do nothing;
 select has_table('public', 'salons', 'salons table exists');
 select has_table('public', 'salon_members', 'membership table exists');
 select has_table('public', 'services', 'services table exists');
+select ok(
+  has_function_privilege('authenticated', 'public.create_salon_with_owner(text,text,text)', 'EXECUTE'),
+  'authenticated role has execute permission for salon provisioning'
+);
+select ok(
+  not has_function_privilege('anon', 'public.create_salon_with_owner(text,text,text)', 'EXECUTE'),
+  'anonymous role has no execute permission for salon provisioning'
+);
 
 set local role authenticated;
 set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000001';
