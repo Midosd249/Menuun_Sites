@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { safeRedirectPath } from "../lib/auth/redirect.mjs";
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 
@@ -34,10 +35,24 @@ test("server identity helper verifies claims instead of trusting a raw session",
   assert.doesNotMatch(auth, /auth\.getSession\(\)/);
 });
 
-test("auth callback and sign-out only redirect to safe local paths", () => {
-  const redirect = read("../lib/auth/redirect.ts");
-  assert.match(redirect, /startsWith\(["']\/\/["']\)/);
-  assert.match(redirect, /startsWith\(["']\/["']\)/);
+test("redirect validator allows safe local paths and rejects open redirects", () => {
+  assert.equal(safeRedirectPath("/app?tab=services"), "/app?tab=services");
+  assert.equal(safeRedirectPath("/login/#form"), "/login/#form");
+  assert.equal(safeRedirectPath("/"), "/");
+  for (const unsafe of [
+    "https://evil.example",
+    "//evil.example/path",
+    "///evil.example/path",
+    "/\\\\evil.example/path",
+    "",
+    "javascript:alert(1)"
+  ]) {
+    assert.equal(safeRedirectPath(unsafe, "/login/"), "/login/", `reject unsafe redirect: ${unsafe}`);
+  }
+  assert.match(read("../lib/auth/redirect.mjs"), /url\.origin !== "https:\/\/menuun\.invalid"/);
+});
+
+test("auth callback exchanges a one-time code and sign-out clears the session", () => {
   assert.match(read("../app/auth/callback/route.ts"), /exchangeCodeForSession/);
   assert.match(read("../app/auth/signout/route.ts"), /auth\.signOut\(\)/);
   assert.match(read("../app/auth/callback/route.ts") + read("../app/auth/signout/route.ts"), /safeRedirectPath/);
