@@ -63,7 +63,7 @@ test("marketing and staged account routes remain public while private routes fai
   assert.match(middleware, /matcher/);
   assert.match(middleware, /PRIVATE_ROUTE_PREFIXES/);
   assert.match(middleware, /request\.nextUrl\.pathname/);
-  assert.match(middleware, /claims\.sub/);
+  assert.match(middleware, /claims\??\.sub/);
   assert.match(middleware, /\/login\//);
   assert.match(middleware, /export async function middleware/);
   assert.match(read("../app/login/page.tsx"), /export \{ default \} from "\.\.\/page"/);
