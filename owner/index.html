@@ -23,6 +23,23 @@
 <div class="auth-foot" data-ar="إنشاء حساب لا يمنح صلاحيات مشرف المنصة. مساحة الصالون تنشأ بعضوية موثّقة في قاعدة البيانات." data-en="Creating an account does not grant platform-admin privileges. Salon access is created through a verified database membership.">إنشاء حساب لا يمنح صلاحيات مشرف المنصة. مساحة الصالون تنشأ بعضوية موثّقة في قاعدة البيانات.</div></div></section>
 
 
+
+<section id="onboardingView" class="auth-wrap hidden">
+  <div class="auth-card">
+    <div class="eyebrow" data-ar="خطوة البداية" data-en="GET STARTED">خطوة البداية</div>
+    <h1 data-ar="أنشئ مساحة صالونك." data-en="Create your salon workspace.">أنشئ مساحة صالونك.</h1>
+    <p class="muted" data-ar="أكمل البيانات الأساسية لربط حسابك بالصالون. يمكنك تعديل التفاصيل لاحقًا من الإعدادات." data-en="Add the essentials to link your account to a salon. You can update the details later in settings.">أكمل البيانات الأساسية لربط حسابك بالصالون. يمكنك تعديل التفاصيل لاحقًا من الإعدادات.</p>
+    <div id="onboardingNotice" class="notice hidden" role="status" aria-live="polite"></div>
+    <form id="onboardingForm" class="auth-form">
+      <div class="field"><label for="salonNameAr" data-ar="اسم الصالون بالعربية" data-en="Salon name in Arabic">اسم الصالون بالعربية</label><input id="salonNameAr" required minlength="2" maxlength="120" autocomplete="organization"></div>
+      <div class="field"><label for="salonNameEn" data-ar="اسم الصالون بالإنجليزية (اختياري)" data-en="Salon name in English (optional)">اسم الصالون بالإنجليزية (اختياري)</label><input id="salonNameEn" maxlength="120" autocomplete="organization"></div>
+      <div class="field"><label for="salonSlug" data-ar="رابط الصالون" data-en="Salon URL slug">رابط الصالون</label><input id="salonSlug" required minlength="1" maxlength="63" pattern="[a-z0-9][a-z0-9-]*" dir="ltr" autocomplete="off" placeholder="my-salon"><small class="muted" data-ar="استخدم حروفًا إنجليزية صغيرة وأرقامًا وشرطة فقط." data-en="Use lowercase letters, numbers and hyphens only.">استخدم حروفًا إنجليزية صغيرة وأرقامًا وشرطة فقط.</small></div>
+      <button id="createSalon" class="primary" type="submit" data-ar="إنشاء مساحة الصالون ↗" data-en="Create salon workspace ↗">إنشاء مساحة الصالون ↗</button>
+    </form>
+    <div class="auth-foot" data-ar="يُنشأ الصالون وعضوية المالك في عملية قاعدة بيانات واحدة. إذا كان الرابط مستخدمًا، اختر رابطًا آخر." data-en="The salon and owner membership are created in one database transaction. If the URL is taken, choose another.">يُنشأ الصالون وعضوية المالك في عملية قاعدة بيانات واحدة. إذا كان الرابط مستخدمًا، اختر رابطًا آخر.</div>
+  </div>
+</section>
+
 <div id="workspaceView" class="layout hidden">
 <aside><div class="aside-label" data-ar="إدارة الصالون" data-en="SALON MANAGEMENT">إدارة الصالون</div><nav class="nav"><button class="active" data-page="overview" data-ar="▦　نظرة عامة" data-en="▦　Overview">▦　نظرة عامة</button><button data-page="appointments" data-ar="▣　المواعيد" data-en="▣　Appointments">▣　المواعيد</button><button data-page="services" data-ar="≡　الخدمات والأسعار" data-en="≡　Services & prices">≡　الخدمات والأسعار</button><button data-page="barbers" data-ar="◉　فريق الحلاقين" data-en="◉　Barbers">◉　فريق الحلاقين</button><button data-page="settings" data-ar="⚙　إعدادات الصالون" data-en="⚙　Salon settings">⚙　إعدادات الصالون</button></nav><div class="aside-note"><strong data-ar="مرحلة التأسيس" data-en="Foundation phase">مرحلة التأسيس</strong><span data-ar="لوحة التشغيل مرتبطة بقاعدة البيانات. رفع الوسائط وربط الموقع العام وQR ستُضاف بعد الاختبارات." data-en="The workspace is connected to the database. Media uploads, public-site binding and QR come after testing.">لوحة التشغيل مرتبطة بقاعدة البيانات. رفع الوسائط وربط الموقع العام وQR ستُضاف بعد الاختبارات.</span></div></aside>
 <main><div id="globalNotice" class="notice hidden" role="status" aria-live="polite"></div>
@@ -54,7 +71,7 @@ function notice(id,msg,kind=""){const e=$(id);e.textContent=msg;e.className="not
 function clear(id){$(id)?.classList.add("hidden")}
 function toast(msg){const e=$("toast");e.textContent=msg;e.classList.remove("hidden");clearTimeout(toast.timer);toast.timer=setTimeout(()=>e.classList.add("hidden"),3500)}
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function show(view){["authView","onboardingView","workspaceView","mobileNav"].forEach(id=>$(id).classList.toggle("hidden",id!==view&&!(view==="workspaceView"&&id==="mobileNav")));$("logout").classList.toggle("hidden",!state.session);$("userEmail").classList.toggle("hidden",!state.session);$("userEmail").textContent=state.session?.user?.email||""}
+function show(view){["authView","onboardingView","workspaceView","mobileNav"].forEach(id=>{const el=$(id);if(el)el.classList.toggle("hidden",id!==view&&!(view==="workspaceView"&&id==="mobileNav"))});$("logout").classList.toggle("hidden",!state.session);$("userEmail").classList.toggle("hidden",!state.session);$("userEmail").textContent=state.session?.user?.email||""}
 async function renderPublicQr(){const link=$("publicSiteLink"),open=$("openPublicSite"),canvas=$("publicQrCanvas"),download=$("downloadQr");if(!state.salon||!link||!canvas)return;const url=new URL("/",window.location.origin);url.searchParams.set("salon",state.salon.slug);link.value=url.href;open.href=url.href;download.disabled=true;try{const mod=await import("https://esm.sh/qrcode@1.5.4");await mod.toCanvas(canvas,url.href,{width:220,margin:2,color:{dark:"#171815",light:"#ffffff"}});download.disabled=false;$("qrNotice").textContent=ar()?"الباركود جاهز. امسحه بهاتف آخر لاختبار فتح الموقع.":"QR ready. Scan it with another phone to test the public site."}catch(error){$("qrNotice").textContent=ar()?"تعذر تحميل مولّد الباركود. استخدم الرابط العام أعلاه مؤقتًا.":"QR generator could not load. Use the public URL above for now.";console.warn("QR generation unavailable",error)}}
 function lang(){document.documentElement.lang=state.lang;document.documentElement.dir=ar()?"rtl":"ltr";document.querySelectorAll("[data-ar][data-en]").forEach(e=>{e.textContent=e.dataset[state.lang]});$("langToggle").textContent=ar()?"EN ↗":"عربي ↗";$("authSubmit").textContent=t(state.mode==="login"?"login":"signup");renderAll();if(state.salon)chrome()}
 function mode(m){state.mode=m;$("loginTab").classList.toggle("active",m==="login");$("signupTab").classList.toggle("active",m==="signup");$("authSubmit").textContent=t(m==="login"?"login":"signup");$("password").autocomplete=m==="signup"?"new-password":"current-password";clear("authNotice")}
