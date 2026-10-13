@@ -1,0 +1,45 @@
+name: Supabase RLS integration tests
+
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/supabase-rls.yml"
+  push:
+    branches:
+      - feat/tenant-authorization-rls-tests
+    paths:
+      - "supabase/**"
+      - ".github/workflows/supabase-rls.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-rls-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rls-tests:
+    name: Local PostgreSQL RLS / pgTAP
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start disposable local Supabase database
+        run: supabase start -x studio,inbucket,edge-runtime,logflare,vector
+
+      - name: Run database integration tests
+        run: supabase test db
+
+      - name: Stop local Supabase
+        if: always()
+        run: supabase stop --no-backup
