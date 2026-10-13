@@ -48,5 +48,25 @@ try {
   rmSync(tempDir, { recursive: true, force: true });
 }
 
+const ownerHtml = readFileSync(resolve("owner/index.html"), "utf8");
+const ownerOnboardingContracts = [
+  ['onboarding view', /id="onboardingView"/],
+  ['onboarding form', /id="onboardingForm"/],
+  ['onboarding notice', /id="onboardingNotice"/],
+  ['salon Arabic name input', /id="salonNameAr"/],
+  ['salon English name input', /id="salonNameEn"/],
+  ['salon slug input', /id="salonSlug"/],
+  ['create salon submit button', /id="createSalon"/],
+  ['null-safe view switching', /const el=\$\(id\);if\(el\)el\.classList\.toggle\("hidden"/]
+];
+for (const [label, pattern] of ownerOnboardingContracts) {
+  if (!pattern.test(ownerHtml)) {
+    failures++;
+    process.stderr.write("[owner onboarding regression] Missing " + label + "\\n");
+  } else {
+    process.stdout.write("[owner onboarding ok] " + label + "\\n");
+  }
+}
+
 if (failures) process.exit(1);
 process.stdout.write("Static quality checks passed.\n");
