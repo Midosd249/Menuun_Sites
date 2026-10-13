@@ -69,3 +69,13 @@ test("marketing and staged account routes remain public while private routes fai
   assert.match(read("../app/login/page.tsx"), /export \{ default \} from "\.\.\/page"/);
   assert.match(read("../app/signup/page.tsx"), /export \{ default \} from "\.\.\/page"/);
 });
+
+
+test("Vercel upload exclusions are root-anchored and preserve lib/supabase SSR clients", () => {
+  const vercelignore = read("../.vercelignore");
+  assert.match(vercelignore, /^\\/supabase\\/$/m);
+  assert.doesNotMatch(vercelignore, /^supabase\\/$/m);
+  assert.match(vercelignore, /^\\/tests\\/$/m);
+  assert.match(vercelignore, /^\\/docs\\/$/m);
+  assert.match(read("../lib/supabase/server.ts"), /createServerClient/);
+});
