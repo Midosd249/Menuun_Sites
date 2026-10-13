@@ -108,7 +108,7 @@ select is_empty(
 );
 select is_empty(
   $$update public.media_assets set is_public = true
-    where id = '82000000-0000-4000-8000-000000000002' returning id$,
+    where id = '82000000-0000-4000-8000-000000000002' returning id$$,
   'owner A cannot mutate a media record in another tenant'
 );
 
@@ -151,8 +151,8 @@ select is_empty(
   'owner B cannot read a storage object belonging to salon A'
 );
 select throws_ok(
-  $insert into storage.objects (bucket_id, name)
-    values ('salon-media', '22000000-0000-4000-8000-000000000001/gallery/forbidden.webp')$,
+  $$insert into storage.objects (bucket_id, name)
+    values ('salon-media', '22000000-0000-4000-8000-000000000001/gallery/forbidden.webp')$$,
   '42501', null,
   'owner B cannot upload into salon A storage path'
 );
