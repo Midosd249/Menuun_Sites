@@ -38,7 +38,7 @@ jobs:
         run: supabase start -x studio,mailpit,edge-runtime,logflare,vector
 
       - name: Run database integration tests
-        run: supabase test db --local supabase/tests/tenant_authorization.test.sql
+        run: supabase test db --local supabase/tests/tenant_authorization.test.sql supabase/tests/security_surface.test.sql
 
       - name: Stop local Supabase
         if: always()
