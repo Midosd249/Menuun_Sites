@@ -13,7 +13,7 @@ stack. They do not connect to the hosted project and do not require project secr
 
 ```sh
 supabase start
-supabase test db
+supabase test db supabase/tests/tenant_authorization.test.sql
 supabase stop --no-backup
 ```
 
@@ -33,3 +33,5 @@ before treating tenant authorization as production-ready.
 Public published content intentionally has different visibility from private
 workspace data. Tests should use unpublished fixture salons when asserting
 private tenant boundaries.
+
+The explicit file argument is intentional: the repository also contains legacy smoke scripts that use `DO` blocks rather than pgTAP and are not collected by this initial pgTAP gate.
