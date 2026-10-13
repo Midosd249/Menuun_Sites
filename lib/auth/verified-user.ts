@@ -5,13 +5,18 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 export type VerifiedClaims = Record<string, unknown> & { sub: string };
 
 export async function getVerifiedClaims(): Promise<VerifiedClaims | null> {
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.auth.getClaims();
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.getClaims();
+    const claims = data?.claims;
 
-  const claims = data?.claims;
-  if (error || !claims || typeof claims.sub !== "string") {
+    if (error || !claims || typeof claims.sub !== "string") {
+      return null;
+    }
+
+    return claims as VerifiedClaims;
+  } catch {
+    // Missing configuration and auth/network failures must fail closed.
     return null;
   }
-
-  return claims as VerifiedClaims;
 }
