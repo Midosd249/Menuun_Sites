@@ -77,6 +77,10 @@ export async function middleware(request: NextRequest) {
     return loginRedirect(request, response, "login_required");
   }
 
+  if (privateRoute) {
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
+  }
+
   return response;
 }
 
