@@ -12,13 +12,14 @@ insert into auth.users (
   ('10000000-0000-4000-8000-000000000002', 'authenticated', 'authenticated', 'manager-a@example.test', '', now(), '{}'::jsonb, '{}'::jsonb, now(), now()),
   ('10000000-0000-4000-8000-000000000003', 'authenticated', 'authenticated', 'reception-a@example.test', '', now(), '{}'::jsonb, '{}'::jsonb, now(), now()),
   ('10000000-0000-4000-8000-000000000004', 'authenticated', 'authenticated', 'inactive-a@example.test', '', now(), '{}'::jsonb, '{}'::jsonb, now(), now()),
-  ('10000000-0000-4000-8000-000000000005', 'authenticated', 'authenticated', 'outsider@example.test', '', now(), '{}'::jsonb, '{}'::jsonb, now(), now())
+  ('10000000-0000-4000-8000-000000000005', 'authenticated', 'authenticated', 'outsider@example.test', '', now(), '{}'::jsonb, '{}'::jsonb, now(), now()),
+  ('10000000-0000-4000-8000-000000000006', 'authenticated', 'authenticated', 'owner-b@example.test', '', now(), '{}'::jsonb, '{}'::jsonb, now(), now())
 on conflict (id) do nothing;
 
 insert into public.salons (id, slug, name_ar, name_en, is_active, is_published, created_by)
 values
   ('20000000-0000-4000-8000-000000000001', 'rls-salon-a', 'اختبار أ', 'RLS Salon A', true, false, '10000000-0000-4000-8000-000000000001'),
-  ('20000000-0000-4000-8000-000000000002', 'rls-salon-b', 'اختبار ب', 'RLS Salon B', true, false, '10000000-0000-4000-8000-000000000002')
+  ('20000000-0000-4000-8000-000000000002', 'rls-salon-b', 'اختبار ب', 'RLS Salon B', true, false, '10000000-0000-4000-8000-000000000006')
 on conflict (id) do nothing;
 
 insert into public.salon_members (salon_id, user_id, role, is_active)
@@ -27,7 +28,7 @@ values
   ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000002', 'manager', true),
   ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000003', 'receptionist', true),
   ('20000000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000004', 'manager', false),
-  ('20000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000002', 'owner', true)
+  ('20000000-0000-4000-8000-000000000002', '10000000-0000-4000-8000-000000000006', 'owner', true)
 on conflict (salon_id, user_id) do nothing;
 
 insert into public.services (id, salon_id, name_ar, name_en, price_sar, duration_minutes)
@@ -76,9 +77,9 @@ select throws_ok(
   'receptionist cannot create or manage services'
 );
 
-set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000002';
+set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000006';
 select is_empty(
-  $$update public.services
+  $update public.services
        set name_en = 'cross-tenant mutation'
      where id = '30000000-0000-4000-8000-000000000001'
      returning id$$,
