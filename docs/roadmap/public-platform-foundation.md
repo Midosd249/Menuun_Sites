@@ -8,7 +8,7 @@
 
 ## 1. Product direction
 
-Menuun becomes a professional, Arabic-first, bilingual SaaS platform for appointment-led businesses, starting with salons and barbershops. The public domain `www.menuun.com` should explain the product, establish trust, and provide clear routes to sign in or create an account. The current Atelier 09 salon page is a template candidate, not the main homepage. It has been preserved at `templates/atelier-09/index.html` while the public entry point is replaced.
+Menuun becomes a professional, Arabic-first, bilingual SaaS platform for appointment-led businesses, starting with salons and barbershops. The public domain `www.menuun.com` should explain the product, establish trust, and provide clear routes to sign in or create an account. Individual businesses should be publishable on tenant subdomains such as `site.menuun.com` (and, later, verified custom domains) rather than being restricted to a shared URL path. The current Atelier 09 salon page is a template candidate, not the main homepage. It has been preserved at `templates/atelier-09/index.html` while the public entry point is replaced.
 
 The platform should follow Menu V3's engineering patterns where appropriate: React + TypeScript, Vite/TanStack-compatible routing strategy, server-side authentication, durable persistence, deterministic authorization, tenant isolation, tests-first changes, documented release evidence, and a disciplined specialist workflow. This is an architectural reference, not a blind file-for-file copy. Menuun has a different domain model (businesses, services, staff, appointment slots, booking requests, template catalog).
 
@@ -182,3 +182,11 @@ No real authentication, tenant provisioning, booking API, schema changes, Storag
 - Vercel preview `dpl_2to2zUtiik8GebE5c3xpWuc13hRB` reached READY; HTTP checks returned 200 for marketing, login, signup, owner, Atelier 09, robots and sitemap paths.
 - Account routes have distinct metadata and are excluded from indexing.
 - Remaining acceptance gap is real-browser visual and interaction QA; no screenshots or mobile-device behavior are claimed as verified.
+
+## 8. Domain and template direction — updated 2026-10-13
+- **Marketing domain:** `www.menuun.com` is the intended public homepage domain; its current DNS/Vercel attachment remains unverified and must not be changed automatically.
+- **Tenant publishing model:** use a tenant slug as a subdomain, for example `site.menuun.com`. Resolve the requested host to a published tenant using server-side host parsing and a canonical tenant/domain mapping. Do not trust an arbitrary client-provided tenant ID as authorization.
+- **Reserved hosts:** keep platform hosts such as `www`, `app`, `api`, and `auth` out of tenant slug allocation.
+- **Domain verification:** before supporting a customer's external custom domain, require proof of control, unique mapping, canonical redirects, TLS readiness, and safe handling of host-header spoofing.
+- **Template catalog for the current public showcase:** exactly three starting points — Essential, Editorial, and Atelier. The existing Atelier 09 HTML remains a preserved legacy page; the showcase does not imply the other two are fully published product templates.
+- **Current delivery evidence:** CI run `38324828524` passed for commit `27155a3`; the matching Vercel preview is READY and HTTP checks pass. Browser visual QA remains outstanding.

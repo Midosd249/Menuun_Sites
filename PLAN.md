@@ -13,10 +13,14 @@
 - [x] Re-run CI after setting the Vercel framework preset to Next.js (run 38322300996 passed).
 - [x] Verify the explicit `.next` output-directory override: GitHub Actions run 38322471413 passed and the preview HTTP smoke checks returned 200 for all nine target paths.
 - [x] Re-run CI after account-route metadata refinement (GitHub Actions run 38322706018 passed).
-- [ ] Inspect CI for the current documentation-only evidence refresh commit before merge.
-- [ ] Verify root, login, signup, owner and Atelier 09 template routes in a real browser. First preview exposed a Vercel framework-preset mismatch; `vercel.json` now explicitly selects Next.js.
+- [x] Import the full Arabic/English SVG brand assets from Menu V3 and wire the correct logo by selected language.
+- [x] Curate the homepage template showcase to exactly three: Essential, Editorial, Atelier.
+- [x] Add restrained CSS motion and explicit reduced-motion handling without adding a new dependency.
+- [x] GitHub Actions run 38324828524 passed tests, typecheck, build and static checks for commit 27155a3.
+- [x] Latest preview is READY; all seven key routes and both new logo asset URLs returned HTTP 200.
+- [ ] Verify root, login, signup, owner and Atelier 09 template routes in a real browser; HTTP routing has been verified, but no browser session/screenshots have been captured.
 - [ ] Verify desktop/tablet/mobile rendering, Arabic RTL, English LTR, keyboard focus and reduced motion.
-- [ ] Recheck Vercel quota and record direct preview deployment evidence.
+- [ ] Record browser screenshots and interaction QA evidence before merge.
 
 ## Later phases — not started
 1. Reconcile the actual Supabase project schema/migration history and choose the auth provider from official current documentation.

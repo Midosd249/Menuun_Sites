@@ -1,9 +1,17 @@
 # Project State — Menuun
 
 **Updated:** 2026-10-13  
-**Implementation status:** IMPLEMENTATION_IN_PROGRESS — Next.js migration CI and preview HTTP routing verified; browser visual QA pending  
+**Implementation status:** IMPLEMENTATION_IN_PROGRESS — full Arabic/English SVG brand assets restored, landing page curated to three templates, restrained CSS motion added; CI and preview HTTP checks pass; browser visual QA pending  
 **Active branch:** `feat/public-platform-foundation`  
 **Open PR:** [#5](https://github.com/Midosd249/Menuun_Sites/pull/5) (draft)
+
+## Latest verified update — 2026-10-13
+- Imported the original Arabic and English Menuun SVG wordmarks from `Midosd249/Menu_V3` into `assets/brand/menuun/final/`; the build-copy script publishes them under `/assets/brand/menuun/final/`.
+- Public template showcase now contains exactly three options: Essential, Editorial, and Atelier.
+- Added restrained CSS entrance/hover motion with explicit `prefers-reduced-motion` handling; no animation dependency was added.
+- **PASS:** GitHub Actions run `38324828524` on commit `27155a392d568813fc58c0882497f52b89f93a50` passed contract tests, typecheck, production build and static checks.
+- **PASS:** Vercel preview `https://menuun-sites-2jnihdgt8-midosd2s-projects.vercel.app/` is READY for the code commit. HTTP 200 confirmed for `/`, `/login/`, `/signup/`, `/owner/`, `/templates/atelier-09/`, `/robots.txt`, and `/sitemap.xml`; both imported SVG logo assets return HTTP 200. The root HTML contains exactly three template cards and no Vite entry.
+- **NOT VERIFIED:** no actual browser screenshots, responsive layout inspection, keyboard-interaction checks, or client-side language/FAQ/mobile-menu interaction tests were available. Keep browser visual QA as the next task.
 
 ## Active milestone
 Phase 1 — Next.js public-platform foundation.
