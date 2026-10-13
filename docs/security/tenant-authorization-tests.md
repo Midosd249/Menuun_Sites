@@ -40,11 +40,11 @@ with hosted project credentials.
 - `tenant_surface_authorization.test.sql`: barber, business-hours, barber-service,
   site-settings, media metadata, notification-recipient, and Storage object-path
   authorization. It checks manager/owner writes, receptionist restrictions, and
-  cross-tenant Storage read/delete denial.
+  cross-tenant Storage read denial and upload-path isolation.
 
 This is an expanded regression baseline, not a complete authorization sign-off.
 It does not yet prove every CRUD operation on every tenant-owned table, all
-Storage upload/update/delete edge cases, every privileged function's security
+Storage update/delete authorization through the Storage API, every privileged function's security
 properties, or all business-logic invariants. Expand the suite before treating
 tenant authorization as production-ready.
 
