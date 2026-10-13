@@ -87,7 +87,7 @@ select throws_ok(
 
 set local request.jwt.claim.sub = '10000000-0000-4000-8000-000000000006';
 select is_empty(
-  $update public.services
+  $$update public.services
        set name_en = 'cross-tenant mutation'
      where id = '30000000-0000-4000-8000-000000000001'
      returning id$$,
