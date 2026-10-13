@@ -13,13 +13,15 @@ stack. They do not connect to the hosted project and do not require project secr
 
 ```sh
 supabase start
-supabase test db supabase/tests/tenant_authorization.test.sql
+supabase test db --local supabase/tests/tenant_authorization.test.sql
 supabase stop --no-backup
 ```
 
-The first run downloads the local Supabase container images. The test suite runs
-inside a transaction and rolls back deterministic fixtures. Do not replace the
-local project configuration with hosted project credentials.
+The explicit `--local` flag ensures the command targets the disposable local
+database rather than a linked hosted project. The first run downloads the local
+Supabase container images. The test suite uses deterministic fixtures and rolls
+back its test transaction. Do not replace the local project configuration with
+hosted project credentials.
 
 ## Current scope and limitations
 
@@ -34,4 +36,6 @@ Public published content intentionally has different visibility from private
 workspace data. Tests should use unpublished fixture salons when asserting
 private tenant boundaries.
 
-The explicit file argument is intentional: the repository also contains legacy smoke scripts that use `DO` blocks rather than pgTAP and are not collected by this initial pgTAP gate.
+The explicit file argument is intentional: the repository also contains legacy
+smoke scripts that use `DO` blocks rather than pgTAP and are not collected by
+this initial pgTAP gate.
