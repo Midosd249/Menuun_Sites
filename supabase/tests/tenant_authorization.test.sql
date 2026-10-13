@@ -1,6 +1,6 @@
 begin;
 
-select plan(17);
+select plan(18);
 
 -- Deterministic users and two isolated salons. All fixture writes run as the
 -- local database owner before switching into the application roles.
