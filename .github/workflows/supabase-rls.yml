@@ -35,7 +35,7 @@ jobs:
           version: latest
 
       - name: Start disposable local Supabase database
-        run: supabase start -x studio,inbucket,edge-runtime,logflare,vector
+        run: supabase start -x studio,mailpit,edge-runtime,logflare,vector
 
       - name: Run database integration tests
         run: supabase test db --local supabase/tests/tenant_authorization.test.sql
