@@ -96,7 +96,8 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
       setNotice({ kind: "error", text: "حدّث المواعيد واختر وقتًا متاحًا." });
       return;
     }
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     const name = String(form.get("customer_name") ?? "").trim();
     const phone = String(form.get("customer_phone") ?? "").trim();
     const note = String(form.get("customer_note") ?? "").trim();
@@ -138,7 +139,7 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
     setAppointmentId(String(data));
     setNotice({ kind: "success", text: "وصل طلبك بنجاح. حالة الطلب: بانتظار تأكيد الصالون." });
     setSelectedSlot("");
-    (event.currentTarget as HTMLFormElement).reset();
+    formElement.reset();
   }
 
   if (!services.length) {
