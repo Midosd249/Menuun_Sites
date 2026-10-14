@@ -169,13 +169,13 @@ export default function PublicBookingForm({ slug, services, barbers, timezone, l
       </div>
       <div className={styles.slotBlock}><div className={styles.slotHeading}><h3>{english ? "Available times" : "الأوقات المتاحة"}</h3><span>{date}</span></div>
         {loadingSlots ? <p className={styles.bookingHint} role="status">{english ? "Loading available times..." : "جارٍ تحميل المواعيد..."}</p>
-          : uniqueSlots.length ? <div className={styles.slotGrid}>{uniqueSlots.map((slot) => <button key={slot.starts_at} type="button" className={selectedSlot === slot.starts_at ? styles.slotSelected : styles.slotButton} onClick={() => setSelectedSlot(slot.starts_at)} aria-pressed={selectedSlot === slot.starts_at}><strong>{localDateTime(slot.starts_at, timezone || "Asia/Riyadh", language).split("، ").slice(-1)[0]}</strong><small>{slot.barber_name}</small></button>)}</div>
+          : uniqueSlots.length ? <div className={styles.slotGrid}>{uniqueSlots.map((slot) => <button key={slot.starts_at} type="button" className={selectedSlot === slot.starts_at ? styles.slotSelected : styles.slotButton} onClick={() => setSelectedSlot(slot.starts_at)} aria-pressed={selectedSlot === slot.starts_at}><strong>{localDateTime(slot.starts_at, timezone || "Asia/Riyadh", language).split(english ? ", " : "، ").slice(-1)[0]}</strong><small>{slot.barber_name}</small></button>)}</div>
           : <p className={styles.bookingHint}>{english ? "No appointments available that day. Try another date." : "لا توجد مواعيد متاحة في هذا اليوم. جرّب تاريخًا آخر."}</p>}
       </div>
       <div className={styles.bookingFields}>
         <label>{english ? "Full name" : "الاسم الكامل"}<input name="customer_name" autoComplete="name" minLength={2} maxLength={120} required /></label>
         <label>{english ? "Phone number" : "رقم الجوال"}<input name="customer_phone" type="tel" autoComplete="tel" inputMode="tel" minLength={8} maxLength={24} placeholder="+966 5X XXX XXXX" required /></label>
-        <label className={styles.noteField}>{english ? "Notes (optional)" : "ملاحظات (اختياري)"}<textarea name="customer_note" maxLength={1000} rows={3} placeholder=english ? "Anything that will help us prepare for your visit" : "أي تفاصيل تساعدنا على تجهيز زيارتك" /></label>
+        <label className={styles.noteField}>{english ? "Notes (optional)" : "ملاحظات (اختياري)"}<textarea name="customer_note" maxLength={1000} rows={3} placeholder={english ? "Anything that will help us prepare for your visit" : "أي تفاصيل تساعدنا على تجهيز زيارتك"} /></label>
       </div>
       {notice?.kind === "error" && <p className={styles.bookingError} role="alert">{notice.text}</p>}
       <button type="submit" className={styles.bookingSubmit} disabled={submitting || loadingSlots || !selectedSlot}>{submitting ? english ? "Sending request..." : "جارٍ إرسال الطلب..." : english ? "Submit booking request ↙" : "تأكيد طلب الموعد ↙"}</button>
