@@ -1,6 +1,6 @@
 begin;
 
-select plan(20);
+select plan(28);
 
 -- Every tenant-owned table must keep row-level security enabled.
 select ok((select relrowsecurity from pg_class where oid = 'public.salons'::regclass), 'RLS enabled on salons');
@@ -52,6 +52,41 @@ select ok(
 select ok(
   has_function_privilege('anon', 'public.get_public_booking_slots(text,uuid,date,uuid)', 'EXECUTE'),
   'anon can execute the privacy-preserving public availability RPC'
+);
+
+-- Table grants and column-level privileges are a second security boundary;
+-- RLS policies cannot compensate for accidentally broad SQL grants.
+select ok(
+  not has_table_privilege('anon', 'public.appointments', 'SELECT'),
+  'anonymous role cannot select appointment/customer records directly'
+);
+select ok(
+  not has_table_privilege('anon', 'public.appointments', 'INSERT'),
+  'anonymous role cannot insert appointments outside the validated RPC'
+);
+select ok(
+  not has_column_privilege('anon', 'public.site_settings', 'draft_content', 'SELECT'),
+  'anonymous role cannot read unpublished site draft content'
+);
+select ok(
+  has_column_privilege('anon', 'public.site_settings', 'published_content', 'SELECT'),
+  'anonymous role can read only the published site content column'
+);
+select ok(
+  has_column_privilege('authenticated', 'public.site_settings', 'draft_content', 'UPDATE'),
+  'authenticated clients can update draft content subject to manager RLS'
+);
+select ok(
+  not has_column_privilege('authenticated', 'public.site_settings', 'published_content', 'UPDATE'),
+  'authenticated clients cannot directly overwrite published site content'
+);
+select ok(
+  not has_column_privilege('authenticated', 'public.appointments', 'customer_phone', 'UPDATE'),
+  'authenticated clients cannot rewrite appointment customer identity fields'
+);
+select ok(
+  has_column_privilege('authenticated', 'public.appointments', 'status', 'UPDATE'),
+  'authenticated clients can update appointment status subject to role and transition checks'
 );
 
 select * from finish();
