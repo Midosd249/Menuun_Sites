@@ -106,3 +106,16 @@ Replace the legacy standalone owner dashboard (`owner/index.html`) with a fully 
 ## Handoff prompt for a new ChatGPT conversation
 
 Continue the Menuun migration from this document: `docs/MENUUN_NEXTJS_MIGRATION_PLAN.md` in repository `Midosd249/Menuun_Sites`, branch `feat/tenant-authorization-rls-tests`. Read this plan and inspect the current repository and latest Vercel deployment before changing code. The goal is a complete native Next.js App Router owner workspace replacing `owner/index.html`, with unified Supabase SSR auth, safe server-side authorization/RLS, polished responsive Arabic RTL mobile UX, workflow parity, tests, and a READY Vercel preview. Preserve existing users and data. Do not claim work or tests succeeded unless tool output proves it. Continue with the next unchecked phase and update this plan as implementation progresses.
+
+## Repository inventory findings (2026-10-14)
+
+- The owner workspace currently contains sign-in/sign-up UI, salon onboarding, salon switching, overview, appointments, services/prices, barber/team management, and salon settings. Confirm exact mutation/read behavior by tracing the full inline module before porting.
+- `scripts/copy-static.mjs` copies `owner/` to `public/owner`, `templates/` to `public/templates`, and brand assets to `public/assets/brand/menuun`. The build currently invokes this copy script, so legacy owner assets remain part of the delivered application.
+- `app/owner/page.tsx` and `app/owner/layout.tsx` do not currently exist on the working branch. A native owner route has not yet been implemented.
+- `app/login/page.tsx` re-exports the root marketing/account page. The login flow must be reviewed before making it the owner auth entry point, to avoid breaking the now-working sign-in.
+- Existing Supabase helpers are available in `lib/supabase/client.ts` and `lib/supabase/server.ts`; `middleware.ts` currently excludes `/owner` from its private route prefixes because the legacy app owns its own auth lifecycle.
+- The existing owner navigation exposes at least: overview, appointments, services/prices, barber/team, and salon settings. Migration must preserve these workflows, not replace them with a decorative dashboard mockup.
+
+### Inventory status
+
+Phase 0 is **in progress**, not complete. Database table names, all RLS policies, inline event handlers, storage usage, and every data mutation still need a complete trace before feature parity can be claimed.
