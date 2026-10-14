@@ -6,12 +6,11 @@
 **Last updated:** 2026-10-14
 
 ## Baseline inspected before changes
-
-- Latest pre-change branch deployment was READY for commit 587f029cccf84f0b5c5223b18b47fd60749353ed; preview: https://menuun-sites-2ttv73psi-midosd2s-projects.vercel.app. This is the previous build, not the new code.
+- Latest pre-change branch deployment was READY for commit 587f029cccf84f0b5c5223b18b47fd60749353ed; preview https://menuun-sites-2ttv73psi-midosd2s-projects.vercel.app. This is the previous build, not the new code.
 - The prior Next config rewrote /owner to legacy owner/index.html; middleware excluded owner routes from private prefixes.
 - Traced legacy sign-in/sign-up, active salon_members membership lookup, create_salon_with_owner RPC, salon switching, appointments, services, barbers, and settings.
-- Existing workflow references salon_members(user_id, salon_id, role, is_active), plus salons, appointments, services, and barbers. This is a source-code inventory, not a fresh database/RLS audit.
-- Scripts: npm run build performs static copying, TypeScript, and Next build; npm run typecheck runs TypeScript; npm test uses Node's built-in test runner.
+- Existing workflow references salon_members(user_id, salon_id, role, is_active), plus salons, appointments, services, and barbers. This is source-code inventory, not a fresh database/RLS audit.
+- npm run build performs static copying, TypeScript, and Next build; npm run typecheck runs TypeScript; npm test uses Node's built-in test runner.
 
 ## Phase 0 — Baseline and inventory: PARTIAL
 - [x] Read plan, package scripts, middleware, Supabase helpers, legacy owner workflows, and latest Vercel deployment metadata.
@@ -20,9 +19,9 @@
 
 ## Phase 1 — Auth foundation: IMPLEMENTED IN SOURCE; END-TO-END PENDING
 - [x] Reuse shared @supabase/ssr browser/server helpers and existing publishable-key configuration.
-- [x] Verify identity with server-side supabase.auth.getUser() in the owner layout; redirect missing/invalid sessions to /login/?next=%2Fowner%2F.
+- [x] Verify identity with server-side supabase.auth.getUser() in owner layout; redirect missing/invalid sessions to /login/?next=%2Fowner%2F.
 - [x] Add /owner to private middleware prefixes for SSR session refresh and unauthenticated redirects.
-- [x] Scope active tenant memberships to the current verified user and expose owner/admin/manager memberships in the workspace.
+- [x] Scope active tenant memberships to current verified user and expose owner/admin/manager memberships in workspace.
 - [ ] Verify existing account login, confirmation callback, refresh, and logout end-to-end on preview.
 
 ## Phase 2 — Native owner shell: IMPLEMENTED IN SOURCE; BUILD/DEVICE CHECKS PENDING
@@ -33,7 +32,7 @@
 
 ## Phase 3 — Workflow parity: IMPLEMENTED IN SOURCE; INTEGRATION CHECKS PENDING
 - [x] Membership-based salon loading, onboarding RPC, salon selection, dashboard stats, appointment search/filter/status updates, service creation/listing, team creation/listing, and salon settings updates.
-- [x] Scope tenant queries/mutations by salon_id; retain existing RLS as the database authorization boundary. No privileged key or replacement database introduced.
+- [x] Scope tenant queries/mutations by salon_id; retain existing RLS as database authorization boundary. No privileged key or replacement database introduced.
 - [ ] Verify live schema constraints, status transition rules, and all mutations.
 - [ ] Verify real-session success, empty, failure, and unauthorized states.
 
@@ -46,15 +45,14 @@
 ## Phase 5 — Preview, acceptance, cutover: PENDING
 - [ ] Verify a new Vercel preview is READY for the resulting commit.
 - [ ] Smoke-test authenticated/unauthenticated routes, refresh, logout, all mutations, and Arabic/English mobile layout.
-- [ ] Keep legacy page and production untouched until acceptance; rollback by restoring the previous deployment/route rewrite.
+- [ ] Keep legacy page and production untouched until acceptance; rollback by restoring previous deployment/route rewrite.
 
 ## Known limitations
-
 Files were committed through the GitHub repository API; this environment does not provide a local checkout/test runner. Tests have NOT been executed here. Vercel READY alone cannot prove authenticated database workflows or cross-tenant isolation. Reads and mutations use the shared browser Supabase client and depend on existing database RLS; server identity verification is implemented, but each live policy/role boundary still needs verification. Do not mark migration complete until unchecked acceptance items pass.
 
 ## Manual acceptance checklist
 - [ ] Existing account signs in without a second account.
-- [ ] Confirmation links return to the correct route.
+- [ ] Confirmation links return to correct route.
 - [ ] Refreshing /owner retains session.
 - [ ] Missing/expired session redirects to login with a local next path.
 - [ ] Non-members and wrong-role users cannot read or mutate tenant data.
