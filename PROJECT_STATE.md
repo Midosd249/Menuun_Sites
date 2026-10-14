@@ -1,5 +1,18 @@
 # Project State — Menuun
 
+## Latest update — 2026-10-14 (signature salon template redesign)
+- **Active branch:** `feat/salon-templates-owner-media-editor`; **draft PR:** [#13](https://github.com/Midosd249/Menuun_Sites/pull/13).
+- **Visual implementation:** the three public salon templates now have separate art direction rather than color-only variants: Atelier (dark, high-contrast editorial), Oasis (botanical light surfaces and image-led service cards), and Rose Studio (fashion-editorial rose palette, arched photography, boutique service cards).
+- **Imagery:** replaced barber-shop-biased default service/hero photos with salon/beauty-oriented Unsplash source images; owner-provided gallery and service photos remain higher priority. Failed image URLs are hidden gracefully so they do not display broken-image icons.
+- **Responsive and motion:** introduced template-specific desktop/tablet/mobile service grids and explicit reduced-motion overrides; preserved the existing booking RPCs and Supabase boundaries.
+- **Reference repositories reviewed:** `Midosd249/Menu_V3` (design intelligence, RTL/accessibility and visual QA gates), `Midosd249/Demo_Site` (truthful builder/preview data boundaries), `Midosd249/Menu-V2-Sandbox` (tenant-aware image management and responsive RTL patterns), and `Midosd249/ai-agent-foundation` (repository-first workflow, minimal specialist routing, verification and state continuity). Patterns were adapted, not copied wholesale; restaurant schemas and incompatible auth/booking stacks were not imported.
+- **External research:** Exa surfaced salon-focused MIT-licensed template candidates; they were treated as feature/art-direction references only. Refero remains unavailable (`NO_SUBSCRIPTION`). Stock images are visual defaults, not representations of the actual business; owners should replace them with authentic salon photos.
+- **Tests added:** static regression assertions for three distinct template art directions, salon-oriented imagery and broken-image fallback handling.
+- **Verification status:** implementation commits pushed; CI, current-head Vercel deployment and real-browser visual QA still need verification. No claim of error-free runtime or pixel-perfect visual QA until those gates pass.
+- **Database/release safety:** Supabase migration remains unapplied; PR remains draft and unmerged. Do not apply migration or deploy production without explicit approval.
+
+---
+
 ## Latest verified update — 2026-10-14 (salon media and discovery links)
 - **Active branch:** `feat/salon-templates-owner-media-editor`; **draft PR:** [#13](https://github.com/Midosd249/Menuun_Sites/pull/13).
 - **Implemented in source:** service image URLs with fallback photography; barber portraits with explicitly labeled illustrative fallback photos; owner uploads for service photos and barber portraits; owner-managed Instagram, TikTok, Snapchat, Facebook, Google Maps and website links; public map directions and social links; empty-state sample imagery that tells owners to replace it with real salon content.
