@@ -1,5 +1,17 @@
 # Project State — Menuun
 
+## Latest verified update — 2026-10-14 (salon media and discovery links)
+- **Active branch:** `feat/salon-templates-owner-media-editor`; **draft PR:** [#13](https://github.com/Midosd249/Menuun_Sites/pull/13).
+- **Implemented in source:** service image URLs with fallback photography; barber portraits with explicitly labeled illustrative fallback photos; owner uploads for service photos and barber portraits; owner-managed Instagram, TikTok, Snapchat, Facebook, Google Maps and website links; public map directions and social links; empty-state sample imagery that tells owners to replace it with real salon content.
+- **Schema migration is staged, not applied:** `supabase/migrations/20261014120000_salon_templates_public_media.sql` now adds service image metadata and social/location URL fields, in addition to template selection and public-media storage policies. Owner upload/persistent links require the migration.
+- **Open-source review:** inspected the MIT-licensed Opencals Frisor Next.js barbershop template and MIT-licensed ShearCraft booking project as reference candidates. Their booking/backend/auth implementations are not copied because they would duplicate or conflict with Menuun's existing Supabase/RPC architecture. The private `Midosd249/ai-agent-foundation` was used as the workflow/security contract; no AI runtime or provider integration was added because the feature is deterministic UI/data management.
+- **Refero status:** searches returned `NO_SUBSCRIPTION`; no Refero styles/screens were retrieved. Exa research and repository evidence informed the feature scope. See `docs/design-research-log.md`.
+- **Verification:** latest known CI on commit `24eb3fcd6c6cc0c5f641b25e899e61ab93341cbe` passed all 36 tests but failed TypeScript on the legacy-schema fallback; that type error was fixed in subsequent commit `d865fb4`. Further layout changes were committed through `b6375895b9df52bf1c77e42dec67ca8e00a9f3e7`; latest CI for that head is pending/has not yet been confirmed.
+- **Release blockers:** Vercel previously rate-limited new preview builds; current shareable preview is the earlier READY build and does not yet include these latest media/social changes. Do not claim these new features are live until a fresh preview is READY and checked.
+- **Not done:** no Supabase migration applied; no production merge/deployment; no actual owner-upload test, social-link click test, visual browser QA or mobile screenshot review yet.
+- **Next task:** confirm latest Static Quality and Supabase RLS workflow results; fix any regressions; secure a fresh preview build and verify public/owner paths; then request approval before applying the migration.
+
+
 **Updated:** 2026-10-13  
 **Implementation status:** IMPLEMENTATION_IN_PROGRESS — full Arabic/English SVG brand assets restored, landing page curated to three templates, restrained CSS motion added; CI and preview HTTP checks pass; browser visual QA pending  
 **Active branch:** `feat/public-platform-foundation`  
