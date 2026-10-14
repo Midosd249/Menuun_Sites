@@ -18,14 +18,14 @@ function dateInZone(timeZone: string) {
   return part("year") + "-" + part("month") + "-" + part("day");
 }
 
-function localDateTime(value: string, timeZone: string) {
+function localDateTime(value: string, timeZone: string, language: "ar" | "en") {
   return new Intl.DateTimeFormat(language === "en" ? "en-US" : "ar-SA", {
     timeZone, weekday: "short", day: "numeric", month: "short",
     hour: "numeric", minute: "2-digit",
   }).format(new Date(value));
 }
 
-function errorMessage(message: string) {
+function errorMessage(message: string, english: boolean) {
   if (/SLOT|EXCLUSION|duplicate key|no rows/i.test(message)) return english ? "That time is no longer available. Refresh and choose another." : "هذا الموعد لم يعد متاحًا. حدّث الأوقات واختر موعدًا آخر.";
   if (/SALON_NOT_AVAILABLE|SERVICE_NOT_AVAILABLE|BARBER_NOT_AVAILABLE/i.test(message)) return english ? "The salon or service is no longer available." : "تعذّر إتمام الطلب لأن الصالون أو الخدمة لم تعد متاحة.";
   if (/OUTSIDE_BUSINESS_HOURS|INVALID_APPOINTMENT_TIME|INVALID_AVAILABILITY_DATE/i.test(message)) return english ? "That time is unavailable. Choose another time." : "الوقت المختار غير متاح. اختر وقتًا آخر.";
@@ -134,7 +134,7 @@ export default function PublicBookingForm({ slug, services, barbers, timezone, l
     });
     setSubmitting(false);
     if (error || !data) {
-      setNotice({ kind: "error", text: errorMessage(error?.message ?? "BOOKING_FAILED") });
+      setNotice({ kind: "error", text: errorMessage(error?.message ?? "BOOKING_FAILED", english) });
       setSelectedSlot("");
       const refreshed = await db.rpc("get_public_booking_slots", {
         p_salon_slug: slug, p_service_id: serviceId, p_date: date, p_barber_id: barberId || null,
@@ -149,37 +149,37 @@ export default function PublicBookingForm({ slug, services, barbers, timezone, l
   }
 
   if (!services.length) {
-    return <section className={styles.bookingSection} id="booking"><p className={styles.eyebrow}>الحجز المباشر</p><h2>ابدأ باختيار خدمتك.</h2><p className={styles.bookingHint}>لا توجد خدمات متاحة للحجز حاليًا. تواصل مع الصالون للاستفسار.</p></section>;
+    return <section className={styles.bookingSection} id="booking"><p className={styles.eyebrow}>{english ? "BOOKING" : "الحجز المباشر"}</p><h2>{english ? "Start by choosing a service." : "ابدأ باختيار خدمتك."}</h2><p className={styles.bookingHint}>{english ? "No services are available for online booking. Contact the salon for assistance." : "لا توجد خدمات متاحة للحجز حاليًا. تواصل مع الصالون للاستفسار."}</p></section>;
   }
 
   return <section className={styles.bookingSection} id="booking">
     <div className={styles.sectionHeading}>
-      <div><p className={styles.eyebrow}>الحجز المباشر</p><h2>موعدك القادم، بخطوات بسيطة.</h2></div>
-      <p>اختر الخدمة والوقت المناسب. سيصل طلبك إلى الصالون بانتظار التأكيد.</p>
+      <div><p className={styles.eyebrow}>{english ? "BOOKING" : "الحجز المباشر"}</p><h2>{english ? "Your next appointment, made simple." : "موعدك القادم، بخطوات بسيطة."}</h2></div>
+      <p>{english ? "Choose a service and a convenient time. The salon will review your request." : "اختر الخدمة والوقت المناسب. سيصل طلبك إلى الصالون بانتظار التأكيد."}</p>
     </div>
     {notice?.kind === "success" ? <div className={styles.bookingSuccess} role="status">
-      <span className={styles.successMark}>✓</span><h3>تم إرسال طلب الحجز</h3><p>{notice.text}</p>
-      {appointmentId && <small>رقم الطلب: {appointmentId.slice(0, 8).toUpperCase()}</small>}
-      <button type="button" className={styles.secondaryButton} onClick={() => { setNotice(null); setAppointmentId(""); }}>طلب موعد آخر</button>
+      <span className={styles.successMark}>✓</span><h3>{english ? "Booking request sent" : "تم إرسال طلب الحجز"}</h3><p>{notice.text}</p>
+      {appointmentId && <small>{english ? "Request ID: " : "رقم الطلب: "}{appointmentId.slice(0, 8).toUpperCase()}</small>}
+      <button type="button" className={styles.secondaryButton} onClick={() => { setNotice(null); setAppointmentId(""); }}>{english ? "Request another appointment" : "طلب موعد آخر"}</button>
     </div> : <form className={styles.bookingForm} onSubmit={submit}>
       <div className={styles.bookingFields}>
-        <label>الخدمة<select value={serviceId} onChange={(event) => setServiceId(event.target.value)} required>{services.map((service) => <option key={service.id} value={service.id}>{service.name_ar} · {service.duration_minutes} دقيقة</option>)}</select></label>
-        <label>مقدم الخدمة<select value={barberId} onChange={(event) => setBarberId(event.target.value)}><option value="">أقرب موعد متاح</option>{barbers.map((barber) => <option key={barber.id} value={barber.id}>{barber.display_name}</option>)}</select></label>
-        <label>التاريخ<input type="date" value={date} min={today} max={maxDate} onChange={(event) => setDate(event.target.value)} required /></label>
+        <label>{english ? "Service" : "الخدمة"}<select value={serviceId} onChange={(event) => setServiceId(event.target.value)} required>{services.map((service) => <option key={service.id} value={service.id}>{service.name_ar} · {service.duration_minutes} دقيقة</option>)}</select></label>
+        <label>{english ? "Barber" : "مقدم الخدمة"}<select value={barberId} onChange={(event) => setBarberId(event.target.value)}><option value="">{english ? "Any available barber" : "أقرب موعد متاح"}</option>{barbers.map((barber) => <option key={barber.id} value={barber.id}>{barber.display_name}</option>)}</select></label>
+        <label>{english ? "Date" : "التاريخ"}<input type="date" value={date} min={today} max={maxDate} onChange={(event) => setDate(event.target.value)} required /></label>
       </div>
-      <div className={styles.slotBlock}><div className={styles.slotHeading}><h3>الأوقات المتاحة</h3><span>{date}</span></div>
-        {loadingSlots ? <p className={styles.bookingHint} role="status">جارٍ تحميل المواعيد...</p>
-          : uniqueSlots.length ? <div className={styles.slotGrid}>{uniqueSlots.map((slot) => <button key={slot.starts_at} type="button" className={selectedSlot === slot.starts_at ? styles.slotSelected : styles.slotButton} onClick={() => setSelectedSlot(slot.starts_at)} aria-pressed={selectedSlot === slot.starts_at}><strong>{localDateTime(slot.starts_at, timezone || "Asia/Riyadh").split("، ").slice(-1)[0]}</strong><small>{slot.barber_name}</small></button>)}</div>
-          : <p className={styles.bookingHint}>لا توجد مواعيد متاحة في هذا اليوم. جرّب تاريخًا آخر.</p>}
+      <div className={styles.slotBlock}><div className={styles.slotHeading}><h3>{english ? "Available times" : "الأوقات المتاحة"}</h3><span>{date}</span></div>
+        {loadingSlots ? <p className={styles.bookingHint} role="status">{english ? "Loading available times..." : "جارٍ تحميل المواعيد..."}</p>
+          : uniqueSlots.length ? <div className={styles.slotGrid}>{uniqueSlots.map((slot) => <button key={slot.starts_at} type="button" className={selectedSlot === slot.starts_at ? styles.slotSelected : styles.slotButton} onClick={() => setSelectedSlot(slot.starts_at)} aria-pressed={selectedSlot === slot.starts_at}><strong>{localDateTime(slot.starts_at, timezone || "Asia/Riyadh", language).split("، ").slice(-1)[0]}</strong><small>{slot.barber_name}</small></button>)}</div>
+          : <p className={styles.bookingHint}>{english ? "No appointments available that day. Try another date." : "لا توجد مواعيد متاحة في هذا اليوم. جرّب تاريخًا آخر."}</p>}
       </div>
       <div className={styles.bookingFields}>
-        <label>الاسم الكامل<input name="customer_name" autoComplete="name" minLength={2} maxLength={120} required /></label>
-        <label>رقم الجوال<input name="customer_phone" type="tel" autoComplete="tel" inputMode="tel" minLength={8} maxLength={24} placeholder="+966 5X XXX XXXX" required /></label>
-        <label className={styles.noteField}>ملاحظات (اختياري)<textarea name="customer_note" maxLength={1000} rows={3} placeholder=english ? "Anything that will help us prepare for your visit" : "أي تفاصيل تساعدنا على تجهيز زيارتك" /></label>
+        <label>{english ? "Full name" : "الاسم الكامل"}<input name="customer_name" autoComplete="name" minLength={2} maxLength={120} required /></label>
+        <label>{english ? "Phone number" : "رقم الجوال"}<input name="customer_phone" type="tel" autoComplete="tel" inputMode="tel" minLength={8} maxLength={24} placeholder="+966 5X XXX XXXX" required /></label>
+        <label className={styles.noteField}>{english ? "Notes (optional)" : "ملاحظات (اختياري)"}<textarea name="customer_note" maxLength={1000} rows={3} placeholder=english ? "Anything that will help us prepare for your visit" : "أي تفاصيل تساعدنا على تجهيز زيارتك" /></label>
       </div>
       {notice?.kind === "error" && <p className={styles.bookingError} role="alert">{notice.text}</p>}
       <button type="submit" className={styles.bookingSubmit} disabled={submitting || loadingSlots || !selectedSlot}>{submitting ? english ? "Sending request..." : "جارٍ إرسال الطلب..." : english ? "Submit booking request ↙" : "تأكيد طلب الموعد ↙"}</button>
-      <p className={styles.bookingDisclaimer}>إرسال الطلب لا يعني تأكيد الموعد تلقائيًا؛ سيظهر للصالون بانتظار المراجعة والتأكيد.</p>
+      <p className={styles.bookingDisclaimer}>{english ? "Submitting a request does not automatically confirm the appointment. The salon must review and confirm it." : "إرسال الطلب لا يعني تأكيد الموعد تلقائيًا؛ سيظهر للصالون بانتظار المراجعة والتأكيد."}</p>
     </form>}
   </section>;
 }
