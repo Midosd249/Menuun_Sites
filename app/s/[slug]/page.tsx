@@ -6,6 +6,7 @@ import styles from "./public-salon.module.css";
 import SalonQrShare from "./qr-share";
 import PublicBookingForm from "./booking-form";
 import SalonImage from "./salon-image";
+import { DEMO_CONTACT, DEMO_SERVICES, GROOM_PACKAGE, LOCATION_IMAGE, OUR_WORK_IMAGES } from "./salon-demo-content";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -71,15 +72,20 @@ export async function generateMetadata({params}:{params:Promise<{slug:string}>})
 export default async function PublicSalonPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{template?:string}>}) {
   const [{slug},search] = await Promise.all([params,searchParams]);
   const requestedTemplate = search?.template;
+  const english = search?.lang === "en";
   const templateKey = requestedTemplate && ["atelier","oasis","rose"].includes(requestedTemplate) ? requestedTemplate : undefined;
   const result = await getSalon(slug);
   if (!result) notFound();
   const {salon,services,barbers,hours,media} = result;
   const activeTemplate = templateKey || salon.template_key || "atelier";
-  const rawWa = (salon.whatsapp || salon.phone || "").replace(/[^0-9]/g,"");
+  const isDemoSalon = /^(atelier|oasis|rose)(-|$)/i.test(salon.slug);
+  const displayPhone = isDemoSalon ? DEMO_CONTACT.phone : salon.phone;
+  const displayWhatsapp = isDemoSalon ? DEMO_CONTACT.whatsapp : (salon.whatsapp || salon.phone || "");
+  const rawWa = displayWhatsapp.replace(/[^0-9]/g,"");
   const wa = rawWa.startsWith("00") ? rawWa.slice(2) : rawWa.startsWith("0") ? "966"+rawWa.slice(1) : /^[5][0-9]{8}$/.test(rawWa) ? "966"+rawWa : rawWa;
-  const location = [salon.address_ar,salon.city].filter(Boolean).join("، ");
-  const mapHref = salon.google_maps_url || (location ? "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location) : null);
+  const location = isDemoSalon ? (english ? DEMO_CONTACT.address_en : DEMO_CONTACT.address_ar) : [salon.address_ar,salon.city].filter(Boolean).join("، ");
+  const mapHref = (isDemoSalon ? DEMO_CONTACT.map_url : salon.google_maps_url) || (location ? "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location) : null);
+  const bookingHref = (serviceId?:string) => { const params = new URLSearchParams(); if (templateKey) params.set("template", templateKey); if (english) params.set("lang", "en"); if (serviceId) params.set("service", serviceId); return (params.size ? "?"+params.toString() : "")+"#booking"; };
   const socialLinks = [
     { label:"Instagram", href:salon.instagram_url },
     { label:"TikTok", href:salon.tiktok_url },
@@ -87,25 +93,26 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
     { label:"Facebook", href:salon.facebook_url },
     { label:"الموقع الإلكتروني", href:salon.website_url }
   ].filter((item):item is {label:string;href:string} => Boolean(item.href && /^https:\/\//i.test(item.href)));
-  const displayServices:Service[] = services.length ? services : [
-    {id:"sample-service-1",name_ar:"قصة شعر",description_ar:"نموذج استرشادي — أضف خدماتك وأسعارك من مساحة المالك.",price_sar:0,duration_minutes:30,sort_order:0,image_url:null},
-    {id:"sample-service-2",name_ar:"تحديد اللحية",description_ar:"نموذج استرشادي — استبدل الصورة بصورة خدمتك الحقيقية.",price_sar:0,duration_minutes:20,sort_order:1,image_url:null},
-    {id:"sample-service-3",name_ar:"العناية المتكاملة",description_ar:"نموذج استرشادي — أضف تفاصيل خدمتك من مساحة المالك.",price_sar:0,duration_minutes:45,sort_order:2,image_url:null}
-  ];
-  const displayBarbers:Barber[] = barbers.length ? barbers : [
-    {id:"sample-barber-1",display_name:"أضف اسم الحلاق",bio_ar:"صورة استرشادية — أضف أعضاء فريقك وصورهم من مساحة المالك.",image_url:null,sort_order:0},
-    {id:"sample-barber-2",display_name:"عضو من فريقك",bio_ar:"صورة استرشادية — استبدلها بالصورة الحقيقية للحلاق.",image_url:null,sort_order:1},
-    {id:"sample-barber-3",display_name:"الحلاق المختص",bio_ar:"صورة استرشادية — حدّث بيانات الفريق من مساحة المالك.",image_url:null,sort_order:2}
-  ];
+  const displayServices:Service[] = isDemoSalon
+    ? DEMO_SERVICES.map((item,index) => {
+        const stored = services[index];
+        return { id: stored?.id || "demo-service-"+item.key, name_ar: item.name_ar, description_ar: item.description_ar, price_sar: item.price_sar, duration_minutes: item.duration_minutes, sort_order: index, image_url: stored?.image_url || item.image_url };
+      })
+    : services;
+  const displayBarbers:Barber[] = barbers.length ? barbers : (isDemoSalon ? [
+    {id:"demo-barber-1",display_name:english ? "Senior Barber" : "خبير القص",bio_ar:english ? "Precision cuts and considered finishing details." : "قصات دقيقة واهتمام بالتفاصيل الختامية.",image_url:BARBER_IMAGE_FALLBACKS[0],sort_order:0},
+    {id:"demo-barber-2",display_name:english ? "Grooming Specialist" : "متخصص العناية",bio_ar:english ? "Thoughtful beard shaping and classic grooming." : "عناية متقنة باللحية وتفاصيل الحلاقة الكلاسيكية.",image_url:BARBER_IMAGE_FALLBACKS[1],sort_order:1},
+    {id:"demo-barber-3",display_name:english ? "Style Consultant" : "خبير التصفيف",bio_ar:english ? "Contemporary styling tailored to your look." : "تصفيف عصري يناسب إطلالتك.",image_url:BARBER_IMAGE_FALLBACKS[2],sort_order:2}
+  ] : []);
   const gallery = media.filter(x=>x.kind==="gallery" && x.public_url);
   const heroImage = gallery.length ? gallery[0] : null;
   const hero = heroImage?.public_url || HERO_FALLBACK;
   const waHref = (message:string) => "https://wa.me/"+wa+"?text="+encodeURIComponent(message);
-  return <main className={styles.site+" "+(activeTemplate==="oasis"?styles.templateOasis:activeTemplate==="rose"?styles.templateRose:styles.templateAtelier)} style={{"--salon-ink":activeTemplate==="atelier"?salon.primary_color:undefined,"--salon-accent":activeTemplate==="atelier"?salon.accent_color:undefined} as CSSProperties} dir="rtl" lang="ar">
+  return <main className={styles.site+" "+(activeTemplate==="oasis"?styles.templateOasis:activeTemplate==="rose"?styles.templateRose:styles.templateAtelier)} style={{"--salon-ink":activeTemplate==="atelier"?salon.primary_color:undefined,"--salon-accent":activeTemplate==="atelier"?salon.accent_color:undefined} as CSSProperties} dir={english ? "ltr" : "rtl"} lang={english ? "en" : "ar"}>
     <div className={styles.topline}><span>تجربة صالونك، بتفاصيله</span><span>صفحة رسمية عبر Menuun</span></div>
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={salon.name_ar}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{salon.name_ar}</strong><small>{salon.name_en || "SALON EXPERIENCE"}</small></span></a>
-      <nav aria-label="التنقل الرئيسي"><a href="#services">الخدمات</a><a href="#booking">الحجز</a><a href="#team">الفريق</a><a href="#hours">أوقات العمل</a></nav>
+      <nav aria-label={english ? "Main navigation" : "التنقل الرئيسي"}><a href="#services">{english ? "Services" : "الخدمات"}</a><a href="#booking">{english ? "Booking" : "الحجز"}</a><a href="#work">{english ? "Our work" : "أعمالنا"}</a><a href="#hours">{english ? "Visit us" : "معلومات الزيارة"}</a></nav><a className={styles.languageToggle} href={"?template="+activeTemplate+"&lang="+(english?"ar":"en")} lang={english?"ar":"en"}>{english ? "العربية" : "English"}</a>
       <SalonQrShare slug={salon.slug} salonName={salon.name_ar} />
     </header>
     <section className={styles.hero} id="home">
@@ -113,13 +120,13 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
         <div className={styles.heroActions}><a className={styles.primaryButton} href={services.length ? "#booking" : wa ? waHref("مرحبًا، أرغب في حجز موعد لدى "+salon.name_ar) : "#services"} target={!services.length && wa ? "_blank" : undefined} rel={!services.length && wa ? "noreferrer" : undefined}>{services.length ? "احجز موعدك" : wa ? "تواصل عبر واتساب" : "اكتشف الخدمات"} ↙</a>{wa && <a className={styles.secondaryButton} href={waHref("مرحبًا، أرغب في حجز موعد لدى "+salon.name_ar)} target="_blank" rel="noreferrer">احجز عبر واتساب ↗</a>}<a className={styles.secondaryButton} href="#services">تصفّح الخدمات</a></div>
         <div className={styles.quickFacts}>{location && <span>⌖ {location}</span>}{salon.phone && <a href={"tel:"+salon.phone}>☎ {salon.phone}</a>}</div>
       </div>
-      <div className={styles.heroVisual}><SalonImage className={styles.heroImage} src={hero} alt={heroImage?.alt_ar || "صورة استرشادية لأجواء الصالون والعناية"} fetchPriority="high" loading="eager" /><div className={styles.visualCaption}><span>مساحة مصممة حولك</span><span>01 — 04</span></div></div>
+      <div className={styles.heroVisual}><SalonImage className={styles.heroImage} src={hero} alt={english ? "Contemporary men's grooming salon interior" : (heroImage?.alt_ar || "أجواء صالون رجالي معاصر للعناية والتصفيف")} fetchPriority="high" loading="eager" /><div className={styles.visualCaption}><span>مساحة مصممة حولك</span><span>01 — 04</span></div></div>
     </section>
     <section className={styles.section} id="services"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>قائمة الخدمات</p><h2>اختر تجربتك القادمة.</h2></div><p>خدمات واضحة، أسعار معلنة، ووقت تعرفه قبل أن تبدأ.</p></div>
-      <div className={styles.services}>{displayServices.map((service,index)=><article className={styles.service} key={service.id}><div className={styles.serviceImage}><SalonImage src={service.image_url || SERVICE_IMAGE_FALLBACKS[index % SERVICE_IMAGE_FALLBACKS.length]} alt={service.image_url ? service.name_ar : "صورة استرشادية لخدمة "+service.name_ar} loading="lazy" />{!service.image_url && <span>صورة استرشادية</span>}</div><span className={styles.serviceIndex}>{String(index+1).padStart(2,"0")}</span><div className={styles.serviceInfo}><h3>{service.name_ar}</h3>{service.description_ar && <p>{service.description_ar}</p>}<span>◷ {service.duration_minutes} دقيقة</span></div>{services.length ? <strong className={styles.price}>{money(Number(service.price_sar),salon.currency_code)}</strong> : <strong className={styles.price}>أضف السعر</strong>}<div className={styles.serviceActions}>{services.length>0 && <a className={styles.serviceAction} href="#booking" aria-label={"حجز خدمة "+service.name_ar}>احجز أونلاين ↗</a>}{services.length>0 && wa && <a className={styles.serviceAction} target="_blank" rel="noreferrer" href={waHref("مرحبًا، أرغب في حجز خدمة "+service.name_ar+" لدى "+salon.name_ar)} aria-label={"طلب حجز خدمة "+service.name_ar+" عبر واتساب"}>واتساب ↗</a>}</div></article>)}</div>
+      <div className={styles.services}>{displayServices.map((service,index)=><article className={styles.service} key={service.id}><div className={styles.serviceImage}><SalonImage src={service.image_url || SERVICE_IMAGE_FALLBACKS[index % SERVICE_IMAGE_FALLBACKS.length]} alt={english ? (DEMO_SERVICES[index]?.name_en || service.name_ar) : service.name_ar} loading="lazy" /></div><span className={styles.serviceIndex}>{String(index+1).padStart(2,"0")}</span><div className={styles.serviceInfo}><h3>{service.name_ar}</h3>{service.description_ar && <p>{service.description_ar}</p>}<span>◷ {service.duration_minutes} دقيقة</span></div>{services.length ? <strong className={styles.price}>{money(Number(service.price_sar),salon.currency_code)}</strong> : <strong className={styles.price}>أضف السعر</strong>}<div className={styles.serviceActions}>{services.length>0 && <a className={styles.serviceAction} href="#booking" aria-label={"حجز خدمة "+service.name_ar}>احجز أونلاين ↗</a>}{services.length>0 && wa && <a className={styles.serviceAction} target="_blank" rel="noreferrer" href={waHref("مرحبًا، أرغب في حجز خدمة "+service.name_ar+" لدى "+salon.name_ar)} aria-label={"طلب حجز خدمة "+service.name_ar+" عبر واتساب"}>واتساب ↗</a>}</div></article>)}</div>
     </section>
     <PublicBookingForm slug={salon.slug} services={services} barbers={barbers} timezone={salon.timezone} />
-    <section className={styles.teamSection} id="team"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>الأشخاص وراء التجربة</p><h2>تعرف على فريقنا.</h2></div><p>خبرة واهتمام بالتفاصيل في كل زيارة.</p></div><div className={styles.teamGrid}>{displayBarbers.map((b,i)=><article className={styles.person} key={b.id}><div className={styles.personImage}><SalonImage src={b.image_url || BARBER_IMAGE_FALLBACKS[i % BARBER_IMAGE_FALLBACKS.length]} alt={b.image_url ? b.display_name : "صورة استرشادية للحلاق — يرجى استبدالها بالصورة الحقيقية"} loading="lazy" />{!b.image_url && <span className={styles.imagePlaceholderLabel}>صورة استرشادية</span>}</div><h3>{b.display_name}</h3>{b.bio_ar && <p>{b.bio_ar}</p>}</article>)}</div></section>
+    <section className={styles.teamSection} id="team"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>الأشخاص وراء التجربة</p><h2>تعرف على فريقنا.</h2></div><p>خبرة واهتمام بالتفاصيل في كل زيارة.</p></div><div className={styles.teamGrid}>{displayBarbers.map((b,i)=><article className={styles.person} key={b.id}><div className={styles.personImage}><SalonImage src={b.image_url || BARBER_IMAGE_FALLBACKS[i % BARBER_IMAGE_FALLBACKS.length]} alt={english ? b.display_name : b.display_name+" — صورة احترافية لفريق العناية"} loading="lazy" /></div><h3>{b.display_name}</h3>{b.bio_ar && <p>{b.bio_ar}</p>}</article>)}</div></section>
     {gallery.length>1 && <section className={styles.gallerySection}><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>من أجواء المكان</p><h2>لمحات من عالمنا.</h2></div></div><div className={styles.gallery}>{gallery.slice(1,4).map(image=><SalonImage key={image.id} src={image.public_url!} alt={image.alt_ar||""} loading="lazy" />)}</div></section>}
     <section className={styles.infoSection} id="hours"><div className={styles.infoIntro}><p className={styles.eyebrow}>خطوتك التالية</p><h2>نرتب زيارتك بكل سهولة.</h2><p>تواصل معنا للاستفسار عن الخدمة المناسبة أو لتنسيق موعدك القادم.</p>{wa && <a className={styles.primaryButton} target="_blank" rel="noreferrer" href={waHref("مرحبًا، أرغب في الاستفسار عن "+salon.name_ar)}>تواصل عبر واتساب ↗</a>}{salon.phone && <a className={styles.phoneLink} href={"tel:"+salon.phone}>{salon.phone}</a>}</div>
       <div className={styles.hoursCard}><h3>أوقات العمل</h3>{hours.length ? hours.map(day=><div className={styles.hoursRow} key={day.weekday}><span>{weekdays[day.weekday]}</span><strong>{day.is_closed ? "مغلق" : time(day.opens_at)+" — "+time(day.closes_at)}</strong></div>) : <p className={styles.empty}>تواصل معنا لمعرفة أوقات العمل.</p>}{location && <p className={styles.location}>⌖ {mapHref ? <a href={mapHref} target="_blank" rel="noopener noreferrer">{location} — الاتجاهات ↗</a> : location}</p>}{socialLinks.length>0 && <div className={styles.socialLinks} aria-label="روابط التواصل الاجتماعي">{socialLinks.map(link=><a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div>}</div></section>
