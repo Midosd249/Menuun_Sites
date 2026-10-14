@@ -156,7 +156,7 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
       <button type="button" className={styles.secondaryButton} onClick={() => { setNotice(null); setAppointmentId(""); }}>طلب موعد آخر</button>
     </div> : <form className={styles.bookingForm} onSubmit={submit}>
       <div className={styles.bookingFields}>
-        <label>الخدمة<select value={serviceId} onChange={(event) => setServiceId(event.target.value} required>{services.map((service) => <option key={service.id} value={service.id}>{service.name_ar} · {service.duration_minutes} دقيقة</option>)}</select></label>
+        <label>الخدمة<select value={serviceId} onChange={(event) => setServiceId(event.target.value)} required>{services.map((service) => <option key={service.id} value={service.id}>{service.name_ar} · {service.duration_minutes} دقيقة</option>)}</select></label>
         <label>مقدم الخدمة<select value={barberId} onChange={(event) => setBarberId(event.target.value)}><option value="">أقرب موعد متاح</option>{barbers.map((barber) => <option key={barber.id} value={barber.id}>{barber.display_name}</option>)}</select></label>
         <label>التاريخ<input type="date" value={date} min={today} max={maxDate} onChange={(event) => setDate(event.target.value)} required /></label>
       </div>
