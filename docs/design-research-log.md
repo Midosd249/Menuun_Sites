@@ -104,3 +104,14 @@
 ### Verification gate
 - Added static regression assertions for distinct template selectors, salon imagery and failed-image handling.
 - **Pending:** current-head CI, Vercel preview for the redesign commit, real browser screenshots and interaction checks at desktop/tablet/mobile, and external image URL checks.
+
+
+## Final runtime and responsive verification — 2026-10-14
+
+- **Verified source head:** `e4cd44bee6a44d713b03f8da9d90415da098af13`; preview deployment `dpl_36cBmox5KXRNeP95YzY5xpWM6y9N` reached READY.
+- **Runtime defect found and fixed:** passing `onError` functions from the server-rendered salon page caused Next.js to return HTTP 500. The image fallback behavior now lives inside the client component `app/s/[slug]/salon-image.tsx`, so no event handler crosses the Server/Client Component boundary.
+- **HTTP smoke checks:** `/`, `/s/atelier-09`, and the `atelier`, `oasis`, and `rose` template query variants returned HTTP 200.
+- **Playwright matrix:** all three templates checked at 390 px, 768 px and 1440 px. No horizontal overflow; no browser page errors or console errors; all nine demo images loaded after scrolling through the page. The service-section captures confirm Atelier's row layout, Oasis's three-column photo cards, and Rose's two-column editorial cards at desktop.
+- **External media:** the five current salon fallback URLs returned HTTP 200 with `image/jpeg`.
+- **CI:** Static Quality run `38624960584` and Supabase RLS/pgTAP run `38624960495` both passed for the implementation head.
+- **Still intentionally pending:** no Supabase migration was applied; owner-upload persistence, saved template selection, and social-link persistence cannot be claimed until migration and owner-path tests are completed. The PR remains draft/unmerged pending those release decisions.
