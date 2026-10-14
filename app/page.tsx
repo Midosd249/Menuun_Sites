@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpLeft, Check, ChevronDown, CirclePlay, Menu, Sparkles, X } from "lucide-react";
 
 type Language = "ar" | "en";
@@ -172,17 +173,18 @@ function AccountPage({ lang, mode }: { lang: Language; mode: "login" | "signup" 
   const safeNext = nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/owner/";
 
   useEffect(() => {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL?.trim();
-    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim();
-    if (!url || !key) {
-      setNotice(lang === "ar" ? "إعدادات الاتصال بقاعدة البيانات غير مكتملة على الخادم. يرجى ضبط متغيرات NEXT_PUBLIC_SUPABASE_URL وNEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY في Vercel." : "Supabase is not configured. Set the public Supabase URL and publishable key in Vercel.");
-      setReady(true);
-      return;
-    }
     try {
-      setClient(createClient(url, key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }));
-    } catch {
-      setNotice(lang === "ar" ? "تعذر تهيئة الاتصال الآمن. تحقق من إعدادات Supabase." : "Could not initialize Supabase. Check its configuration.");
+      // Use the same @supabase/ssr browser client as the owner workspace.
+      // This persists auth in cookies so middleware and Server Components can
+      // verify the session after the redirect to /owner.
+      setClient(createSupabaseBrowserClient());
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      setNotice(lang === "ar"
+        ? (message.includes("Supabase is not configured")
+          ? "إعدادات الاتصال بقاعدة البيانات غير مكتملة على الخادم. يرجى ضبط متغيرات NEXT_PUBLIC_SUPABASE_URL وNEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY في Vercel."
+          : "تعذر تهيئة الاتصال الآمن. تحقق من إعدادات Supabase.")
+        : (message || "Supabase is not configured. Set the public Supabase URL and publishable key in Vercel."));
     }
     setReady(true);
   }, [lang]);
