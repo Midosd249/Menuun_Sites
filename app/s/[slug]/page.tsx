@@ -9,7 +9,7 @@ import PublicBookingForm from "./booking-form";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-type Salon = { id:string; slug:string; name_ar:string; name_en:string|null; tagline_ar:string|null; description_ar:string|null; logo_url:string|null; phone:string|null; whatsapp:string|null; address_ar:string|null; city:string|null; timezone:string; currency_code:string; primary_color:string; accent_color:string };
+type Salon = { id:string; slug:string; name_ar:string; name_en:string|null; tagline_ar:string|null; description_ar:string|null; logo_url:string|null; phone:string|null; whatsapp:string|null; address_ar:string|null; city:string|null; timezone:string; currency_code:string; primary_color:string; accent_color:string; template_key:string };
 type Service = { id:string; name_ar:string; description_ar:string|null; price_sar:number; duration_minutes:number; sort_order:number };
 type Barber = { id:string; display_name:string; bio_ar:string|null; image_url:string|null; sort_order:number };
 type Hours = { weekday:number; opens_at:string|null; closes_at:string|null; is_closed:boolean };
@@ -20,7 +20,7 @@ const time = (value:string|null) => value ? value.slice(0,5) : "—";
 
 async function getSalon(slug:string) {
   const db = await createSupabaseServerClient();
-  const {data: salon,error} = await db.from("salons").select("id,slug,name_ar,name_en,tagline_ar,description_ar,logo_url,phone,whatsapp,address_ar,city,timezone,currency_code,primary_color,accent_color,is_active,is_published").eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle();
+  const {data: salon,error} = await db.from("salons").select("id,slug,name_ar,name_en,tagline_ar,description_ar,logo_url,phone,whatsapp,address_ar,city,timezone,currency_code,primary_color,accent_color,template_key,is_active,is_published").eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle();
   if (error || !salon) return null;
   const [sr,br,hr,mr] = await Promise.all([
     db.from("services").select("id,name_ar,description_ar,price_sar,duration_minutes,sort_order").eq("salon_id",salon.id).eq("is_active",true).order("sort_order"),
@@ -52,7 +52,7 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
   const heroImage = gallery.length ? gallery[0] : null;
   const hero = heroImage?.public_url || null;
   const waHref = (message:string) => "https://wa.me/"+wa+"?text="+encodeURIComponent(message);
-  return <main className={styles.site} style={{"--salon-ink":salon.primary_color,"--salon-accent":salon.accent_color} as CSSProperties} dir="rtl" lang="ar">
+  return <main className={styles.site+" "+(salon.template_key==="oasis"?styles.templateOasis:salon.template_key==="rose"?styles.templateRose:styles.templateAtelier)} style={{"--salon-ink":salon.primary_color,"--salon-accent":salon.accent_color} as CSSProperties} dir="rtl" lang="ar">
     <div className={styles.topline}><span>تجربة صالونك، بتفاصيله</span><span>صفحة رسمية عبر Menuun</span></div>
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={salon.name_ar}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{salon.name_ar}</strong><small>{salon.name_en || "SALON EXPERIENCE"}</small></span></a>
