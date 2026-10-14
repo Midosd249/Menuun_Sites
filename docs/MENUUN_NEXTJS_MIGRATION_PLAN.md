@@ -21,7 +21,7 @@
 - [x] Reuse shared @supabase/ssr browser/server helpers and existing publishable-key configuration.
 - [x] Verify identity with server-side supabase.auth.getUser() in owner layout; redirect missing/invalid sessions to /login/?next=%2Fowner%2F.
 - [x] Add /owner to private middleware prefixes for SSR session refresh and unauthenticated redirects.
-- [x] Scope active tenant memberships to current verified user and expose owner/admin/manager memberships in workspace.
+- [x] Scope active tenant memberships to current verified user and expose owner/manager memberships in workspace.
 - [ ] Verify existing account login, confirmation callback, refresh, and logout end-to-end on preview.
 
 ## Phase 2 — Native owner shell: IMPLEMENTED IN SOURCE; BUILD/DEVICE CHECKS PENDING
