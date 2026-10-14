@@ -22,14 +22,16 @@ test("public page displays service, team, hours, contact and public media data",
     assert.ok(page.includes(value), "expected template to include " + value);
   }
   assert.match(page, /generateMetadata/);
-  assert.match(page, /services\.length \? "#booking"/);
-  assert.match(page, /href="#booking">الحجز<\/a>/);
+  assert.match(page, /bookingHref\(service\.id\)/);
+  assert.match(page, /languageToggle/);
+  assert.match(page, /href="#booking"/);
 });
 
 test("salon QR controls provide stable page URL, copy and download actions", () => {
   assert.match(qr, /new URL\("\/s\/"\+encodeURIComponent\(slug\),window\.location\.origin\)/);
   assert.match(page, /احجز عبر واتساب/);
-  assert.match(page, /طلب حجز خدمة .* عبر واتساب/);
+  assert.match(page, /waHref\(/);
+  assert.match(page, /Book this service/);
   assert.match(qr, /create-qr-code/);
   assert.match(qr, /navigator\.clipboard\.writeText/);
   assert.match(qr, /download/);
@@ -38,7 +40,7 @@ test("salon QR controls provide stable page URL, copy and download actions", () 
 });
 
 test("template is Arabic RTL-first, responsive and respects reduced motion", () => {
-  assert.match(page, /dir="rtl" lang="ar"/);
+  assert.match(page, /dir=\{english \? "ltr" : "rtl"\} lang=\{english \? "en" : "ar"\}/);
   assert.match(css, /@media\(max-width:640px\)/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
   assert.match(css, /:hover/);
@@ -141,4 +143,43 @@ test("the three salon templates have distinct, accessible art direction", () => 
   assert.match(salonImage, /use client/);
   assert.match(salonImage, /onError/);
   assert.match(salonImage, /setFailed/);
+});
+
+test("Atelier alone receives the separated service-card layout fix", () => {
+  assert.ok(css.includes(".templateAtelier .service{grid-template-columns:minmax(110px,16%)"));
+  assert.ok(css.includes(".templateAtelier .serviceImage{grid-column:1;grid-row:1"));
+  assert.ok(css.includes(".templateAtelier .service{grid-template-columns:minmax(78px,29%)"));
+  assert.ok(css.includes(".templateOasis .service{display:flex;flex-direction:column"));
+  assert.ok(css.includes(".templateRose .services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"));
+});
+
+test("all three themes include a portfolio, premium groom package and final location feature", () => {
+  const content = readFileSync(new URL("../app/s/[slug]/salon-demo-content.ts", import.meta.url), "utf8");
+  assert.ok(page.includes('id="work"'));
+  assert.ok(page.includes("GROOM_PACKAGE"));
+  assert.ok(page.includes("locationFeature"));
+  assert.ok(page.includes("DEMO_CONTACT.phone"));
+  assert.ok(page.includes("DEMO_CONTACT.map_url"));
+  assert.ok(content.includes("OUR_WORK_IMAGES"));
+  assert.ok(content.includes("alt_ar"));
+  assert.ok(content.includes("alt_en"));
+  assert.ok(content.includes('name_ar: "باقة العريس"'));
+  assert.ok(page.includes("Open in Google Maps"));
+});
+
+test("demo content removes public placeholders and avoids zero-priced fallback services", () => {
+  const content = readFileSync(new URL("../app/s/[slug]/salon-demo-content.ts", import.meta.url), "utf8");
+  for (const placeholder of ["صورة استرشادية", "نموذج استرشادي", "يرجى استبدالها", "أضف السعر", "ملف تجريبي", "بيانات تجريبية"]) {
+    assert.equal(page.includes(placeholder), false, "page must not expose " + placeholder);
+  }
+  for (const amount of ["price_sar: 60", "price_sar: 95", "price_sar: 50", "price_sar: 75", "price_sar: 40", "price_sar: 450"]) {
+    assert.ok(content.includes(amount), "demo content must include " + amount);
+  }
+});
+
+test("booking query parameter preselects an existing service and keeps the database booking flow", () => {
+  assert.ok(booking.includes('new URLSearchParams(window.location.search).get("service")'));
+  assert.ok(booking.includes('services.some((service) => service.id === requestedService)'));
+  assert.ok(booking.includes('rpc("request_salon_appointment"'));
+  assert.ok(page.includes("bookingHref(service.id)"));
 });
