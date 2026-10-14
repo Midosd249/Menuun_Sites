@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./public-salon.module.css";
 import SalonQrShare from "./qr-share";
+import PublicBookingForm from "./booking-form";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -69,6 +70,7 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
     <section className={styles.section} id="services"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>قائمة الخدمات</p><h2>اختر تجربتك القادمة.</h2></div><p>خدمات واضحة، أسعار معلنة، ووقت تعرفه قبل أن تبدأ.</p></div>
       {services.length ? <div className={styles.services}>{services.map((service,index)=><article className={styles.service} key={service.id}><span className={styles.serviceIndex}>{String(index+1).padStart(2,"0")}</span><div className={styles.serviceInfo}><h3>{service.name_ar}</h3>{service.description_ar && <p>{service.description_ar}</p>}<span>◷ {service.duration_minutes} دقيقة</span></div><strong className={styles.price}>{money(Number(service.price_sar),salon.currency_code)}</strong>{wa && <a className={styles.serviceAction} target="_blank" rel="noreferrer" href={waHref("مرحبًا، أرغب في حجز خدمة "+service.name_ar+" لدى "+salon.name_ar)} aria-label={"طلب حجز خدمة "+service.name_ar+" عبر واتساب"}>احجز ↗</a>}</article>)}</div> : <p className={styles.empty}>ستظهر الخدمات هنا بعد إضافتها من مساحة الصالون.</p>}
     </section>
+    <PublicBookingForm slug={salon.slug} services={services} barbers={barbers} timezone={salon.timezone} />
     {barbers.length>0 && <section className={styles.teamSection} id="team"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>الأشخاص وراء التجربة</p><h2>تعرف على فريقنا.</h2></div><p>خبرة واهتمام بالتفاصيل في كل زيارة.</p></div><div className={styles.teamGrid}>{barbers.map((b,i)=><article className={styles.person} key={b.id}><div className={styles.personImage}>{b.image_url ? <img src={b.image_url} alt={b.display_name}/> : <span>{String(i+1).padStart(2,"0")}</span>}</div><h3>{b.display_name}</h3>{b.bio_ar && <p>{b.bio_ar}</p>}</article>)}</div></section>}
     {gallery.length>1 && <section className={styles.gallerySection}><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>من أجواء المكان</p><h2>لمحات من عالمنا.</h2></div></div><div className={styles.gallery}>{gallery.slice(1,4).map(image=><img key={image.id} src={image.public_url!} alt={image.alt_ar||""}/>)}</div></section>}
     <section className={styles.infoSection} id="hours"><div className={styles.infoIntro}><p className={styles.eyebrow}>خطوتك التالية</p><h2>نرتب زيارتك بكل سهولة.</h2><p>تواصل معنا للاستفسار عن الخدمة المناسبة أو لتنسيق موعدك القادم.</p>{wa && <a className={styles.primaryButton} target="_blank" rel="noreferrer" href={waHref("مرحبًا، أرغب في الاستفسار عن "+salon.name_ar)}>تواصل عبر واتساب ↗</a>}{salon.phone && <a className={styles.phoneLink} href={"tel:"+salon.phone}>{salon.phone}</a>}</div>
