@@ -25,7 +25,7 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
     if (error) throw error;
     setMedia((data || []) as MediaAsset[]);
   }
-  useEffect(() => { let live = true; load().catch(e => live && setNotice(e?.message || "تعذر تحميل الصور.")); return () => { live = false; }; }, [salonId]);
+  useEffect(() => { setLogoUrl(initialLogoUrl); let live = true; load().catch(e => live && setNotice(e?.message || "تعذر تحميل الصور.")); return () => { live = false; }; }, [salonId, initialLogoUrl]);
 
   async function uploadLogo(event: ChangeEvent<HTMLInputElement>) {
     const input = event.currentTarget, file = input.files?.[0]; input.value = "";
