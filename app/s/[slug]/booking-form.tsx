@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import styles from "./public-salon.module.css";
 
-type Service = { id: string; name_ar: string; price_sar: number; duration_minutes: number };
+type Service = { id: string; name_ar: string; name_en?: string; price_sar: number; duration_minutes: number };
 type Barber = { id: string; display_name: string };
 
 type Slot = { starts_at: string; barber_id: string; barber_name: string };
@@ -80,7 +80,7 @@ export default function PublicBookingForm({ slug, services, barbers, timezone, l
       setLoadingSlots(false);
     });
     return () => { cancelled = true; };
-  }, [slug, serviceId, date, barberId]);
+  }, [slug, serviceId, date, barberId, english]);
 
   const uniqueSlots = useMemo(() => {
     const seen = new Set<string>();
