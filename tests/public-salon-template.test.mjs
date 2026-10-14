@@ -134,6 +134,7 @@ test("the three salon templates have distinct, accessible art direction", () => 
   assert.match(css, /\.templateOasis \.services\{display:grid/);
   assert.match(css, /\.templateRose \.services\{display:grid/);
   assert.match(css, /prefers-reduced-motion:reduce/);
+  assert.doesNotMatch(css, /align-items:end/);
   assert.match(page, /photo-1560066984-138dadb4c035/);
   assert.match(page, /onError=\{\(event\) => \{ event\.currentTarget\.style\.visibility = "hidden"; \}\}/);
 });
