@@ -93,3 +93,22 @@
 .templateRose .bookingSuccess small,.templateRose .successMark{color:#9b4e61;border-color:#b65e70}
 .templateRose .bookingError{color:#8b3c30;background:#fbece7}
 @media(max-width:640px){.templateOasis .services,.templateRose .services{grid-template-columns:1fr}.templateOasis .service,.templateRose .service{padding:17px}}
+
+/* Media-rich service cards and real team portraits */
+.service{grid-template-columns:clamp(96px,14vw,168px) 34px minmax(0,1fr) auto auto;gap:18px}
+.serviceImage{position:relative;aspect-ratio:4/3;overflow:hidden;background:#292c24;border:1px solid #ffffff24}
+.serviceImage img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s ease}
+.service:hover .serviceImage img{transform:scale(1.04)}
+.serviceImage>span,.imagePlaceholderLabel{position:absolute;inset:auto 6px 6px auto;background:#111c;color:#fff;padding:4px 7px;font-size:9px;backdrop-filter:blur(8px)}
+.personImage{position:relative}
+.personImage img{display:block}
+.socialLinks,.footerSocials{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.socialLinks a,.footerSocials a{display:inline-flex;align-items:center;gap:6px;border:1px solid #1718152a;padding:9px 12px;color:#38543b;font-size:11px;transition:background .2s,color .2s}
+.socialLinks a:hover{background:#1a382d;color:#fff}
+.footerSocials{margin:0;gap:8px}
+.footerSocials a{padding:6px 8px;border-color:#ffffff24;color:#d6d2c7;font-size:10px}
+.footerSocials a:hover{color:var(--salon-accent);border-color:var(--salon-accent)}
+.location a{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:900px){.service{grid-template-columns:112px 28px minmax(0,1fr) auto;gap:12px}.serviceAction{grid-column:3 / -1;justify-self:start}.serviceImage{grid-row:span 2}}
+@media(max-width:640px){.service{grid-template-columns:88px 22px minmax(0,1fr);gap:10px;padding:16px 0}.serviceImage{grid-row:span 3;align-self:stretch;min-height:112px}.serviceIndex{align-self:start;padding-top:3px}.serviceInfo{grid-column:3}.price{grid-column:3;grid-row:auto}.serviceAction{grid-column:3;grid-row:auto;justify-self:start}.socialLinks a{font-size:10px;padding:8px 9px}.footer{align-items:flex-start}.footerSocials{order:3;width:100%}}
+@media(prefers-reduced-motion:reduce){.serviceImage img{transition:none}.service:hover .serviceImage img{transform:none}}
