@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { ArrowDownLeft, ArrowLeft, ArrowRight, ArrowUpLeft, Check, ChevronDown, CirclePlay, Menu, Sparkles, X } from "lucide-react";
 
 type Language = "ar" | "en";
@@ -159,20 +161,85 @@ function Logo({ lang = "ar" }: { lang?: Language }) {
 
 function AccountPage({ lang, mode }: { lang: Language; mode: "login" | "signup" }) {
   const t = copy[lang];
+  const router = useRouter();
+  const params = useSearchParams();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [notice, setNotice] = useState("");
+  const [client, setClient] = useState<SupabaseClient | null>(null);
+  const [ready, setReady] = useState(false);
+  const nextPath = params.get("next") || "/owner/";
+  const safeNext = nextPath.startsWith("/") && !nextPath.startsWith("//") ? nextPath : "/owner/";
+
+  useEffect(() => {
+    try {
+      // Use the same @supabase/ssr browser client as the owner workspace.
+      // This persists auth in cookies so middleware and Server Components can
+      // verify the session after the redirect to /owner.
+      setClient(createSupabaseBrowserClient());
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      setNotice(lang === "ar"
+        ? (message.includes("Supabase is not configured")
+          ? "إعدادات الاتصال بقاعدة البيانات غير مكتملة على الخادم. يرجى ضبط متغيرات NEXT_PUBLIC_SUPABASE_URL وNEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY في Vercel."
+          : "تعذر تهيئة الاتصال الآمن. تحقق من إعدادات Supabase.")
+        : (message || "Supabase is not configured. Set the public Supabase URL and publishable key in Vercel."));
+    }
+    setReady(true);
+  }, [lang]);
+
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!client) {
+      setNotice(lang === "ar" ? "اتصال Supabase غير جاهز. تحقق من إعدادات النشر ثم أعد المحاولة." : "Supabase is not ready. Check deployment configuration and retry.");
+      return;
+    }
+    setBusy(true);
+    setNotice("");
+    try {
+      if (mode === "login") {
+        const { error } = await client.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) throw error;
+        router.replace(safeNext);
+        router.refresh();
+      } else {
+        const { data, error } = await client.auth.signUp({ email: email.trim(), password, options: { emailRedirectTo: typeof window !== "undefined" ? window.location.origin + "/login/" : undefined } });
+        if (error) throw error;
+        setNotice(data.session
+          ? (lang === "ar" ? "تم إنشاء الحساب بنجاح. يمكنك الآن تسجيل الدخول." : "Account created successfully. You can now sign in.")
+          : (lang === "ar" ? "تم إرسال رسالة تأكيد إلى بريدك الإلكتروني. أكّد البريد ثم سجّل الدخول." : "A confirmation email was sent. Confirm your email, then sign in."));
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      setNotice(lang === "ar" ? (message.includes("Invalid login credentials") ? "البريد الإلكتروني أو كلمة المرور غير صحيحة." : message.includes("Email not confirmed") ? "يرجى تأكيد بريدك الإلكتروني من الرسالة المرسلة إليك أولاً." : "تعذر إكمال العملية. تحقق من بيانات الدخول وإعدادات مصادقة Supabase ثم أعد المحاولة.") : (message || "Authentication failed. Check your credentials and Supabase Auth settings."));
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return <main className="account-stage">
     <Logo lang={lang} />
     <div className="account-card">
       <div className="account-icon"><Sparkles size={22} /></div>
-      <p className="eyebrow">{t.stagedLabel}</p>
+      <p className="eyebrow">{lang === "ar" ? "حسابك في Menuun" : "YOUR MENUUN ACCOUNT"}</p>
       <h1>{mode === "login" ? t.signInTitle : t.signUpTitle}</h1>
-      <p className="account-title">{t.stagedTitle}</p>
-      <p className="muted">{t.stagedText}</p>
+      <p className="account-title">{mode === "login" ? (lang === "ar" ? "سجّل الدخول إلى مساحة عملك" : "Sign in to your workspace") : (lang === "ar" ? "أنشئ حسابك للبدء" : "Create your account to begin")}</p>
+      <form onSubmit={submit} className="account-form">
+        <label htmlFor="account-email">{lang === "ar" ? "البريد الإلكتروني" : "Email address"}</label>
+        <input id="account-email" type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="name@example.com" />
+        <label htmlFor="account-password">{lang === "ar" ? "كلمة المرور" : "Password"}</label>
+        <input id="account-password" type="password" autoComplete={mode === "login" ? "current-password" : "new-password"} minLength={6} required value={password} onChange={e => setPassword(e.target.value)} />
+        <button className="button button-dark" type="submit" disabled={busy || !ready || !client}>{busy ? (lang === "ar" ? "جارٍ المعالجة..." : "Please wait...") : mode === "login" ? (lang === "ar" ? "تسجيل الدخول" : "Sign in") : (lang === "ar" ? "إنشاء حساب" : "Create account")}<ArrowLeft size={16} /></button>
+      </form>
+      {notice && <p role="status" aria-live="polite" className="muted account-notice">{notice}</p>}
+      <p className="muted">{mode === "login" ? (lang === "ar" ? "ليس لديك حساب؟" : "New to Menuun?") : (lang === "ar" ? "لديك حساب بالفعل؟" : "Already have an account?")} <a href={mode === "login" ? "/signup/" : "/login/"}>{mode === "login" ? (lang === "ar" ? "إنشاء حساب" : "Create account") : (lang === "ar" ? "تسجيل الدخول" : "Sign in")}</a></p>
       <a className="button button-dark" href="/">{t.backHome}<ArrowLeft size={16} /></a>
     </div>
   </main>;
 }
 
-export default function App() {
+function AppContent() {
   const [lang, setLang] = useState<Language>("ar");
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -284,4 +351,9 @@ export default function App() {
 
     <footer className="footer"><div className="section-wrap footer-main"><div className="footer-brand"><Logo lang={lang} /><p>{t.footerText}</p></div><div className="footer-links">{t.footerLinks.map((label, i) => <a key={label} href={i === 0 ? "#main" : i === 1 ? "#templates" : "#faq"}>{label}</a>)}</div><a className="back-top" href="#main" aria-label={lang === "ar" ? "العودة للأعلى" : "Back to top"}><ArrowRight size={17} /></a></div><div className="section-wrap footer-bottom"><span>© {new Date().getFullYear()} Menuun</span><span>{lang === "ar" ? "صُنع بعناية." : "Made with care."}</span></div></footer>
   </div>;
+}
+
+
+export default function App() {
+  return <Suspense fallback={<main className="account-stage"><div className="account-card" role="status">Loading Menuun…</div></main>}><AppContent /></Suspense>;
 }

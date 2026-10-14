@@ -2,7 +2,12 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
-const PRIVATE_ROUTE_PREFIXES = ["/owner", "/app", "/platform-admin"];
+// /owner is a static HTML app with its own Supabase sign-in/session lifecycle.
+// Protecting it here redirected users to the marketing site's staged /login
+// screen, which does not authenticate anyone. The owner app must load so its
+// own sign-in UI can run; its database access remains enforced by Supabase RLS.
+// Keep server-middleware protection on Next.js application routes.
+const PRIVATE_ROUTE_PREFIXES = ["/app", "/platform-admin", "/owner"];
 
 function isPrivateRoute(pathname: string): boolean {
   return PRIVATE_ROUTE_PREFIXES.some(
@@ -31,8 +36,8 @@ export async function middleware(request: NextRequest) {
   const privateRoute = isPrivateRoute(request.nextUrl.pathname);
   const publicConfig = getSupabasePublicConfig();
 
-  // Fail closed for private surfaces. Public marketing pages remain available
-  // in previews where auth environment variables have not yet been configured.
+  // Fail closed for private application surfaces. The static owner workspace
+  // handles its own login screen and is intentionally excluded above.
   if (!publicConfig) {
     if (privateRoute) return loginRedirect(request, NextResponse.next({ request }), "auth_unavailable");
     return NextResponse.next({ request });
@@ -54,8 +59,6 @@ export async function middleware(request: NextRequest) {
           response.cookies.set(name, value, options);
         });
 
-        // Preserve Supabase's anti-cache headers and explicitly disallow shared
-        // caching for responses that may contain refreshed session cookies.
         for (const [name, value] of Object.entries(headers ?? {})) {
           response.headers.set(name, value);
         }
@@ -69,7 +72,6 @@ export async function middleware(request: NextRequest) {
     const { data, error } = await supabase.auth.getClaims();
     hasVerifiedIdentity = !error && typeof data.claims?.sub === "string";
   } catch {
-    // Auth/network failures must never grant access to a private route.
     hasVerifiedIdentity = false;
   }
 
