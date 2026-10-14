@@ -7,7 +7,7 @@ import { getSupabasePublicConfig } from "@/lib/supabase/config";
 // screen, which does not authenticate anyone. The owner app must load so its
 // own sign-in UI can run; its database access remains enforced by Supabase RLS.
 // Keep server-middleware protection on Next.js application routes.
-const PRIVATE_ROUTE_PREFIXES = ["/app", "/platform-admin"];
+const PRIVATE_ROUTE_PREFIXES = ["/app", "/platform-admin", "/owner"];
 
 function isPrivateRoute(pathname: string): boolean {
   return PRIVATE_ROUTE_PREFIXES.some(
