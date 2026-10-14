@@ -8,3 +8,4 @@ test("owner mutations preserve existing RPC and tenant scope",async()=>{const s=
 test("workspace supports RTL and narrow mobile layouts",async()=>{const s=await read("../app/owner/page.tsx");const c=await read("../app/globals.css");assert.match(s,/dir=\{lang==="ar"\?"rtl":"ltr"\}/);assert.match(c,/@media\(max-width:360px\)/);assert.match(c,/\.owner-nav/)});
 
 test("login persists Supabase auth through the shared SSR cookie client",async()=>{const s=await read("../app/page.tsx");assert.match(s,/createSupabaseBrowserClient/);assert.doesNotMatch(s,/createClient\(url, key, \{ auth: \{ persistSession: true/)});
+test("Supabase public env vars are statically referenced for Next.js browser bundling",async()=>{const s=await read("../lib/supabase/config.ts");assert.match(s,/process\\.env\\.NEXT_PUBLIC_SUPABASE_URL/);assert.match(s,/process\\.env\\.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY/);assert.doesNotMatch(s,/env: NodeJS\\.ProcessEnv = process\\.env/)});
