@@ -45,9 +45,8 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
   const result = await getSalon(slug);
   if (!result) notFound();
   const {salon,services,barbers,hours,media} = result;
-  const origin = process.env.NEXT_PUBLIC_SITE_URL || "https://www.menuun.com";
-  const publicUrl = new URL("/s/"+salon.slug,origin).toString();
-  const wa = (salon.whatsapp || salon.phone || "").replace(/[^0-9]/g,"");
+  const rawWa = (salon.whatsapp || salon.phone || "").replace(/[^0-9]/g,"");
+  const wa = rawWa.startsWith("00") ? rawWa.slice(2) : rawWa.startsWith("0") ? "966"+rawWa.slice(1) : /^[5][0-9]{8}$/.test(rawWa) ? "966"+rawWa : rawWa;
   const location = [salon.address_ar,salon.city].filter(Boolean).join("، ");
   const gallery = media.filter(x=>x.kind==="gallery" && x.public_url);
   const heroImage = gallery.length ? gallery[0] : null;
@@ -58,17 +57,17 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={salon.name_ar}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{salon.name_ar}</strong><small>{salon.name_en || "SALON EXPERIENCE"}</small></span></a>
       <nav aria-label="التنقل الرئيسي"><a href="#services">الخدمات</a><a href="#booking">الحجز</a><a href="#team">الفريق</a><a href="#hours">أوقات العمل</a></nav>
-      <SalonQrShare publicUrl={publicUrl} salonName={salon.name_ar} />
+      <SalonQrShare slug={salon.slug} salonName={salon.name_ar} />
     </header>
     <section className={styles.hero} id="home">
       <div className={styles.heroCopy}><p className={styles.eyebrow}>مساحتك للعناية والتجديد</p><h1>{salon.tagline_ar || "تفاصيل صغيرة، تجربة مختلفة."}</h1><p className={styles.description}>{salon.description_ar || "أهلًا بك في "+salon.name_ar+". اكتشف خدماتنا واختر ما يناسبك، وتواصل معنا لتنسيق موعدك."}</p>
-        <div className={styles.heroActions}><a className={styles.primaryButton} href={services.length ? "#booking" : wa ? waHref("مرحبًا، أرغب في حجز موعد لدى "+salon.name_ar) : "#services"} target={!services.length && wa ? "_blank" : undefined} rel={!services.length && wa ? "noreferrer" : undefined}>{services.length ? "احجز موعدك" : wa ? "تواصل عبر واتساب" : "اكتشف الخدمات"} ↙</a><a className={styles.secondaryButton} href="#services">تصفّح الخدمات</a></div>
+        <div className={styles.heroActions}><a className={styles.primaryButton} href={services.length ? "#booking" : wa ? waHref("مرحبًا، أرغب في حجز موعد لدى "+salon.name_ar) : "#services"} target={!services.length && wa ? "_blank" : undefined} rel={!services.length && wa ? "noreferrer" : undefined}>{services.length ? "احجز موعدك" : wa ? "تواصل عبر واتساب" : "اكتشف الخدمات"} ↙</a>{wa && <a className={styles.secondaryButton} href={waHref("مرحبًا، أرغب في حجز موعد لدى "+salon.name_ar)} target="_blank" rel="noreferrer">احجز عبر واتساب ↗</a>}<a className={styles.secondaryButton} href="#services">تصفّح الخدمات</a></div>
         <div className={styles.quickFacts}>{location && <span>⌖ {location}</span>}{salon.phone && <a href={"tel:"+salon.phone}>☎ {salon.phone}</a>}</div>
       </div>
       <div className={styles.heroVisual}>{hero ? <img className={styles.heroImage} src={hero} alt={heroImage?.alt_ar || "صور "+salon.name_ar} /> : <div className={styles.artCard}><span className={styles.artNumber}>01 / MENUUN</span><span className={styles.artGlyph}>✳</span><strong>{salon.name_ar}</strong><small>CARE • CRAFT • DETAIL</small></div>}<div className={styles.visualCaption}><span>مساحة مصممة حولك</span><span>01 — 04</span></div></div>
     </section>
     <section className={styles.section} id="services"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>قائمة الخدمات</p><h2>اختر تجربتك القادمة.</h2></div><p>خدمات واضحة، أسعار معلنة، ووقت تعرفه قبل أن تبدأ.</p></div>
-      {services.length ? <div className={styles.services}>{services.map((service,index)=><article className={styles.service} key={service.id}><span className={styles.serviceIndex}>{String(index+1).padStart(2,"0")}</span><div className={styles.serviceInfo}><h3>{service.name_ar}</h3>{service.description_ar && <p>{service.description_ar}</p>}<span>◷ {service.duration_minutes} دقيقة</span></div><strong className={styles.price}>{money(Number(service.price_sar),salon.currency_code)}</strong>{services.length ? <a className={styles.serviceAction} href="#booking" aria-label={"حجز خدمة "+service.name_ar}>احجز ↗</a> : wa && <a className={styles.serviceAction} target="_blank" rel="noreferrer" href={waHref("مرحبًا، أرغب في حجز خدمة "+service.name_ar+" لدى "+salon.name_ar)} aria-label={"طلب حجز خدمة "+service.name_ar+" عبر واتساب"}>تواصل ↗</a>}</article>)}</div> : <p className={styles.empty}>ستظهر الخدمات هنا بعد إضافتها من مساحة الصالون.</p>}
+      {services.length ? <div className={styles.services}>{services.map((service,index)=><article className={styles.service} key={service.id}><span className={styles.serviceIndex}>{String(index+1).padStart(2,"0")}</span><div className={styles.serviceInfo}><h3>{service.name_ar}</h3>{service.description_ar && <p>{service.description_ar}</p>}<span>◷ {service.duration_minutes} دقيقة</span></div><strong className={styles.price}>{money(Number(service.price_sar),salon.currency_code)}</strong>{services.length > 0 && <a className={styles.serviceAction} href="#booking" aria-label={"حجز خدمة "+service.name_ar}>احجز أونلاين ↗</a>}{wa && <a className={styles.serviceAction} target="_blank" rel="noreferrer" href={waHref("مرحبًا، أرغب في حجز خدمة "+service.name_ar+" لدى "+salon.name_ar)} aria-label={"طلب حجز خدمة "+service.name_ar+" عبر واتساب"}>واتساب ↗</a>}</article>)}</div> : <p className={styles.empty}>ستظهر الخدمات هنا بعد إضافتها من مساحة الصالون.</p>}
     </section>
     <PublicBookingForm slug={salon.slug} services={services} barbers={barbers} timezone={salon.timezone} />
     {barbers.length>0 && <section className={styles.teamSection} id="team"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>الأشخاص وراء التجربة</p><h2>تعرف على فريقنا.</h2></div><p>خبرة واهتمام بالتفاصيل في كل زيارة.</p></div><div className={styles.teamGrid}>{barbers.map((b,i)=><article className={styles.person} key={b.id}><div className={styles.personImage}>{b.image_url ? <img src={b.image_url} alt={b.display_name}/> : <span>{String(i+1).padStart(2,"0")}</span>}</div><h3>{b.display_name}</h3>{b.bio_ar && <p>{b.bio_ar}</p>}</article>)}</div></section>}
