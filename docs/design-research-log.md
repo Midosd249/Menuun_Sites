@@ -83,3 +83,24 @@
 - **Refero limitation:** style and screen searches were attempted, but Refero returned `NO_SUBSCRIPTION`. No Refero styles/screens were available to inspect; do not claim otherwise. Re-run the Refero research after subscription access is restored.
 - **Open items:** verify the Unsplash fallback URLs in a real browser, test upload/replace flows against the staged migration, inspect responsive screenshots and keyboard behavior, and confirm CI on the latest branch head before calling the work complete.
 
+
+
+## Signature salon templates — 2026-10-14
+
+### Reference repositories actually inspected
+- `Midosd249/Menu_V3`: read the design-intelligence and design-system contract. Applied the transferable gates: strong information hierarchy, explicit Arabic RTL behavior, responsive image stability, reduced-motion support, and truthful data/image states. No restaurant menu internals were imported.
+- `Midosd249/Demo_Site`: read the builder and data-contract documentation. Applied the principle that preview/demo content must remain clearly distinct from real business data; the stock photos are marked as illustrative through alt text/labels and must be replaced by the salon's own photography.
+- `Midosd249/Menu-V2-Sandbox`: read the tenant-aware image upload, preview, RTL/LTR and responsive interaction overview. Kept Menuun's own owner-media bucket and Supabase/RPC architecture; did not import its tenant/product schema.
+- `Midosd249/ai-agent-foundation`: read `AGENTS.md`, `SESSION_PROTOCOL.md`, `PLAN.md`, `TASKS.md`, `prompts/ORCHESTRATOR.md` and the feature workflow. Used a bounded design/implementation/QA workflow with explicit evidence gates; no AI runtime was added because templates are deterministic.
+
+### Design lock
+- **Atelier / dark editorial:** charcoal foundation, electric citron signal, large photographic hero, sharp lines, high contrast, structured service rows.
+- **Oasis / botanical natural:** warm chalk and sage palette, organic arch hero, photo-led service cards, soft paper surfaces and rounded booking controls.
+- **Rose Studio / couture beauty:** blush and rosewood palette, arched imagery, editorial Arabic serif fallbacks, asymmetric corner details and boutique service cards.
+- Shared invariants: Arabic-first RTL, clear booking CTA, stable price/duration hierarchy, owner-uploaded media wins over stock defaults, visible keyboard focus, reduced-motion support, no false reviews/ratings or fabricated business claims.
+- The composition is original synthesis, not a clone of any single reference.
+- **Image policy:** default remote Unsplash images are illustrative fallback photography. Real salon-owned photos take precedence. Image load errors hide the broken image rather than exposing the browser's broken-image glyph.
+
+### Verification gate
+- Added static regression assertions for distinct template selectors, salon imagery and failed-image handling.
+- **Pending:** current-head CI, Vercel preview for the redesign commit, real browser screenshots and interaction checks at desktop/tablet/mobile, and external image URL checks.
