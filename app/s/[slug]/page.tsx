@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./public-salon.module.css";
@@ -51,7 +52,7 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
   const heroImage = gallery.length ? gallery[0] : null;
   const hero = heroImage?.public_url || null;
   const waHref = (message:string) => "https://wa.me/"+wa+"?text="+encodeURIComponent(message);
-  return <main className={styles.site} style={{"--salon-ink":salon.primary_color,"--salon-accent":salon.accent_color} as React.CSSProperties} dir="rtl" lang="ar">
+  return <main className={styles.site} style={{"--salon-ink":salon.primary_color,"--salon-accent":salon.accent_color} as CSSProperties} dir="rtl" lang="ar">
     <div className={styles.topline}><span>تجربة صالونك، بتفاصيله</span><span>صفحة رسمية عبر Menuun</span></div>
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={salon.name_ar}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{salon.name_ar}</strong><small>{salon.name_en || "SALON EXPERIENCE"}</small></span></a>
