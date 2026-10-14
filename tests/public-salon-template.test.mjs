@@ -7,6 +7,7 @@ const qr = readFileSync(new URL("../app/s/[slug]/qr-share.tsx", import.meta.url)
 const booking = readFileSync(new URL("../app/s/[slug]/booking-form.tsx", import.meta.url), "utf8");
 const ownerQr = readFileSync(new URL("../app/owner/qr-card.tsx", import.meta.url), "utf8");
 const owner = readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8");
+const picker = readFileSync(new URL("../app/owner/template-picker.tsx", import.meta.url), "utf8");
 const css = readFileSync(new URL("../app/s/[slug]/public-salon.module.css", import.meta.url), "utf8");
 
 test("public salon template resolves only active, published tenants by stable slug", () => {
@@ -59,6 +60,8 @@ test("salon owner can choose one of three saved visual templates", () => {
   assert.match(page, /fallback=await db\.from\(["']salons["']\)/);
   assert.match(page, /styles\.templateOasis/);
   assert.match(page, /styles\.templateRose/);
+  assert.match(page, /searchParams/);
+  assert.match(picker, /\?template=\+template\.id/);
   assert.match(owner, /TemplatePicker/);
   assert.match(owner, /template-picker/);
 });
