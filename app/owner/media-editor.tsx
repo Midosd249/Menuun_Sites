@@ -1,30 +1,82 @@
 "use client";
-import { useEffect, useState, type ChangeEvent } from "react";
-import { ImagePlus, Trash2, Upload } from "lucide-react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { Facebook, Globe, ImagePlus, Instagram, MapPin, Trash2, Upload } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const BUCKET = "salon-public-media";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const ACCEPTED_IMAGES = "image/jpeg,image/png,image/webp,image/avif";
 type MediaAsset = { id: string; kind: string; storage_path: string; public_url: string | null; alt_ar: string | null; sort_order: number };
+type ServiceAsset = { id: string; name_ar: string; image_url: string | null; price_sar: number; duration_minutes: number };
+type BarberAsset = { id: string; display_name: string; image_url: string | null; bio_ar: string | null };
+type SocialLinks = { instagram_url: string; tiktok_url: string; snapchat_url: string; facebook_url: string; google_maps_url: string; website_url: string };
+const EMPTY_LINKS: SocialLinks = { instagram_url: "", tiktok_url: "", snapchat_url: "", facebook_url: "", google_maps_url: "", website_url: "" };
 
 function safeName(name: string) { return name.normalize("NFKD").replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/^-+|-+$/g, "").slice(-90) || "image"; }
 function validateImage(file: File) {
   if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type)) throw new Error("استخدم صورة بصيغة JPG أو PNG أو WebP أو AVIF.");
   if (file.size > MAX_FILE_SIZE) throw new Error("الحد الأقصى لحجم الصورة 10 ميجابايت.");
 }
+function normalizeUrl(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : "https://" + trimmed;
+  let parsed: URL;
+  try { parsed = new URL(candidate); } catch { throw new Error("أحد الروابط غير صالح."); }
+  if (parsed.protocol !== "https:" || !parsed.hostname.includes(".")) throw new Error("استخدم روابط آمنة تبدأ بـ https://.");
+  return parsed.toString();
+}
+function pathFromPublicUrl(url: string | null) {
+  if (!url) return null;
+  const marker = "/object/public/" + BUCKET + "/";
+  const index = url.indexOf(marker);
+  return index >= 0 ? decodeURIComponent(url.slice(index + marker.length).split("?")[0]) : null;
+}
 
 export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId: string; initialLogoUrl: string | null }) {
   const [db] = useState(() => createSupabaseBrowserClient());
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
   const [media, setMedia] = useState<MediaAsset[]>([]);
+  const [services, setServices] = useState<ServiceAsset[]>([]);
+  const [barbers, setBarbers] = useState<BarberAsset[]>([]);
+  const [links, setLinks] = useState<SocialLinks>(EMPTY_LINKS);
+  const [socialLinksAvailable, setSocialLinksAvailable] = useState(true);
+  const [serviceImagesAvailable, setServiceImagesAvailable] = useState(true);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
 
   async function load() {
-    const { data, error } = await db.from("media_assets").select("id,kind,storage_path,public_url,alt_ar,sort_order").eq("salon_id", salonId).eq("kind", "gallery").order("sort_order");
-    if (error) throw error;
-    setMedia((data || []) as MediaAsset[]);
+    const [mediaResult, serviceResult, barberResult, socialResult] = await Promise.all([
+      db.from("media_assets").select("id,kind,storage_path,public_url,alt_ar,sort_order").eq("salon_id", salonId).eq("kind", "gallery").order("sort_order"),
+      db.from("services").select("id,name_ar,image_url,price_sar,duration_minutes").eq("salon_id", salonId).eq("is_active", true).order("sort_order"),
+      db.from("barbers").select("id,display_name,image_url,bio_ar").eq("salon_id", salonId).eq("is_active", true).order("sort_order"),
+      db.from("salons").select("id,instagram_url,tiktok_url,snapchat_url,facebook_url,google_maps_url,website_url").eq("id", salonId).maybeSingle()
+    ]);
+    if (mediaResult.error) throw mediaResult.error;
+    if (barberResult.error) throw barberResult.error;
+    setMedia((mediaResult.data || []) as MediaAsset[]);
+    setBarbers((barberResult.data || []) as BarberAsset[]);
+    if (serviceResult.error && /image_url/.test(serviceResult.error.message || "")) {
+      setServiceImagesAvailable(false);
+      const legacy = await db.from("services").select("id,name_ar,price_sar,duration_minutes").eq("salon_id", salonId).eq("is_active", true).order("sort_order");
+      if (legacy.error) throw legacy.error;
+      setServices((legacy.data || []).map((row: any) => ({ ...row, image_url: null })) as ServiceAsset[]);
+    } else {
+      if (serviceResult.error) throw serviceResult.error;
+      setServiceImagesAvailable(true);
+      setServices((serviceResult.data || []) as ServiceAsset[]);
+    }
+    if (socialResult.error && /instagram_url|tiktok_url|snapchat_url|facebook_url|google_maps_url|website_url/.test(socialResult.error.message || "")) {
+      setSocialLinksAvailable(false);
+      setLinks(EMPTY_LINKS);
+    } else {
+      if (socialResult.error) throw socialResult.error;
+      setSocialLinksAvailable(true);
+      const row = socialResult.data as Partial<SocialLinks> | null;
+      setLinks({ instagram_url: row?.instagram_url || "", tiktok_url: row?.tiktok_url || "", snapchat_url: row?.snapchat_url || "", facebook_url: row?.facebook_url || "", google_maps_url: row?.google_maps_url || "", website_url: row?.website_url || "" });
+    }
   }
+
   useEffect(() => { setLogoUrl(initialLogoUrl); let live = true; load().catch(e => live && setNotice(e?.message || "تعذر تحميل الصور.")); return () => { live = false; }; }, [salonId, initialLogoUrl]);
 
   async function uploadLogo(event: ChangeEvent<HTMLInputElement>) {
@@ -53,7 +105,6 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
       for (const file of files) validateImage(file);
       const { data: { user } } = await db.auth.getUser();
       for (const [index, file] of files.entries()) {
-        validateImage(file);
         const path = salonId + "/gallery/" + crypto.randomUUID() + "-" + safeName(file.name);
         const { error: uploadError } = await db.storage.from(BUCKET).upload(path, file, { contentType: file.type, cacheControl: "3600", upsert: false });
         if (uploadError) throw uploadError;
@@ -63,6 +114,42 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
       }
       await load(); setNotice("تم رفع الصور وإضافتها إلى معرض الصالون.");
     } catch (e: any) { setNotice(e?.message || "تعذر رفع الصور."); }
+    finally { setBusy(false); }
+  }
+
+  async function uploadTargetImage(file: File, kind: "services" | "barbers", id: string, currentUrl: string | null) {
+    validateImage(file);
+    if (kind === "services" && !serviceImagesAvailable) throw new Error("يلزم تطبيق تحديث قاعدة البيانات لتفعيل صور الخدمات.");
+    const path = salonId + "/" + kind + "/" + id + "/" + crypto.randomUUID() + "-" + safeName(file.name);
+    const { error: uploadError } = await db.storage.from(BUCKET).upload(path, file, { contentType: file.type, cacheControl: "3600", upsert: false });
+    if (uploadError) throw uploadError;
+    const url = db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+    const table = kind === "services" ? "services" : "barbers";
+    const { data, error } = await db.from(table).update({ image_url: url }).eq("id", id).eq("salon_id", salonId).select("id").maybeSingle();
+    if (error || !data) {
+      await db.storage.from(BUCKET).remove([path]);
+      if (error) throw error;
+      throw new Error("لا توجد صلاحية لتعديل هذا العنصر.");
+    }
+    const oldPath = pathFromPublicUrl(currentUrl);
+    if (oldPath) await db.storage.from(BUCKET).remove([oldPath]);
+  }
+
+  async function uploadServiceImage(event: ChangeEvent<HTMLInputElement>, service: ServiceAsset) {
+    const input = event.currentTarget, file = input.files?.[0]; input.value = "";
+    if (!file) return;
+    setBusy(true); setNotice("");
+    try { await uploadTargetImage(file, "services", service.id, service.image_url); await load(); setNotice("تم تحديث صورة الخدمة: " + service.name_ar); }
+    catch (e: any) { setNotice(e?.message || "تعذر رفع صورة الخدمة."); }
+    finally { setBusy(false); }
+  }
+
+  async function uploadBarberImage(event: ChangeEvent<HTMLInputElement>, barber: BarberAsset) {
+    const input = event.currentTarget, file = input.files?.[0]; input.value = "";
+    if (!file) return;
+    setBusy(true); setNotice("");
+    try { await uploadTargetImage(file, "barbers", barber.id, barber.image_url); await load(); setNotice("تم تحديث صورة الحلاق: " + barber.display_name); }
+    catch (e: any) { setNotice(e?.message || "تعذر رفع صورة الحلاق."); }
     finally { setBusy(false); }
   }
 
@@ -80,12 +167,63 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
     finally { setBusy(false); }
   }
 
+  async function saveSocialLinks(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (busy) return;
+    setBusy(true); setNotice("");
+    try {
+      if (!socialLinksAvailable) throw new Error("يلزم تطبيق تحديث قاعدة البيانات لتفعيل روابط التواصل.");
+      const payload = {
+        instagram_url: normalizeUrl(links.instagram_url),
+        tiktok_url: normalizeUrl(links.tiktok_url),
+        snapchat_url: normalizeUrl(links.snapchat_url),
+        facebook_url: normalizeUrl(links.facebook_url),
+        google_maps_url: normalizeUrl(links.google_maps_url),
+        website_url: normalizeUrl(links.website_url)
+      };
+      const { data, error } = await db.from("salons").update(payload).eq("id", salonId).select("id").maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error("لا توجد صلاحية لتعديل روابط هذا الصالون.");
+      await load(); setNotice("تم حفظ روابط التواصل والموقع.");
+    } catch (e: any) { setNotice(e?.message || "تعذر حفظ الروابط."); }
+    finally { setBusy(false); }
+  }
+
   return <section className="owner-panel">
     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><ImagePlus size={19}/><h2 style={{margin:0}}>صور وهوية الصالون</h2></div>
-    <p style={{fontSize:12,color:"#697469",lineHeight:1.9,marginTop:0}}>ارفع شعارًا وصورًا حقيقية للمكان والأعمال. الصور التي ترفعها هنا ستكون متاحة للعرض العام في صفحة الصالون.</p>
-    <div className="menuun-media-logo">{logoUrl?<img src={logoUrl} alt="شعار الصالون الحالي"/>:<div className="menuun-media-placeholder">لا يوجد شعار بعد</div>}<div><strong>شعار الصالون</strong><small>JPG أو PNG أو WebP أو AVIF — حتى 10 ميجابايت</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{busy?"جارٍ العمل…":"رفع / استبدال الشعار"}<input type="file" accept="image/jpeg,image/png,image/webp,image/avif" disabled={busy} onChange={uploadLogo}/></label></div></div>
-    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginTop:24,marginBottom:12,flexWrap:"wrap"}}><h3 style={{margin:0,fontSize:15}}>معرض الصور ({media.length})</h3><label className="owner-primary menuun-upload-button"><ImagePlus size={15}/>إضافة صور<input type="file" multiple accept="image/jpeg,image/png,image/webp,image/avif" disabled={busy} onChange={uploadGallery}/></label></div>
+    <p style={{fontSize:12,color:"#697469",lineHeight:1.9,marginTop:0}}>ارفع صورًا أصلية للخدمات والحلاقين والمكان. ستظهر الصور في الصفحة العامة، مع صور استرشادية مؤقتة حتى ترفع صورك الحقيقية.</p>
+    <div className="menuun-media-logo">{logoUrl?<img src={logoUrl} alt="شعار الصالون الحالي"/>:<div className="menuun-media-placeholder">لا يوجد شعار بعد</div>}<div><strong>شعار الصالون</strong><small>JPG أو PNG أو WebP أو AVIF — حتى 10 ميجابايت</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{busy?"جارٍ العمل…":"رفع / استبدال الشعار"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={uploadLogo}/></label></div></div>
+
+    <div style={{marginTop:26}}>
+      <h3 style={{fontSize:15,margin:"0 0 12px"}}>صور الخدمات</h3>
+      {!serviceImagesAvailable && <p role="status" className="owner-notice">تحديث قاعدة البيانات مطلوب لحفظ صور الخدمات. الصور الاسترشادية ستبقى ظاهرة إلى حين تطبيق التحديث.</p>}
+      <div className="menuun-owner-media-grid">{services.map(service=><article className="menuun-owner-media-card" key={service.id}>{service.image_url?<img src={service.image_url} alt={service.name_ar}/>:<div className="menuun-media-placeholder">صورة استرشادية<br/>{service.name_ar}</div>}<div><strong>{service.name_ar}</strong><small>{service.duration_minutes} دقيقة · {service.price_sar} ر.س</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{service.image_url?"تغيير الصورة":"رفع صورة الخدمة"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy||!serviceImagesAvailable} onChange={e=>uploadServiceImage(e,service)}/></label></div></article>)}</div>
+      {services.length===0 && <p className="empty">أضف الخدمات أولًا، ثم ارفع صورة لكل خدمة.</p>}
+    </div>
+
+    <div style={{marginTop:26}}>
+      <h3 style={{fontSize:15,margin:"0 0 12px"}}>صور الحلاقين وفريق العمل</h3>
+      <div className="menuun-owner-media-grid">{barbers.map(barber=><article className="menuun-owner-media-card" key={barber.id}>{barber.image_url?<img src={barber.image_url} alt={barber.display_name}/>:<div className="menuun-media-placeholder">صورة استرشادية<br/>{barber.display_name}</div>}<div><strong>{barber.display_name}</strong><small>{barber.bio_ar||"أضف نبذة عن خبرة الحلاق من إعدادات الفريق."}</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{barber.image_url?"تغيير الصورة":"رفع صورة الحلاق"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={e=>uploadBarberImage(e,barber)}/></label></div></article>)}</div>
+      {barbers.length===0 && <p className="empty">أضف أعضاء الفريق من تبويب «فريق العمل» ثم ارفع صورهم من هنا.</p>}
+    </div>
+
+    <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginTop:28,marginBottom:12,flexWrap:"wrap"}}><h3 style={{margin:0,fontSize:15}}>معرض الصور ({media.length})</h3><label className="owner-primary menuun-upload-button"><ImagePlus size={15}/>إضافة صور<input type="file" multiple accept={ACCEPTED_IMAGES} disabled={busy} onChange={uploadGallery}/></label></div>
     <div className="menuun-gallery-grid">{media.map(item=><article className="menuun-gallery-item" key={item.id}>{item.public_url&&<img src={item.public_url} alt={item.alt_ar||"صورة من الصالون"}/>}<span>{item.alt_ar||"صورة الصالون"}</span><button type="button" className="owner-small-danger" disabled={busy} onClick={()=>removeImage(item)} aria-label="حذف الصورة"><Trash2 size={14}/> حذف</button></article>)}</div>
+
+    <form onSubmit={saveSocialLinks} className="menuun-social-form">
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><Globe size={18}/><h3 style={{margin:0,fontSize:15}}>الموقع وروابط التواصل الاجتماعي</h3></div>
+      <p style={{fontSize:12,color:"#697469",lineHeight:1.9,marginTop:0}}>أدخل الروابط الكاملة التي تريد عرضها للزوار. لا نعرض إلا الروابط الآمنة التي تبدأ بـ HTTPS.</p>
+      {!socialLinksAvailable && <p role="status" className="owner-notice">تحديث قاعدة البيانات مطلوب لتفعيل روابط التواصل والموقع.</p>}
+      <div className="menuun-social-grid">
+        <label><span><Instagram size={15}/> Instagram</span><input type="url" dir="ltr" placeholder="https://instagram.com/..." value={links.instagram_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,instagram_url:e.target.value}))}/></label>
+        <label><span><span style={{fontWeight:800}}>♪</span> TikTok</span><input type="url" dir="ltr" placeholder="https://tiktok.com/@..." value={links.tiktok_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,tiktok_url:e.target.value}))}/></label>
+        <label><span><span style={{fontWeight:800}}>S</span> Snapchat</span><input type="url" dir="ltr" placeholder="https://snapchat.com/add/..." value={links.snapchat_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,snapchat_url:e.target.value}))}/></label>
+        <label><span><Facebook size={15}/> Facebook</span><input type="url" dir="ltr" placeholder="https://facebook.com/..." value={links.facebook_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,facebook_url:e.target.value}))}/></label>
+        <label><span><MapPin size={15}/> رابط خرائط Google</span><input type="url" dir="ltr" placeholder="https://maps.google.com/..." value={links.google_maps_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,google_maps_url:e.target.value}))}/></label>
+        <label><span><Globe size={15}/> الموقع الإلكتروني</span><input type="url" dir="ltr" placeholder="https://your-salon.com" value={links.website_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,website_url:e.target.value}))}/></label>
+      </div>
+      <button type="submit" className="owner-primary" disabled={busy||!socialLinksAvailable}>{busy?"جارٍ الحفظ…":"حفظ روابط التواصل"}</button>
+    </form>
     {notice&&<p role="status" className="owner-notice" style={{marginTop:14}}>{notice}</p>}
   </section>;
 }
