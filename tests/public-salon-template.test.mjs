@@ -82,3 +82,10 @@ test("owner can edit existing services, not only add them", () => {
   assert.match(owner, /name_ar.*price_sar.*duration_minutes/s);
   assert.match(owner, /حفظ/);
 });
+
+
+test("public salon remains available before the optional template migration is applied", () => {
+  assert.match(page, /template_key/);
+  assert.match(page, /PGRST204|42703/);
+  assert.match(page, /legacySalon|legacy salon/i);
+});
