@@ -143,6 +143,8 @@ test("the three salon templates have distinct, accessible art direction", () => 
   assert.match(salonImage, /use client/);
   assert.match(salonImage, /onError/);
   assert.match(salonImage, /setFailed/);
+  assert.match(salonImage, /fallbackSrc/);
+  assert.match(salonImage, /setCurrentSrc\(fallbackSrc\)/);
 });
 
 test("Atelier alone receives the separated service-card layout fix", () => {
@@ -182,4 +184,16 @@ test("booking query parameter preselects an existing service and keeps the datab
   assert.ok(booking.includes('services.some((service) => service.id === requestedService)'));
   assert.ok(booking.includes('rpc("request_salon_appointment"'));
   assert.ok(page.includes("bookingHref(service.id)"));
+});
+
+test("location and hero media use centralized per-theme image configuration", () => {
+  const content = readFileSync(new URL("../app/s/[slug]/salon-demo-content.ts", import.meta.url), "utf8");
+  assert.ok(content.includes("export const LOCATION_IMAGES"));
+  assert.ok(content.includes("atelier:"));
+  assert.ok(content.includes("oasis:"));
+  assert.ok(content.includes("rose:"));
+  assert.ok(content.includes("HERO_IMAGE_FALLBACK"));
+  assert.ok(content.includes("SERVICE_IMAGE_FALLBACKS"));
+  assert.ok(page.includes("locationImageConfig.objectPosition"));
+  assert.ok(salonImage.includes("style={style}"));
 });
