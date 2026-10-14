@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 
 const page = readFileSync(new URL("../app/s/[slug]/page.tsx", import.meta.url), "utf8");
 const qr = readFileSync(new URL("../app/s/[slug]/qr-share.tsx", import.meta.url), "utf8");
+const booking = readFileSync(new URL("../app/s/[slug]/booking-form.tsx", import.meta.url), "utf8");
 const ownerQr = readFileSync(new URL("../app/owner/qr-card.tsx", import.meta.url), "utf8");
 const owner = readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8");
 const css = readFileSync(new URL("../app/s/[slug]/public-salon.module.css", import.meta.url), "utf8");
@@ -36,4 +37,16 @@ test("template is Arabic RTL-first, responsive and respects reduced motion", () 
   assert.match(css, /@media\(max-width:640px\)/);
   assert.match(css, /@media\(prefers-reduced-motion:reduce\)/);
   assert.match(css, /:hover/);
+});
+
+test("public booking uses database RPCs for availability and appointment creation", () => {
+  assert.match(page, /<PublicBookingForm slug=\{salon\.slug\}/);
+  assert.match(booking, /rpc\("get_public_booking_slots"/);
+  assert.match(booking, /rpc\("request_salon_appointment"/);
+  for (const arg of ["p_salon_slug", "p_service_id", "p_barber_id", "p_customer_name", "p_customer_phone", "p_starts_at", "p_customer_note"]) {
+    assert.ok(booking.includes(arg), "expected booking RPC argument " + arg);
+  }
+  assert.match(booking, /role="alert"/);
+  assert.match(booking, /بانتظار تأكيد الصالون/);
+  assert.doesNotMatch(booking, /\.from\(["']appointments["']\)\.insert/);
 });
