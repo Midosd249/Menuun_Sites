@@ -85,8 +85,9 @@ test("owner can edit existing services, not only add them", () => {
 
 test("public salon remains available before the optional template migration is applied", () => {
   assert.match(page, /template_key/);
-  assert.match(page, /if\(error&&\/template_key\/\.test\(error\.message\|\|\\"\\"\)\)/);
-  assert.match(page, /fallback\.data\?\{\.\.\.fallback\.data,template_key:\\"atelier\\"\}/);
+  assert.match(page, /legacySalonColumns/);
+  assert.match(page, /template_key\|instagram_url\|tiktok_url/);
+  assert.match(page, /fallback\.data \? \{ \.\.\.fallback\.data, template_key: fallback\.data\.template_key \|\| "atelier"/);
 });
 
 test("owner preview links can render a template without saving it to the salon", () => {
@@ -112,7 +113,8 @@ test("owner can manage service photos, barber portraits and social/location link
   for (const value of ["uploadServiceImage", "uploadBarberImage", "instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url"]) {
     assert.ok(mediaEditor.includes(value), "expected owner editor to include " + value);
   }
-  for (const value of ["services add column if not exists image_url", "instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url"]) {
+  assert.match(migration, /alter table public\\.services\\s+add column if not exists image_url/);
+  for (const value of ["instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url"]) {
     assert.ok(migration.includes(value), "expected migration to add " + value);
   }
 });
