@@ -40,7 +40,8 @@ async function getSalon(slug:string) {
     const hasTemplateColumn = !/template_key/.test(error.message||"");
     const select = legacySalonColumns + (hasTemplateColumn ? ",template_key" : "");
     const fallback = await db.from("salons").select(select).eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle();
-    salon = fallback.data ? { ...fallback.data, template_key: fallback.data.template_key || "atelier", instagram_url:null, tiktok_url:null, snapchat_url:null, facebook_url:null, google_maps_url:null, website_url:null } : null;
+    const fallbackRow = fallback.data as any;
+    salon = fallbackRow ? { ...fallbackRow, template_key: fallbackRow.template_key || "atelier", instagram_url:null, tiktok_url:null, snapchat_url:null, facebook_url:null, google_maps_url:null, website_url:null } : null;
     error = fallback.error;
   }
   if (error || !salon) return null;
