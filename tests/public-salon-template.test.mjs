@@ -20,7 +20,8 @@ test("public page displays service, team, hours, contact and public media data",
     assert.ok(page.includes(value), "expected template to include " + value);
   }
   assert.match(page, /generateMetadata/);
-  assert.match(page, /target=\{wa \? "_blank" : undefined\}/);
+  assert.match(page, /services\.length \? "#booking"/);
+  assert.match(page, /href="#booking">الحجز<\/a>/);
 });
 
 test("salon QR controls provide stable page URL, copy and download actions", () => {
