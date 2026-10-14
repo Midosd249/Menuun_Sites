@@ -25,7 +25,9 @@ test("public page displays service, team, hours, contact and public media data",
 });
 
 test("salon QR controls provide stable page URL, copy and download actions", () => {
-  assert.match(page, /new URL\("\/s\/"\+salon\.slug,origin\)/);
+  assert.match(qr, /new URL\("\/s\/"\+encodeURIComponent\(slug\),window\.location\.origin\)/);
+  assert.match(page, /احجز عبر واتساب/);
+  assert.match(page, /طلب حجز خدمة .* عبر واتساب/);
   assert.match(qr, /create-qr-code/);
   assert.match(qr, /navigator\.clipboard\.writeText/);
   assert.match(qr, /download/);
