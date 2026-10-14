@@ -56,6 +56,7 @@ test("public booking uses database RPCs for availability and appointment creatio
 
 test("salon owner can choose one of three saved visual templates", () => {
   assert.match(page, /template_key/);
+  assert.match(page, /fallback=await db\.from\(["']salons["']\)/);
   assert.match(page, /template-\$\{salon\.template_key\}/);
   assert.match(owner, /TemplatePicker/);
   assert.match(owner, /template-picker/);
