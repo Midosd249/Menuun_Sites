@@ -50,14 +50,15 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
     if (!files.length) return;
     setBusy(true); setNotice("");
     try {
+      for (const file of files) validateImage(file);
       const { data: { user } } = await db.auth.getUser();
-      for (const file of files) {
+      for (const [index, file] of files.entries()) {
         validateImage(file);
         const path = salonId + "/gallery/" + crypto.randomUUID() + "-" + safeName(file.name);
         const { error: uploadError } = await db.storage.from(BUCKET).upload(path, file, { contentType: file.type, cacheControl: "3600", upsert: false });
         if (uploadError) throw uploadError;
         const publicUrl = db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-        const { error } = await db.from("media_assets").insert({ salon_id: salonId, kind: "gallery", storage_path: path, public_url: publicUrl, mime_type: file.type, byte_size: file.size, alt_ar: file.name.replace(/\.[^.]+$/, "").slice(0, 160), sort_order: media.length, is_active: true, is_public: true, created_by: user?.id || null });
+        const { error } = await db.from("media_assets").insert({ salon_id: salonId, kind: "gallery", storage_path: path, public_url: publicUrl, mime_type: file.type, byte_size: file.size, alt_ar: file.name.replace(/\.[^.]+$/, "").slice(0, 160), sort_order: media.length + index, is_active: true, is_public: true, created_by: user?.id || null });
         if (error) { await db.storage.from(BUCKET).remove([path]); throw error; }
       }
       await load(); setNotice("تم رفع الصور وإضافتها إلى معرض الصالون.");
