@@ -19,7 +19,7 @@ export default function TemplatePicker({ salonId, selected, onSaved }: { salonId
     setBusy(true); setNotice("");
     try {
       const db = createSupabaseBrowserClient();
-      const { data, error } = await db.from("salons").update({ template_key: choice }).eq("id", salonId).select("id").maybeSingle();
+      const { data, error } = await db.from("salons").update({ template_key: choice } as any).eq("id", salonId).select("id").maybeSingle();
       if (error) throw error;
       if (!data) throw new Error("لا توجد صلاحية لتعديل هذا الصالون.");
       onSaved(choice);
