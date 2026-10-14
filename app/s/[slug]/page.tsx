@@ -69,7 +69,7 @@ export async function generateMetadata({params}:{params:Promise<{slug:string}>})
   return {title:result.salon.name_ar,description,alternates:{canonical:"/s/"+result.salon.slug},openGraph:{type:"website",title:result.salon.name_ar,description,url:"/s/"+result.salon.slug},robots:{index:true,follow:true}};
 }
 
-export default async function PublicSalonPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{template?:string}>}) {
+export default async function PublicSalonPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{template?:string;lang?:string}>}) {
   const [{slug},search] = await Promise.all([params,searchParams]);
   const requestedTemplate = search?.template;
   const english = search?.lang === "en";
