@@ -36,8 +36,8 @@ function errorMessage(message: string) {
 export default function PublicBookingForm({ slug, services, barbers, timezone }: Props) {
   const today = useMemo(() => dateInZone(timezone || "Asia/Riyadh"), [timezone]);
   const maxDate = useMemo(() => {
-    const date = new Date(today + "T12:00:00");
-    date.setDate(date.getDate() + 90);
+    const date = new Date(today + "T12:00:00Z");
+    date.setUTCDate(date.getUTCDate() + 90);
     return date.toISOString().slice(0, 10);
   }, [today]);
   const [serviceId, setServiceId] = useState(services[0]?.id ?? "");
