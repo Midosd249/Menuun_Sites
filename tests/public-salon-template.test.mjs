@@ -136,7 +136,7 @@ test("the three salon templates have distinct, accessible art direction", () => 
   assert.match(css, /\.templateRose \.services\{display:grid/);
   assert.match(css, /prefers-reduced-motion:reduce/);
   assert.doesNotMatch(css, /align-items:end/);
-  assert.match(page, /photo-1560066984-138dadb4c035/);
+  assert.match(page, /photo-1503951914875-452162b0f3f1/);
   assert.match(page, /<SalonImage/);
   assert.match(salonImage, /use client/);
   assert.match(salonImage, /onError/);
