@@ -147,12 +147,25 @@ test("the three salon templates have distinct, accessible art direction", () => 
   assert.match(salonImage, /setCurrentSrc\(fallbackSrc\)/);
 });
 
-test("Atelier alone receives the separated service-card layout fix", () => {
-  assert.ok(css.includes(".templateAtelier .service{grid-template-columns:minmax(110px,16%)"));
+test("Atelier service cards use separate image and content regions on narrow mobile widths", () => {
+  assert.ok(css.includes(".templateAtelier .service{grid-template-columns:minmax(0,1fr)"));
   assert.ok(css.includes(".templateAtelier .serviceImage{grid-column:1;grid-row:1"));
-  assert.ok(css.includes(".templateAtelier .service{grid-template-columns:minmax(78px,29%)"));
+  assert.ok(css.includes(".templateAtelier .serviceInfo{grid-column:1;grid-row:auto"));
+  assert.ok(css.includes(".templateAtelier .serviceIndex{grid-column:1;grid-row:auto"));
+  assert.ok(css.includes(".templateAtelier .price{grid-column:1;grid-row:auto"));
+  assert.ok(css.includes(".templateAtelier .serviceActions{grid-column:1;grid-row:auto"));
+  assert.ok(css.includes("height:auto"));
+  assert.ok(css.includes("overflow-wrap:anywhere"));
+  assert.ok(css.includes("min-width:0"));
+  assert.ok(css.includes("@media(max-width:640px)"));
   assert.ok(css.includes(".templateOasis .service{display:flex;flex-direction:column"));
   assert.ok(css.includes(".templateRose .services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"));
+});
+
+test("contact phone number is only rendered in the hero quick facts", () => {
+  assert.match(page, /quickFacts[^]*displayPhone/);
+  assert.doesNotMatch(page, /styles\.phoneLink/);
+  assert.doesNotMatch(page, /english\?"Call the salon":"اتصل بالصالون"/);
 });
 
 test("all three themes include a portfolio, premium groom package and final location feature", () => {
