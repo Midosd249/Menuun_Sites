@@ -4,6 +4,8 @@ import { readFileSync } from "node:fs";
 
 const page = readFileSync(new URL("../app/s/[slug]/page.tsx", import.meta.url), "utf8");
 const qr = readFileSync(new URL("../app/s/[slug]/qr-share.tsx", import.meta.url), "utf8");
+const ownerQr = readFileSync(new URL("../app/owner/qr-card.tsx", import.meta.url), "utf8");
+const owner = readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8");
 const css = readFileSync(new URL("../app/s/[slug]/public-salon.module.css", import.meta.url), "utf8");
 
 test("public salon template resolves only active, published tenants by stable slug", () => {
@@ -20,11 +22,13 @@ test("public page displays service, team, hours, contact and public media data",
   assert.match(page, /target=\{wa \? "_blank" : undefined\}/);
 });
 
-test("QR sharing includes a stable public URL, copy action and QR download link", () => {
-  assert.match(page, /new URL\("\/s\/"/);
+test("salon QR controls provide stable page URL, copy and download actions", () => {
+  assert.match(page, /new URL\("\/s\/"\+salon\.slug,origin\)/);
   assert.match(qr, /create-qr-code/);
   assert.match(qr, /navigator\.clipboard\.writeText/);
   assert.match(qr, /download/);
+  assert.match(ownerQr, /published/);
+  assert.match(owner, /<SalonQrCard/);
 });
 
 test("template is Arabic RTL-first, responsive and respects reduced motion", () => {
