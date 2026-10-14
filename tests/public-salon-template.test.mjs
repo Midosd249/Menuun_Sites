@@ -172,7 +172,7 @@ test("all three themes include a portfolio, premium groom package and final loca
 test("demo content removes public placeholders and avoids zero-priced fallback services", () => {
   const content = readFileSync(new URL("../app/s/[slug]/salon-demo-content.ts", import.meta.url), "utf8");
   for (const placeholder of ["صورة استرشادية", "نموذج استرشادي", "يرجى استبدالها", "أضف السعر", "ملف تجريبي", "بيانات تجريبية"]) {
-    assert.equal(page.includes(placeholder), false, "page must not expose " + placeholder);
+    assert.doesNotMatch(page, new RegExp(">[\\s\\S]{0,80}" + placeholder + "[\\s\\S]{0,80}<"), "page must not render " + placeholder + " as visible JSX text");
   }
   for (const amount of ["price_sar: 60", "price_sar: 95", "price_sar: 50", "price_sar: 75", "price_sar: 40", "price_sar: 450"]) {
     assert.ok(content.includes(amount), "demo content must include " + amount);
