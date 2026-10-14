@@ -7,7 +7,7 @@ The public salon page reads the replaceable demo catalog from `app/s/[slug]/salo
 - `DEMO_SERVICES`: Arabic and English names/descriptions, durations, starting prices, and service photo sources.
 - `GROOM_PACKAGE`: featured package copy, inclusions, duration, price, and image.
 - `OUR_WORK_IMAGES`: six portfolio entries, each with Arabic/English alt text and category labels.
-- `LOCATION_IMAGE`: fallback closing/location image, Arabic/English alt text, and focal-position metadata.
+- `LOCATION_IMAGES`: separate Atelier, Oasis and Rose Studio closing/location images, each with Arabic/English alt text and focal-position metadata; `LOCATION_IMAGE` remains the Atelier fallback.
 - `DEMO_CONTACT`: demo phone/WhatsApp, fictional Riyadh address, map destination, and hours.
 
 For the demo slugs `atelier-*`, `oasis-*`, and `rose-*`, the presentation catalog is intentionally used so all three theme previews remain consistent. Stored service IDs are retained when present so those services can still use the existing booking RPC. If a catalog item has no stored service ID, its CTA uses WhatsApp rather than submitting a fabricated service ID to the database. The groom package similarly uses the current booking flow only if a real stored groom service exists; otherwise it opens WhatsApp.
@@ -18,7 +18,7 @@ The Riyadh address and business hours are fictional presentation data, and the s
 
 ## Image source and reuse status
 
-The fallback image URLs in the content module use `images.unsplash.com` photo URLs with responsive width/quality parameters. They are used under the Unsplash License, which generally permits free commercial and personal use; individual images can still have separate trademark, privacy, or publicity considerations. Check the exact image and its context before using it for a real business.
+The fallback image URLs in the content module use `images.unsplash.com` photo URLs with responsive width/quality parameters. Each theme has a distinct closing/location image; when the owner has uploaded gallery media, the final uploaded image can be used as the closing image and is excluded from the portfolio to avoid immediate repetition. They are used under the Unsplash License, which generally permits free commercial and personal use; individual images can still have separate trademark, privacy, or publicity considerations. Check the exact image and its context before using it for a real business.
 
 - License: https://unsplash.com/license
 - Reference for open-source booking patterns (not copied into this project): https://github.com/letsopencals/template-frisor — MIT-licensed template according to the project's published documentation.
