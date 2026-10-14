@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, ExternalLink, Palette } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
@@ -14,6 +14,7 @@ export default function TemplatePicker({ salonId, slug, selected, onSaved }: { s
   const [choice, setChoice] = useState<TemplateKey>(templates.some(t => t.id === selected) ? selected as TemplateKey : "atelier");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
+  useEffect(() => { setChoice(templates.some(t => t.id === selected) ? selected as TemplateKey : "atelier"); }, [salonId, selected]);
   async function save() {
     if (busy) return;
     setBusy(true); setNotice("");
