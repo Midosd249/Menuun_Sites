@@ -93,6 +93,7 @@ test("public salon remains available before the optional template migration is a
 
 test("owner preview links can render a template without saving it to the salon", () => {
   assert.match(page, /searchParams/);
-  assert.match(page, /previewTemplate/);
+  assert.match(page, /requestedTemplate/);
   assert.match(page, /templateKey/);
+  assert.match(page, /\["atelier","oasis","rose"\]/);
 });
