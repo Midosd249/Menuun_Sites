@@ -48,7 +48,8 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
   const wa = (salon.whatsapp || salon.phone || "").replace(/[^0-9]/g,"");
   const location = [salon.address_ar,salon.city].filter(Boolean).join("، ");
   const gallery = media.filter(x=>x.kind==="gallery" && x.public_url);
-  const hero = gallery.length ? gallery[0].public_url : null;
+  const heroImage = gallery.length ? gallery[0] : null;
+  const hero = heroImage?.public_url || null;
   const waHref = (message:string) => "https://wa.me/"+wa+"?text="+encodeURIComponent(message);
   return <main className={styles.site} style={{"--salon-ink":salon.primary_color,"--salon-accent":salon.accent_color} as React.CSSProperties} dir="rtl" lang="ar">
     <div className={styles.topline}><span>تجربة صالونك، بتفاصيله</span><span>صفحة رسمية عبر Menuun</span></div>
@@ -62,7 +63,7 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
         <div className={styles.heroActions}><a className={styles.primaryButton} href={wa ? waHref("مرحبًا، أرغب في حجز موعد لدى "+salon.name_ar) : "#services"} target={wa ? "_blank" : undefined} rel={wa ? "noreferrer" : undefined}>{wa ? "احجز عبر واتساب" : "اكتشف الخدمات"} ↙</a><a className={styles.secondaryButton} href="#services">تصفّح الخدمات</a></div>
         <div className={styles.quickFacts}>{location && <span>⌖ {location}</span>}{salon.phone && <a href={"tel:"+salon.phone}>☎ {salon.phone}</a>}</div>
       </div>
-      <div className={styles.heroVisual}>{hero ? <img className={styles.heroImage} src={hero} alt={gallery[0].alt_ar || "صور "+salon.name_ar} /> : <div className={styles.artCard}><span className={styles.artNumber}>01 / MENUUN</span><span className={styles.artGlyph}>✳</span><strong>{salon.name_ar}</strong><small>CARE • CRAFT • DETAIL</small></div>}<div className={styles.visualCaption}><span>مساحة مصممة حولك</span><span>01 — 04</span></div></div>
+      <div className={styles.heroVisual}>{hero ? <img className={styles.heroImage} src={hero} alt={heroImage?.alt_ar || "صور "+salon.name_ar} /> : <div className={styles.artCard}><span className={styles.artNumber}>01 / MENUUN</span><span className={styles.artGlyph}>✳</span><strong>{salon.name_ar}</strong><small>CARE • CRAFT • DETAIL</small></div>}<div className={styles.visualCaption}><span>مساحة مصممة حولك</span><span>01 — 04</span></div></div>
     </section>
     <section className={styles.section} id="services"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>قائمة الخدمات</p><h2>اختر تجربتك القادمة.</h2></div><p>خدمات واضحة، أسعار معلنة، ووقت تعرفه قبل أن تبدأ.</p></div>
       {services.length ? <div className={styles.services}>{services.map((service,index)=><article className={styles.service} key={service.id}><span className={styles.serviceIndex}>{String(index+1).padStart(2,"0")}</span><div className={styles.serviceInfo}><h3>{service.name_ar}</h3>{service.description_ar && <p>{service.description_ar}</p>}<span>◷ {service.duration_minutes} دقيقة</span></div><strong className={styles.price}>{money(Number(service.price_sar),salon.currency_code)}</strong>{wa && <a className={styles.serviceAction} target="_blank" rel="noreferrer" href={waHref("مرحبًا، أرغب في حجز خدمة "+service.name_ar+" لدى "+salon.name_ar)} aria-label={"طلب حجز خدمة "+service.name_ar+" عبر واتساب"}>احجز ↗</a>}</article>)}</div> : <p className={styles.empty}>ستظهر الخدمات هنا بعد إضافتها من مساحة الصالون.</p>}
