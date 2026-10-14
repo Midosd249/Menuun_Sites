@@ -89,3 +89,10 @@ test("public salon remains available before the optional template migration is a
   assert.match(page, /if\(error&&\/template_key\/\.test\(error\.message\|\|\"\"\)\)/);
   assert.match(page, /fallback\.data\?\{\.\.\.fallback\.data,template_key:\"atelier\"\}/);
 });
+
+
+test("owner preview links can render a template without saving it to the salon", () => {
+  assert.match(page, /searchParams/);
+  assert.match(page, /previewTemplate/);
+  assert.match(page, /templateKey/);
+});
