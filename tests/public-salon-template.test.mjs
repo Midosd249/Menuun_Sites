@@ -57,7 +57,8 @@ test("public booking uses database RPCs for availability and appointment creatio
 test("salon owner can choose one of three saved visual templates", () => {
   assert.match(page, /template_key/);
   assert.match(page, /fallback=await db\.from\(["']salons["']\)/);
-  assert.match(page, /template-\$\{salon\.template_key\}/);
+  assert.match(page, /styles\.templateOasis/);
+  assert.match(page, /styles\.templateRose/);
   assert.match(owner, /TemplatePicker/);
   assert.match(owner, /template-picker/);
 });
@@ -66,7 +67,8 @@ test("owner can upload salon branding and public gallery images to the dedicated
   const mediaEditor = readFileSync(new URL("../app/owner/media-editor.tsx", import.meta.url), "utf8");
   const migration = readFileSync(new URL("../supabase/migrations/20261014120000_salon_templates_public_media.sql", import.meta.url), "utf8");
   assert.match(mediaEditor, /salon-public-media/);
-  assert.match(mediaEditor, /storage\.from\(["']salon-public-media["']\)\.upload/);
+  assert.match(mediaEditor, /BUCKET = "salon-public-media"/);
+  assert.match(mediaEditor, /storage\.from\(BUCKET\)\.upload/);
   assert.match(mediaEditor, /media_assets/);
   assert.match(migration, /template_key/);
   assert.match(migration, /salon-public-media/);
