@@ -57,7 +57,7 @@ test("public booking uses database RPCs for availability and appointment creatio
 
 test("salon owner can choose one of three saved visual templates", () => {
   assert.match(page, /template_key/);
-  assert.match(page, /fallback=await db\.from\(["']salons["']\)/);
+  assert.match(page, /const fallback = await db\.from\(["']salons["']\)/);
   assert.match(page, /styles\.templateOasis/);
   assert.match(page, /styles\.templateRose/);
   assert.match(page, /searchParams/);
@@ -113,7 +113,7 @@ test("owner can manage service photos, barber portraits and social/location link
   for (const value of ["uploadServiceImage", "uploadBarberImage", "instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url"]) {
     assert.ok(mediaEditor.includes(value), "expected owner editor to include " + value);
   }
-  assert.match(migration, /alter table public\\.services\\s+add column if not exists image_url/);
+  assert.match(migration, /alter table public\.services\s+add column if not exists image_url/);
   for (const value of ["instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url"]) {
     assert.ok(migration.includes(value), "expected migration to add " + value);
   }
