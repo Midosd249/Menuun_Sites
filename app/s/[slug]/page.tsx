@@ -20,7 +20,9 @@ const time = (value:string|null) => value ? value.slice(0,5) : "—";
 
 async function getSalon(slug:string) {
   const db = await createSupabaseServerClient();
-  const {data: salon,error} = await db.from("salons").select("id,slug,name_ar,name_en,tagline_ar,description_ar,logo_url,phone,whatsapp,address_ar,city,timezone,currency_code,primary_color,accent_color,template_key,is_active,is_published").eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle();
+  let salon:any,error:any;
+  ({data:salon,error}=await db.from("salons").select("id,slug,name_ar,name_en,tagline_ar,description_ar,logo_url,phone,whatsapp,address_ar,city,timezone,currency_code,primary_color,accent_color,template_key,is_active,is_published").eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle());
+  if(error&&/template_key/.test(error.message||"")){const fallback=await db.from("salons").select("id,slug,name_ar,name_en,tagline_ar,description_ar,logo_url,phone,whatsapp,address_ar,city,timezone,currency_code,primary_color,accent_color,is_active,is_published").eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle();salon=fallback.data?{...fallback.data,template_key:"atelier"}:null;error=fallback.error;}
   if (error || !salon) return null;
   const [sr,br,hr,mr] = await Promise.all([
     db.from("services").select("id,name_ar,description_ar,price_sar,duration_minutes,sort_order").eq("salon_id",salon.id).eq("is_active",true).order("sort_order"),
@@ -52,7 +54,7 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
   const heroImage = gallery.length ? gallery[0] : null;
   const hero = heroImage?.public_url || null;
   const waHref = (message:string) => "https://wa.me/"+wa+"?text="+encodeURIComponent(message);
-  return <main className={styles.site+" "+(salon.template_key==="oasis"?styles.templateOasis:salon.template_key==="rose"?styles.templateRose:styles.templateAtelier)} style={{"--salon-ink":salon.primary_color,"--salon-accent":salon.accent_color} as CSSProperties} dir="rtl" lang="ar">
+  return <main className={styles.site+" "+(salon.template_key==="oasis"?styles.templateOasis:salon.template_key==="rose"?styles.templateRose:styles.templateAtelier)} style={{"--salon-ink":salon.template_key==="atelier"?salon.primary_color:undefined,"--salon-accent":salon.template_key==="atelier"?salon.accent_color:undefined} as CSSProperties} dir="rtl" lang="ar">
     <div className={styles.topline}><span>تجربة صالونك، بتفاصيله</span><span>صفحة رسمية عبر Menuun</span></div>
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={salon.name_ar}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{salon.name_ar}</strong><small>{salon.name_en || "SALON EXPERIENCE"}</small></span></a>
