@@ -148,16 +148,14 @@ test("the three salon templates have distinct, accessible art direction", () => 
 });
 
 test("Atelier service cards use separate image and content regions on narrow mobile widths", () => {
-  assert.ok(css.includes(".templateAtelier .service{grid-template-columns:minmax(0,1fr)"));
-  assert.ok(css.includes(".templateAtelier .serviceImage{grid-column:1;grid-row:1"));
-  assert.ok(css.includes(".templateAtelier .serviceInfo{grid-column:1;grid-row:auto"));
-  assert.ok(css.includes(".templateAtelier .serviceIndex{grid-column:1;grid-row:auto"));
-  assert.ok(css.includes(".templateAtelier .price{grid-column:1;grid-row:auto"));
-  assert.ok(css.includes(".templateAtelier .serviceActions{grid-column:1;grid-row:auto"));
-  assert.ok(css.includes("height:auto"));
-  assert.ok(css.includes("overflow-wrap:anywhere"));
-  assert.ok(css.includes("min-width:0"));
-  assert.ok(css.includes("@media(max-width:640px)"));
+  const mobileAtelierCss = css.slice(css.lastIndexOf("/* Atelier mobile cards"));
+  assert.match(mobileAtelierCss, /\.templateAtelier \.service\s*\{[^}]*grid-template-columns:\s*minmax\(0,1fr\)/s);
+  assert.match(mobileAtelierCss, /\.templateAtelier \.serviceImage\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*1;[^}]*height:\s*auto/s);
+  assert.match(mobileAtelierCss, /\.templateAtelier \.serviceIndex,[\s\S]*?\.templateAtelier \.serviceActions\s*\{[^}]*grid-column:\s*1;[^}]*grid-row:\s*auto/s);
+  assert.match(mobileAtelierCss, /aspect-ratio:\s*16\/9/);
+  assert.match(mobileAtelierCss, /overflow-wrap:\s*anywhere/);
+  assert.match(mobileAtelierCss, /min-width:\s*0/);
+  assert.match(mobileAtelierCss, /@media\(max-width:640px\)/);
   assert.ok(css.includes(".templateOasis .service{display:flex;flex-direction:column"));
   assert.ok(css.includes(".templateRose .services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"));
 });
