@@ -86,6 +86,6 @@ test("owner can edit existing services, not only add them", () => {
 
 test("public salon remains available before the optional template migration is applied", () => {
   assert.match(page, /template_key/);
-  assert.match(page, /PGRST204|42703/);
-  assert.match(page, /legacySalon|legacy salon/i);
+  assert.match(page, /if\(error&&\/template_key\/\.test\(error\.message\|\|\"\"\)\)/);
+  assert.match(page, /fallback\.data\?\{\.\.\.fallback\.data,template_key:\"atelier\"\}/);
 });
