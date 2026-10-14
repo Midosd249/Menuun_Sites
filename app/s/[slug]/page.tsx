@@ -42,11 +42,14 @@ export async function generateMetadata({params}:{params:Promise<{slug:string}>})
   return {title:result.salon.name_ar,description,alternates:{canonical:"/s/"+result.salon.slug},openGraph:{type:"website",title:result.salon.name_ar,description,url:"/s/"+result.salon.slug},robots:{index:true,follow:true}};
 }
 
-export default async function PublicSalonPage({params}:{params:Promise<{slug:string}>}) {
-  const {slug} = await params;
+export default async function PublicSalonPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{template?:string}>}) {
+  const [{slug},search] = await Promise.all([params,searchParams]);
+  const requestedTemplate = search?.template;
+  const templateKey = requestedTemplate && ["atelier","oasis","rose"].includes(requestedTemplate) ? requestedTemplate : undefined;
   const result = await getSalon(slug);
   if (!result) notFound();
   const {salon,services,barbers,hours,media} = result;
+  const activeTemplate = templateKey || salon.template_key || "atelier";
   const rawWa = (salon.whatsapp || salon.phone || "").replace(/[^0-9]/g,"");
   const wa = rawWa.startsWith("00") ? rawWa.slice(2) : rawWa.startsWith("0") ? "966"+rawWa.slice(1) : /^[5][0-9]{8}$/.test(rawWa) ? "966"+rawWa : rawWa;
   const location = [salon.address_ar,salon.city].filter(Boolean).join("، ");
@@ -54,7 +57,7 @@ export default async function PublicSalonPage({params}:{params:Promise<{slug:str
   const heroImage = gallery.length ? gallery[0] : null;
   const hero = heroImage?.public_url || null;
   const waHref = (message:string) => "https://wa.me/"+wa+"?text="+encodeURIComponent(message);
-  return <main className={styles.site+" "+(salon.template_key==="oasis"?styles.templateOasis:salon.template_key==="rose"?styles.templateRose:styles.templateAtelier)} style={{"--salon-ink":salon.template_key==="atelier"?salon.primary_color:undefined,"--salon-accent":salon.template_key==="atelier"?salon.accent_color:undefined} as CSSProperties} dir="rtl" lang="ar">
+  return <main className={styles.site+" "+(activeTemplate==="oasis"?styles.templateOasis:activeTemplate==="rose"?styles.templateRose:styles.templateAtelier)} style={{"--salon-ink":activeTemplate==="atelier"?salon.primary_color:undefined,"--salon-accent":activeTemplate==="atelier"?salon.accent_color:undefined} as CSSProperties} dir="rtl" lang="ar">
     <div className={styles.topline}><span>تجربة صالونك، بتفاصيله</span><span>صفحة رسمية عبر Menuun</span></div>
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={salon.name_ar}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{salon.name_ar}</strong><small>{salon.name_en || "SALON EXPERIENCE"}</small></span></a>
