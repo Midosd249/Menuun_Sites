@@ -6,7 +6,7 @@ import styles from "./public-salon.module.css";
 import SalonQrShare from "./qr-share";
 import PublicBookingForm from "./booking-form";
 import SalonImage from "./salon-image";
-import { DEMO_CONTACT, DEMO_SERVICES, GROOM_PACKAGE, LOCATION_IMAGE, OUR_WORK_IMAGES } from "./salon-demo-content";
+import { BARBER_IMAGE_FALLBACKS, DEMO_CONTACT, DEMO_SERVICES, GROOM_PACKAGE, HERO_IMAGE_FALLBACK as HERO_FALLBACK, LOCATION_IMAGES, OUR_WORK_IMAGES, SERVICE_IMAGE_FALLBACKS } from "./salon-demo-content";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -19,20 +19,6 @@ type Media = { id:string; kind:string; public_url:string|null; alt_ar:string|nul
 const weekdays = ["الأحد","الإثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
 const money = (value:number,currency:string) => new Intl.NumberFormat("ar-SA",{style:"currency",currency,maximumFractionDigits:0}).format(value);
 const time = (value:string|null) => value ? value.slice(0,5) : "—";
-const HERO_FALLBACK = "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1800&q=88";
-const SERVICE_IMAGE_FALLBACKS = [
-  "https://images.unsplash.com/photo-1621605815971-fbc98d665033?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1622287162716-f311baa1a2b8?auto=format&fit=crop&w=1000&q=85",
-  "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1000&q=85"
-];
-const BARBER_IMAGE_FALLBACKS = [
-  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80",
-  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=700&q=80",
-  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=700&q=80",
-  "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?auto=format&fit=crop&w=700&q=80"
-];
-
 async function getSalon(slug:string) {
   const db = await createSupabaseServerClient();
   const legacySalonColumns = "id,slug,name_ar,name_en,tagline_ar,description_ar,logo_url,phone,whatsapp,address_ar,city,timezone,currency_code,primary_color,accent_color,is_active,is_published";
@@ -108,6 +94,7 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
   const heroImage = gallery.length ? gallery[0] : null;
   const hero = heroImage?.public_url || HERO_FALLBACK;
   const locationPhoto = gallery.length ? gallery[gallery.length-1] : null;
+  const locationImageConfig = LOCATION_IMAGES[activeTemplate as keyof typeof LOCATION_IMAGES] || LOCATION_IMAGES.atelier;
   const bookingServices = isDemoSalon ? services.map((service,index)=>({...service,name_en:DEMO_SERVICES[index]?.name_en})) : services;
   const waHref = (message:string) => "https://wa.me/"+wa+"?text="+encodeURIComponent(message);
   const portfolio = [...gallery.map(image=>({src:image.public_url!,alt_ar:image.alt_ar || "تفاصيل من أعمال الحلاقة والعناية",alt_en:"Barbering and grooming portfolio detail",category_ar:"من أعمالنا",category_en:"Our work"})), ...OUR_WORK_IMAGES].filter((image,index,items)=>items.findIndex(other=>other.src===image.src)===index).slice(0,6);
@@ -136,7 +123,7 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
     <section className={styles.gallerySection} id="work"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>{english?"THE PORTFOLIO":"معرض العناية والتصفيف"}</p><h2>{english?"Our work, in detail.":"أعمالنا، بتفاصيلها."}</h2></div><p>{english?"A portfolio of fades, classic cuts, beard work and polished occasion looks.":"نماذج من التدرّجات والقصات الكلاسيكية وتهذيب اللحية والإطلالات المميزة."}</p></div><div className={styles.workGallery}>{portfolio.map((image,index)=><figure className={styles.workItem} key={image.src}><SalonImage src={image.src} alt={english?image.alt_en:image.alt_ar} loading="lazy"/><figcaption><span>{english?image.category_en:image.category_ar}</span><span>{String(index+1).padStart(2,"0")}</span></figcaption></figure>)}</div></section>
     <section className={styles.infoSection} id="hours"><div className={styles.infoIntro}><p className={styles.eyebrow}>{english ? "PLAN YOUR VISIT" : "خطوتك التالية"}</p><h2>{english ? "Your next visit, made easy." : "نرتب زيارتك بكل سهولة."}</h2><p>{english ? "Ask us about a service or arrange your next appointment." : "تواصل معنا للاستفسار عن الخدمة المناسبة أو لتنسيق موعدك القادم."}</p>{wa && <a className={styles.primaryButton} target="_blank" rel="noopener noreferrer" href={waHref(english ? "Hello, I would like to ask about your salon services." : "مرحبًا، أرغب في الاستفسار عن "+salon.name_ar)}>{english ? "Chat on WhatsApp" : "تواصل عبر واتساب"} ↗</a>}{displayPhone && <a className={styles.phoneLink} href={"tel:"+displayPhone}>{displayPhone}</a>}</div>
       <div className={styles.hoursCard}><h3>{english ? "Opening hours" : "أوقات العمل"}</h3>{shownHours.length ? shownHours.map((day:any)=><div className={styles.hoursRow} key={day.weekday}><span>{"display_day" in day ? day.display_day : (english?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][day.weekday]:weekdays[day.weekday])}</span><strong>{"display_hours" in day ? day.display_hours : (day.is_closed ? (english?"Closed":"مغلق") : time(day.opens_at)+" — "+time(day.closes_at))}</strong></div>) : <p className={styles.empty}>{english?"Contact us for current opening hours.":"تواصل معنا لمعرفة أوقات العمل."}</p>}{location && <p className={styles.location}>⌖ {mapHref ? <a href={mapHref} target="_blank" rel="noopener noreferrer">{location} — {english ? "Open in Google Maps" : "الاتجاهات"} ↗</a> : location}</p>}{socialLinks.length>0 && <div className={styles.socialLinks} aria-label="روابط التواصل الاجتماعي">{socialLinks.map(link=><a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div>}</div></section>
-    <section className={styles.locationFeature}><div className={styles.locationPhoto}><SalonImage src={locationPhoto?.public_url || LOCATION_IMAGE.src} alt={english?(locationPhoto ? "Salon interior and location photography" : LOCATION_IMAGE.alt_en):(locationPhoto?.alt_ar || LOCATION_IMAGE.alt_ar)} loading="lazy"/></div><div className={styles.locationFeatureCopy}><p className={styles.eyebrow}>{english?"FIND YOUR WAY":"موقعنا"}</p><h2>{english?"A place for your next reset.":"مساحة تستحق زيارتك القادمة."}</h2><p>{location}</p><div className={styles.heroActions}>{mapHref&&<a className={styles.primaryButton} href={mapHref} target="_blank" rel="noopener noreferrer">{english?"Open in Google Maps":"افتح الموقع على خرائط Google"} ↗</a>}{displayPhone&&<a className={styles.secondaryButton} href={"tel:"+displayPhone}>{english?"Call the salon":"اتصل بالصالون"}</a>}{wa&&<a className={styles.secondaryButton} href={waHref(english?"Hello, I would like to book an appointment.":"مرحبًا، أرغب في حجز موعد.")} target="_blank" rel="noopener noreferrer">{english?"WhatsApp":"واتساب"} ↗</a>}</div></div></section>
+    <section className={styles.locationFeature}><div className={styles.locationPhoto}><SalonImage src={locationPhoto?.public_url || locationImageConfig.src} alt={english?(locationPhoto ? "Salon interior and location photography" : locationImageConfig.alt_en):(locationPhoto?.alt_ar || locationImageConfig.alt_ar)} loading="lazy"/></div><div className={styles.locationFeatureCopy}><p className={styles.eyebrow}>{english?"FIND YOUR WAY":"موقعنا"}</p><h2>{english?"A place for your next reset.":"مساحة تستحق زيارتك القادمة."}</h2><p>{location}</p><div className={styles.heroActions}>{mapHref&&<a className={styles.primaryButton} href={mapHref} target="_blank" rel="noopener noreferrer">{english?"Open in Google Maps":"افتح الموقع على خرائط Google"} ↗</a>}{displayPhone&&<a className={styles.secondaryButton} href={"tel:"+displayPhone}>{english?"Call the salon":"اتصل بالصالون"}</a>}{wa&&<a className={styles.secondaryButton} href={waHref(english?"Hello, I would like to book an appointment.":"مرحبًا، أرغب في حجز موعد.")} target="_blank" rel="noopener noreferrer">{english?"WhatsApp":"واتساب"} ↗</a>}</div></div></section>
     <footer className={styles.footer}><a className={styles.footerBrand} href="#home">{salon.name_ar} <span>✳</span></a>{socialLinks.length>0 && <nav className={styles.footerSocials} aria-label={english ? "Social links" : "روابط التواصل"}>{socialLinks.map(link=><a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>)}</nav>}<span>{english ? "A salon experience by Menuun" : "تجربة صالون عبر Menuun"}</span><a href="#home">{english ? "Back to top" : "العودة للأعلى"} ↑</a></footer>
   </main>;
 }
