@@ -64,9 +64,33 @@ export const OUR_WORK_IMAGES: PortfolioImage[] = [
   { src: "https://images.unsplash.com/photo-1512690459411-b9245aed614b?auto=format&fit=crop&w=1000&q=82", alt_ar: "إطلالة أنيقة لمناسبة خاصة", alt_en: "A polished look for a special occasion", category_ar: "إطلالة المناسبات", category_en: "Premium occasion look" },
 ];
 
-export const LOCATION_IMAGE = {
-  src: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1800&q=84",
-  alt_ar: "واجهة وأجواء صالون رجالي معاصر في الرياض",
-  alt_en: "Contemporary men's salon setting in Riyadh",
-  objectPosition: "center 48%",
-};
+export const LOCATION_IMAGES = {
+  atelier: {
+    src: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1800&q=84",
+    alt_ar: "أجواء صالون رجالي بتفاصيل داكنة وأنيقة",
+    alt_en: "Dark, editorial men's salon atmosphere",
+    objectPosition: "center 48%",
+  },
+  oasis: {
+    src: "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1800&q=84",
+    alt_ar: "مساحة صالون مشرقة بمواد طبيعية ودرجات هادئة",
+    alt_en: "Bright salon interior with natural textures and calm tones",
+    objectPosition: "center 52%",
+  },
+  rose: {
+    src: "https://images.unsplash.com/photo-1512690459411-b9245aed614b?auto=format&fit=crop&w=1800&q=84",
+    alt_ar: "مساحة عناية أنيقة بلمسات تحريرية ناعمة",
+    alt_en: "Refined grooming space with a soft editorial feel",
+    objectPosition: "center 48%",
+  },
+} as const;
+
+export const LOCATION_IMAGE = LOCATION_IMAGES.atelier;
+export const HERO_IMAGE_FALLBACK = "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1800&q=88";
+export const SERVICE_IMAGE_FALLBACKS = DEMO_SERVICES.map((service) => service.image_url);
+export const BARBER_IMAGE_FALLBACKS = [
+  "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=700&q=80",
+  "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=700&q=80",
+  "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=700&q=80",
+  "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?auto=format&fit=crop&w=700&q=80",
+];
