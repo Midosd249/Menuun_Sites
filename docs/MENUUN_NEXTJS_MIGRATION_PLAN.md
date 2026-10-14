@@ -62,3 +62,13 @@ Files were committed through the GitHub repository API; this environment does no
 - [ ] Arabic RTL and English render correctly.
 - [ ] Build, typecheck, automated tests, and cross-tenant RLS tests pass.
 - [ ] New Vercel preview is READY and smoke tests pass.
+
+
+## Supabase schema/RLS inspection (2026-10-14)
+
+- Inspected the connected Menuun_Site project metadata, public table definitions, applied migration versions, policies for salons/salon_members/services/barbers/appointments, and Supabase advisors. No database writes or migrations were performed.
+- Confirmed RLS is enabled on the five core tables. Member read policies use private.is_salon_member(salon_id) / private.is_salon_member(id); salon/service/barber writes use private.is_salon_manager(...). Appointment updates explicitly allow active owner, manager, or receptionist membership. This is policy-definition inspection, not a live two-user isolation test.
+- The live salon_members role constraint allows owner, manager, receptionist (not admin). The UI filters tenant access to owner/manager; receptionist is deliberately excluded from owner workspace, although existing RLS permits their appointment updates.
+- The services.duration_minutes database check is 5–480; the native form maximum was aligned to 480 to avoid a guaranteed constraint failure.
+- Supabase security advisor reports leaked-password protection disabled (warning). Performance advisor reports unused indexes (informational); no advisor remediation or auth-setting changes were made.
+- Current tenant data remains in the existing Supabase project; no users, salon rows, or records were reset or modified by this migration.
