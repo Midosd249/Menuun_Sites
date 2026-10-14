@@ -1,6 +1,6 @@
 begin;
 
-select plan(4);
+select plan(5);
 
 -- Public RPC regression coverage: anon can book only against a published salon,
 -- and can discover availability without receiving customer/appointment records.
