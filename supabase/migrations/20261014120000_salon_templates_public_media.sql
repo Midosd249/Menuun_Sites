@@ -84,3 +84,15 @@ using (
       and private.is_salon_manager(s.id)
   )
 );
+
+-- Public profile enrichment: service photos and direct business/social destinations.
+alter table public.services
+  add column if not exists image_url text;
+
+alter table public.salons
+  add column if not exists instagram_url text,
+  add column if not exists tiktok_url text,
+  add column if not exists snapchat_url text,
+  add column if not exists facebook_url text,
+  add column if not exists google_maps_url text,
+  add column if not exists website_url text;
