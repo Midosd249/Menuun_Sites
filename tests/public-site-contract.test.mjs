@@ -25,6 +25,11 @@ test("account entry points are honest and do not fake account creation", () => {
   assert.doesNotMatch(app, /passwordHash|service_role|SUPABASE_SERVICE_ROLE_KEY/);
 });
 
+test("private owner workspace is rendered dynamically for request-time auth", () => {
+  const ownerLayout = readFileSync(new URL("../app/owner/layout.tsx", import.meta.url), "utf8");
+  assert.match(ownerLayout, /export const dynamic = "force-dynamic"/);
+});
+
 test("the Next.js page is safe to render on the server", () => {
   assert.match(app, /^"use client";/);
   assert.match(app, /usePathname\(\)/);
