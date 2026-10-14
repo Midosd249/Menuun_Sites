@@ -87,7 +87,8 @@ test("public salon remains available before the optional template migration is a
   assert.match(page, /template_key/);
   assert.match(page, /legacySalonColumns/);
   assert.match(page, /template_key\|instagram_url\|tiktok_url/);
-  assert.match(page, /fallback\.data \? \{ \.\.\.fallback\.data, template_key: fallback\.data\.template_key \|\| "atelier"/);
+  assert.match(page, /const fallbackRow = fallback\.data as any/);
+  assert.match(page, /template_key: fallbackRow\.template_key \|\| "atelier"/);
 });
 
 test("owner preview links can render a template without saving it to the salon", () => {
