@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const page = readFileSync(new URL("../app/s/[slug]/page.tsx", import.meta.url), "utf8");
+const salonImage = readFileSync(new URL("../app/s/[slug]/salon-image.tsx", import.meta.url), "utf8");
 const qr = readFileSync(new URL("../app/s/[slug]/qr-share.tsx", import.meta.url), "utf8");
 const booking = readFileSync(new URL("../app/s/[slug]/booking-form.tsx", import.meta.url), "utf8");
 const ownerQr = readFileSync(new URL("../app/owner/qr-card.tsx", import.meta.url), "utf8");
@@ -136,5 +137,8 @@ test("the three salon templates have distinct, accessible art direction", () => 
   assert.match(css, /prefers-reduced-motion:reduce/);
   assert.doesNotMatch(css, /align-items:end/);
   assert.match(page, /photo-1560066984-138dadb4c035/);
-  assert.match(page, /onError=\{\(event\) => \{ event\.currentTarget\.style\.visibility = "hidden"; \}\}/);
+  assert.match(page, /<SalonImage/);
+  assert.match(salonImage, /use client/);
+  assert.match(salonImage, /onError/);
+  assert.match(salonImage, /setFailed/);
 });
