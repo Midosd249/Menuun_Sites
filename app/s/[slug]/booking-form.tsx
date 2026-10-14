@@ -8,7 +8,7 @@ type Service = { id: string; name_ar: string; price_sar: number; duration_minute
 type Barber = { id: string; display_name: string };
 
 type Slot = { starts_at: string; barber_id: string; barber_name: string };
-type Props = { slug: string; services: Service[]; barbers: Barber[]; timezone: string };
+type Props = { slug: string; services: Service[]; barbers: Barber[]; timezone: string; language?: "ar" | "en" };
 
 function dateInZone(timeZone: string) {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -19,21 +19,22 @@ function dateInZone(timeZone: string) {
 }
 
 function localDateTime(value: string, timeZone: string) {
-  return new Intl.DateTimeFormat("ar-SA", {
+  return new Intl.DateTimeFormat(language === "en" ? "en-US" : "ar-SA", {
     timeZone, weekday: "short", day: "numeric", month: "short",
     hour: "numeric", minute: "2-digit",
   }).format(new Date(value));
 }
 
 function errorMessage(message: string) {
-  if (/SLOT|EXCLUSION|duplicate key|no rows/i.test(message)) return "هذا الموعد لم يعد متاحًا. حدّث الأوقات واختر موعدًا آخر.";
-  if (/SALON_NOT_AVAILABLE|SERVICE_NOT_AVAILABLE|BARBER_NOT_AVAILABLE/i.test(message)) return "تعذّر إتمام الطلب لأن الصالون أو الخدمة لم تعد متاحة.";
-  if (/OUTSIDE_BUSINESS_HOURS|INVALID_APPOINTMENT_TIME|INVALID_AVAILABILITY_DATE/i.test(message)) return "الوقت المختار غير متاح. اختر وقتًا آخر.";
-  if (/INVALID_CUSTOMER_PHONE/i.test(message)) return "تحقق من رقم الجوال وأعد المحاولة.";
-  return "لم نتمكن من إرسال طلب الحجز الآن. يرجى المحاولة مرة أخرى.";
+  if (/SLOT|EXCLUSION|duplicate key|no rows/i.test(message)) return english ? "That time is no longer available. Refresh and choose another." : "هذا الموعد لم يعد متاحًا. حدّث الأوقات واختر موعدًا آخر.";
+  if (/SALON_NOT_AVAILABLE|SERVICE_NOT_AVAILABLE|BARBER_NOT_AVAILABLE/i.test(message)) return english ? "The salon or service is no longer available." : "تعذّر إتمام الطلب لأن الصالون أو الخدمة لم تعد متاحة.";
+  if (/OUTSIDE_BUSINESS_HOURS|INVALID_APPOINTMENT_TIME|INVALID_AVAILABILITY_DATE/i.test(message)) return english ? "That time is unavailable. Choose another time." : "الوقت المختار غير متاح. اختر وقتًا آخر.";
+  if (/INVALID_CUSTOMER_PHONE/i.test(message)) return english ? "Check the phone number and try again." : "تحقق من رقم الجوال وأعد المحاولة.";
+  return english ? "We could not send your request. Please try again." : "لم نتمكن من إرسال طلب الحجز الآن. يرجى المحاولة مرة أخرى.";
 }
 
-export default function PublicBookingForm({ slug, services, barbers, timezone }: Props) {
+export default function PublicBookingForm({ slug, services, barbers, timezone, language = "ar" }: Props) {
+  const english = language === "en";
   const today = useMemo(() => dateInZone(timezone || "Asia/Riyadh"), [timezone]);
   const maxDate = useMemo(() => {
     const date = new Date(today + "T12:00:00Z");
@@ -49,6 +50,11 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
   const [submitting, setSubmitting] = useState(false);
   const [notice, setNotice] = useState<{ kind: "error" | "success"; text: string } | null>(null);
   const [appointmentId, setAppointmentId] = useState("");
+
+  useEffect(() => {
+    const requestedService = new URLSearchParams(window.location.search).get("service");
+    if (requestedService && services.some((service) => service.id === requestedService)) setServiceId(requestedService);
+  }, [services]);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,7 +73,7 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
       if (cancelled) return;
       if (error) {
         setSlots([]);
-        setNotice({ kind: "error", text: "تعذّر تحميل المواعيد المتاحة. حاول تحديث اليوم." });
+        setNotice({ kind: "error", text: english ? "Could not load available times. Try refreshing the date." : "تعذّر تحميل المواعيد المتاحة. حاول تحديث اليوم." });
       } else {
         setSlots((data ?? []) as Slot[]);
       }
@@ -88,12 +94,12 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!serviceId || !selectedSlot) {
-      setNotice({ kind: "error", text: "اختر الخدمة والموعد أولًا." });
+      setNotice({ kind: "error", text: english ? "Choose a service and time first." : "اختر الخدمة والموعد أولًا." });
       return;
     }
     const slot = slots.find((item) => item.starts_at === selectedSlot);
     if (!slot) {
-      setNotice({ kind: "error", text: "حدّث المواعيد واختر وقتًا متاحًا." });
+      setNotice({ kind: "error", text: english ? "Refresh the available times and choose one." : "حدّث المواعيد واختر وقتًا متاحًا." });
       return;
     }
     const formElement = event.currentTarget;
@@ -102,15 +108,15 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
     const phone = String(form.get("customer_phone") ?? "").trim();
     const note = String(form.get("customer_note") ?? "").trim();
     if (name.length < 2 || name.length > 120) {
-      setNotice({ kind: "error", text: "اكتب الاسم من حرفين إلى 120 حرفًا." });
+      setNotice({ kind: "error", text: english ? "Enter a name between 2 and 120 characters." : "اكتب الاسم من حرفين إلى 120 حرفًا." });
       return;
     }
     if (phone.replace(/[^0-9+]/g, "").length < 8 || phone.replace(/[^0-9+]/g, "").length > 16) {
-      setNotice({ kind: "error", text: "أدخل رقم جوال صحيحًا مع مفتاح الدولة عند الحاجة." });
+      setNotice({ kind: "error", text: english ? "Enter a valid phone number, including country code if needed." : "أدخل رقم جوال صحيحًا مع مفتاح الدولة عند الحاجة." });
       return;
     }
     if (note.length > 1000) {
-      setNotice({ kind: "error", text: "الملاحظات يجب ألا تتجاوز 1000 حرف." });
+      setNotice({ kind: "error", text: english ? "Notes must be 1,000 characters or fewer." : "الملاحظات يجب ألا تتجاوز 1000 حرف." });
       return;
     }
 
@@ -137,7 +143,7 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
       return;
     }
     setAppointmentId(String(data));
-    setNotice({ kind: "success", text: "وصل طلبك بنجاح. حالة الطلب: بانتظار تأكيد الصالون." });
+    setNotice({ kind: "success", text: english ? "Your request was sent and is awaiting salon confirmation." : "وصل طلبك بنجاح. حالة الطلب: بانتظار تأكيد الصالون." });
     setSelectedSlot("");
     formElement.reset();
   }
@@ -169,10 +175,10 @@ export default function PublicBookingForm({ slug, services, barbers, timezone }:
       <div className={styles.bookingFields}>
         <label>الاسم الكامل<input name="customer_name" autoComplete="name" minLength={2} maxLength={120} required /></label>
         <label>رقم الجوال<input name="customer_phone" type="tel" autoComplete="tel" inputMode="tel" minLength={8} maxLength={24} placeholder="+966 5X XXX XXXX" required /></label>
-        <label className={styles.noteField}>ملاحظات (اختياري)<textarea name="customer_note" maxLength={1000} rows={3} placeholder="أي تفاصيل تساعدنا على تجهيز زيارتك" /></label>
+        <label className={styles.noteField}>ملاحظات (اختياري)<textarea name="customer_note" maxLength={1000} rows={3} placeholder=english ? "Anything that will help us prepare for your visit" : "أي تفاصيل تساعدنا على تجهيز زيارتك" /></label>
       </div>
       {notice?.kind === "error" && <p className={styles.bookingError} role="alert">{notice.text}</p>}
-      <button type="submit" className={styles.bookingSubmit} disabled={submitting || loadingSlots || !selectedSlot}>{submitting ? "جارٍ إرسال الطلب..." : "تأكيد طلب الموعد ↙"}</button>
+      <button type="submit" className={styles.bookingSubmit} disabled={submitting || loadingSlots || !selectedSlot}>{submitting ? english ? "Sending request..." : "جارٍ إرسال الطلب..." : english ? "Submit booking request ↙" : "تأكيد طلب الموعد ↙"}</button>
       <p className={styles.bookingDisclaimer}>إرسال الطلب لا يعني تأكيد الموعد تلقائيًا؛ سيظهر للصالون بانتظار المراجعة والتأكيد.</p>
     </form>}
   </section>;
