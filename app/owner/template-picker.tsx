@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Check, Palette } from "lucide-react";
+import { Check, ExternalLink, Palette } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const templates = [
@@ -10,7 +10,7 @@ const templates = [
 ] as const;
 type TemplateKey = typeof templates[number]["id"];
 
-export default function TemplatePicker({ salonId, selected, onSaved }: { salonId: string; selected: string; onSaved: (value: TemplateKey) => void }) {
+export default function TemplatePicker({ salonId, slug, selected, onSaved }: { salonId: string; slug: string; selected: string; onSaved: (value: TemplateKey) => void }) {
   const [choice, setChoice] = useState<TemplateKey>(templates.some(t => t.id === selected) ? selected as TemplateKey : "atelier");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -32,7 +32,7 @@ export default function TemplatePicker({ salonId, selected, onSaved }: { salonId
     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><Palette size={19}/><h2 style={{margin:0}}>تصميم صفحة الصالون</h2></div>
     <p style={{fontSize:12,color:"#697469",lineHeight:1.9,marginTop:0}}>اختر أحد القوالب الثلاثة. اختيار القالب لا يغيّر خدماتك أو مواعيدك.</p>
     <div className="menuun-template-grid">{templates.map(template=><button type="button" key={template.id} onClick={()=>setChoice(template.id)} aria-pressed={choice===template.id} className={"menuun-template-card menuun-template-"+template.id+(choice===template.id?" is-selected":"")}>
-      <span className="menuun-template-preview" aria-hidden="true"><i/><i/><i/></span><strong>{template.name}</strong><small>{template.label}</small><span className="menuun-template-description">{template.description}</span>{choice===template.id&&<span className="menuun-template-check"><Check size={14}/> محدد</span>}
+      <span className="menuun-template-preview" aria-hidden="true"><i/><i/><i/></span><strong>{template.name}</strong><small>{template.label}</small><span className="menuun-template-description">{template.description}</span>{choice===template.id&&<span className="menuun-template-check"><Check size={14}/> محدد</span>}<a className="menuun-template-preview-link" href={"/s/"+encodeURIComponent(slug)+"?template="+template.id} target="_blank" rel="noreferrer"><ExternalLink size={12}/> معاينة</a>
     </button>)}</div>
     <div style={{display:"flex",alignItems:"center",gap:12,marginTop:14,flexWrap:"wrap"}}><button type="button" className="owner-primary" disabled={busy} onClick={save}>{busy?"جارٍ الحفظ…":"حفظ القالب"}</button>{notice&&<span role="status" style={{fontSize:12,color:"#36533d"}}>{notice}</span>}</div>
   </section>;
