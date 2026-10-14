@@ -83,17 +83,44 @@ test("owner can edit existing services, not only add them", () => {
   assert.match(owner, /حفظ/);
 });
 
-
 test("public salon remains available before the optional template migration is applied", () => {
   assert.match(page, /template_key/);
-  assert.match(page, /if\(error&&\/template_key\/\.test\(error\.message\|\|\"\"\)\)/);
-  assert.match(page, /fallback\.data\?\{\.\.\.fallback\.data,template_key:\"atelier\"\}/);
+  assert.match(page, /if\(error&&\/template_key\/\.test\(error\.message\|\|\\"\\"\)\)/);
+  assert.match(page, /fallback\.data\?\{\.\.\.fallback\.data,template_key:\\"atelier\\"\}/);
 });
-
 
 test("owner preview links can render a template without saving it to the salon", () => {
   assert.match(page, /searchParams/);
   assert.match(page, /requestedTemplate/);
   assert.match(page, /templateKey/);
   assert.match(page, /\["atelier","oasis","rose"\]/);
+});
+
+test("public salon always shows real service imagery and barber portraits with useful fallbacks", () => {
+  assert.match(page, /service\.image_url/);
+  assert.match(page, /SERVICE_IMAGE_FALLBACKS/);
+  assert.match(page, /BARBER_IMAGE_FALLBACKS/);
+  assert.match(page, /className=\{styles\.serviceImage\}/);
+  assert.match(page, /className=\{styles\.personImage\}/);
+  assert.match(css, /\.serviceImage img/);
+  assert.match(css, /\.personImage img/);
+});
+
+test("owner can manage service photos, barber portraits and social/location links", () => {
+  const mediaEditor = readFileSync(new URL("../app/owner/media-editor.tsx", import.meta.url), "utf8");
+  const migration = readFileSync(new URL("../supabase/migrations/20261014120000_salon_templates_public_media.sql", import.meta.url), "utf8");
+  for (const value of ["uploadServiceImage", "uploadBarberImage", "instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url"]) {
+    assert.ok(mediaEditor.includes(value), "expected owner editor to include " + value);
+  }
+  for (const value of ["services add column if not exists image_url", "instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url"]) {
+    assert.ok(migration.includes(value), "expected migration to add " + value);
+  }
+});
+
+test("public salon exposes verified social links and map directions", () => {
+  for (const value of ["instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url", "socialLinks", "href={mapHref}"]) {
+    assert.ok(page.includes(value), "expected public page to include " + value);
+  }
+  assert.match(page, /rel="noopener noreferrer"/);
+  assert.match(css, /\.socialLinks/);
 });
