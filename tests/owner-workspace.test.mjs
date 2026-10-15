@@ -15,10 +15,13 @@ test("owner QR uses canonical server origin and saved template state",async()=>{
  const layout=await read("../app/owner/layout.tsx");
  const picker=await read("../app/owner/template-picker.tsx");
  const publicPage=await read("../app/s/[slug]/page.tsx");
+ const publicQr=await read("../app/s/[slug]/qr-share.tsx");
  assert.match(layout,/MENUUN_PUBLIC_ORIGIN/);
  assert.match(qr,/usePublicOrigin/);
  assert.match(qr,/useTemplateState/);
  assert.doesNotMatch(qr,/window\.location\.origin/);
+ assert.match(publicQr,/publicOrigin/);
+ assert.doesNotMatch(publicQr,/window\.location\.origin/);
  assert.doesNotMatch(picker,/\?template=/);
  assert.match(publicPage,/const activeTemplate = salon\.template_key \|\| "atelier"/);
  assert.doesNotMatch(publicPage,/requestedTemplate|templateKey|\?template=/);
