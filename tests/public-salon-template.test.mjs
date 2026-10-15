@@ -160,10 +160,10 @@ test("Atelier service cards use separate image and content regions on narrow mob
   assert.ok(css.includes(".templateRose .services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"));
 });
 
-test("contact phone number is only rendered in the hero quick facts", () => {
+test("contact phone number stays in hero quick facts and a call action is available in location details", () => {
   assert.match(page, /quickFacts[^]*displayPhone/);
   assert.doesNotMatch(page, /styles\.phoneLink/);
-  assert.doesNotMatch(page, /english\?"Call the salon":"اتصل بالصالون"/);
+  assert.match(page, /english\?"Call the salon":"اتصل بالصالون"/);
 });
 
 test("all three themes include a portfolio, premium groom package and final location feature", () => {
