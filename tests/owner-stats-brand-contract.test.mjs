@@ -7,14 +7,14 @@ const publicSalon = readFileSync(new URL("../app/s/[slug]/page.tsx", import.meta
 const stats = readFileSync(new URL("../app/owner/notifications-stats.tsx", import.meta.url), "utf8");
 
 test("owner workspace uses language-specific Menuun wordmarks and descriptor", () => {
-  assert.match(owner, /menuun-logo-ar\\.svg/);
-  assert.match(owner, /menuun-logo-en\\.svg/);
+  assert.match(owner, /menuun-logo-ar\.svg/);
+  assert.match(owner, /menuun-logo-en\.svg/);
   assert.match(owner, /تصميم المواقع/);
   assert.match(owner, /Website Design/);
 });
 
 test("Menuun platform wordmark is not injected into public salon templates", () => {
-  assert.doesNotMatch(publicSalon, /menuun-logo-(?:ar|en)\\.svg/);
+  assert.doesNotMatch(publicSalon, /menuun-logo-(?:ar|en)\.svg/);
 });
 
 test("owner statistics refresh for appointment changes and include collection/sound affordances", () => {
