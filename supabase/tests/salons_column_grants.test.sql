@@ -1,5 +1,5 @@
 begin;
-select plan(8);
+select plan(11);
 insert into auth.users (id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at)
 values
  ('10000000-0000-4000-8000-000000000001','authenticated','authenticated','column-owner@example.test','',now(),'{}','{}',now(),now()),
@@ -17,6 +17,8 @@ select ok(not has_column_privilege('authenticated','public.salons','id','UPDATE'
 select ok(not has_column_privilege('authenticated','public.salons','slug','UPDATE'),'slug cannot be updated by authenticated');
 select ok(not has_column_privilege('authenticated','public.salons','is_active','UPDATE'),'active flag cannot be updated by authenticated');
 select ok(not has_column_privilege('authenticated','public.salons','is_published','UPDATE'),'publication flag cannot be updated by authenticated');
+select ok(not has_column_privilege('authenticated','public.salons','created_at','UPDATE'),'creation timestamp cannot be updated by authenticated');
+select ok(not has_column_privilege('authenticated','public.salons','created_by','UPDATE'),'creator cannot be changed by authenticated');
 set local role authenticated;
 set local request.jwt.claim.sub='10000000-0000-4000-8000-000000000001';
 select results_eq($$update public.salons set name_ar='بعد' where id='20000000-0000-4000-8000-000000000001' returning name_ar$$,$$values ('بعد'::text)$$,'member can update allowed column and use RETURNING');
