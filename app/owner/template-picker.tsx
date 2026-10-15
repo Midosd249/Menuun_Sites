@@ -14,7 +14,7 @@ type TemplateKey = typeof templates[number]["id"];
 const validTemplate = (value: string): value is TemplateKey => templates.some(template => template.id === value);
 function friendlyError(error: unknown) {
   const e = error as { code?: string; status?: number; message?: string } | null;
-  const code = e?.status === 401 || e?.status === 403 || e?.code === "42501" ? "TPL-403"
+  const code = e?.status === 401 || e?.status === 403 || e?.code === "42501" || e?.code === "TPL-403" ? "TPL-403"
     : e?.code === "PGRST116" ? "TPL-404" : "TPL-500";
   return { code, message: code === "TPL-403" ? "لا توجد صلاحية لحفظ القالب. / You don’t have permission to save this template."
     : code === "TPL-404" ? "لم يتم العثور على الصالون. حدّث الصفحة ثم أعد المحاولة. / Salon not found. Refresh and try again."
