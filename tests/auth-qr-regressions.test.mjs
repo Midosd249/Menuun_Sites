@@ -7,6 +7,8 @@ const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
 test("login route provides Supabase password auth, recovery, and a validated owner redirect", async () => {
   const page = await read("../app/login/page.tsx");
   const form = await read("../app/login/login-form.tsx");
+  const recovery = await read("../app/forgot-password/forgot-password-form.tsx");
+  const signup = await read("../app/signup/signup-form.tsx");
   const redirect = await read("../lib/auth/redirect.mjs");
   assert.match(page, /safeRedirect|safe-redirect|safeRedirectPath/);
   assert.match(form, /signInWithPassword/);
