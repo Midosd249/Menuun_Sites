@@ -213,7 +213,7 @@ test("location and hero media use centralized per-theme image configuration", ()
 test("Oasis mobile cards fill the section and keep image and content in separate RTL/LTR columns", () => {
   assert.match(css, /@media\(min-width:320px\) and \(max-width:640px\)/);
   assert.match(css, /\.templateOasis \.services\{[^}]*grid-template-columns:minmax\(0,1fr\);[^}]*width:100%/);
-  assert.match(css, /\.templateOasis \.service\{[^}]*grid-template-columns:minmax\(0,1fr\) minmax\(36%,40%\)/);
+  assert.match(css, /\.templateOasis \.service\{[^}]*grid-template-columns:minmax\(0,1fr\) minmax\(60%,64%\)/);
   assert.match(css, /\.templateOasis \.serviceImage\{[^}]*grid-column:1;grid-row:1\/5/);
   assert.match(css, /\.templateOasis \.serviceInfo\{grid-column:2;grid-row:2/);
   assert.match(css, /\.templateOasis \.serviceActions\{grid-column:2;grid-row:4/);
