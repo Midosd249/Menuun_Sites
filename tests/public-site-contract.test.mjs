@@ -64,7 +64,8 @@ test("Next.js owns the owner workspace and retained Atelier route stays static",
   assert.doesNotMatch(staticCopy, /"owner", "public\\/owner"/);
   assert.match(staticCopy, /"templates", "public\/templates"/);
   assert.match(staticCopy, /assets\/brand\/menuun/);
-  assert.match(nextConfig, /owner\/index\.html/);
+  assert.doesNotMatch(nextConfig, /owner\\/index\\.html/);
+  assert.match(readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8"), /TemplatePicker/);
   assert.match(nextConfig, /templates\/atelier-09\/index\.html/);
 });
 
