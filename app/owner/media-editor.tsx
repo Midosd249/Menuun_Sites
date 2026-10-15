@@ -103,7 +103,7 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
   }
 
   async function uploadGallery(event: ChangeEvent<HTMLInputElement>) {
-    const input = event.currentTarget, files = Array.from(input.files || []).slice(0, 8); input.value = "";
+    const input = event.currentTarget, files = Array.from(input.files || []); input.value = "";
     if (!files.length) return;
     setBusy(true); setNotice("");
     try {
