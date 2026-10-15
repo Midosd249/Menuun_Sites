@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import SignupForm from "./signup-form";
 
 export const metadata: Metadata = {
-  title: "إنشاء حساب",
-  description: "تعرّف على خطوات بدء استخدام Menuun.",
-  robots: { index: false, follow: false }
+  title: "إنشاء حساب | Menuun",
+  description: "أنشئ حساب Menuun وأكد بريدك الإلكتروني للمتابعة.",
+  robots: { index: false, follow: false },
 };
 
-export { default } from "../page";
+export default function SignupPage() {
+  return <SignupForm />;
+}

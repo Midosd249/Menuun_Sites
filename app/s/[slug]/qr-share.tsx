@@ -1,11 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./public-salon.module.css";
 
-export default function SalonQrShare({slug,salonName}:{slug:string;salonName:string}) {
-  const [publicUrl,setPublicUrl] = useState("");
+export default function SalonQrShare({slug,salonName,templateName,publicOrigin}:{slug:string;salonName:string;templateName:string;publicOrigin:string}) {
   const [open,setOpen] = useState(false);
-  useEffect(()=>setPublicUrl(new URL("/s/"+encodeURIComponent(slug),window.location.origin).toString()),[slug]);
+  const publicUrl = publicOrigin.replace(/\/+$/, "") + "/s/" + encodeURIComponent(slug);
   const [copied,setCopied] = useState(false);
   const qrUrl = publicUrl ? "https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&format=png&data="+encodeURIComponent(publicUrl) : "";
   async function copyLink() {
@@ -16,6 +15,7 @@ export default function SalonQrShare({slug,salonName}:{slug:string;salonName:str
     <button type="button" className={styles.shareButton} onClick={()=>setOpen(value=>!value)} aria-expanded={open} aria-controls="salon-qr-panel">مشاركة الصفحة ↗</button>
     {open && <div className={styles.qrPanel} id="salon-qr-panel">
       <strong>رابط {salonName}</strong>
+      <p>القالب: {templateName}</p>
       <p>امسح الرمز لفتح صفحة الصالون مباشرة.</p>
       {qrUrl && <img src={qrUrl} alt={"رمز QR لصفحة "+salonName} width="180" height="180"/>}
       <a className={styles.qrDownload} href={qrUrl} target="_blank" rel="noreferrer" download>فتح / تنزيل رمز QR</a>

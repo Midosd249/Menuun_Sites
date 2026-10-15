@@ -66,8 +66,10 @@ test("marketing and staged account routes remain public while private routes fai
   assert.match(middleware, /claims\??\.sub/);
   assert.match(middleware, /\/login\//);
   assert.match(middleware, /export async function middleware/);
-  assert.match(read("../app/login/page.tsx"), /export \{ default \} from "\.\.\/page"/);
-  assert.match(read("../app/signup/page.tsx"), /export \{ default \} from "\.\.\/page"/);
+  assert.match(read("../app/login/page.tsx"), /LoginForm/);
+  assert.match(read("../app/signup/page.tsx"), /SignupForm/);
+  assert.match(read("../app/login/login-form.tsx"), /signInWithPassword/);
+  assert.match(read("../app/signup/signup-form.tsx"), /signUp/);
 });
 
 

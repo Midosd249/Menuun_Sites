@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./public-salon.module.css";
 import SalonQrShare from "./qr-share";
+import { getMenuunPublicOrigin } from "@/lib/public-origin";
 import PublicBookingForm from "./booking-form";
 import SalonImage from "./salon-image";
 import { BARBER_IMAGE_FALLBACKS, DEMO_CONTACT, DEMO_SERVICES, GROOM_PACKAGE, HERO_IMAGE_FALLBACK as HERO_FALLBACK, LOCATION_IMAGES, OUR_WORK_IMAGES, SERVICE_IMAGE_FALLBACKS, THEME_IDENTITIES } from "./salon-demo-content";
@@ -48,11 +49,11 @@ async function getSalon(slug:string) {
   return {salon:salon as Salon,services:(sr.data||[]) as Service[],barbers:(br.data||[]) as Barber[],hours:(hr.data||[]) as Hours[],media:(mr.data||[]) as Media[]};
 }
 
-export async function generateMetadata({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{template?:string;lang?:string}>}):Promise<Metadata> {
+export async function generateMetadata({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{lang?:string;template?:string}>}):Promise<Metadata> {
   const [{slug},search] = await Promise.all([params,searchParams]);
   const result = await getSalon(slug);
   if (!result) return {title:"الصفحة غير متاحة",robots:{index:false,follow:false}};
-  const requested = search?.template && ["atelier","oasis","rose"].includes(search.template) ? search.template : result.salon.template_key || "atelier";
+  const requested = result.salon.template_key || "atelier";
   const demo = /^(atelier|oasis|rose)(-|$)/i.test(slug);
   const identity = THEME_IDENTITIES[requested as keyof typeof THEME_IDENTITIES] || THEME_IDENTITIES.atelier;
   const title = demo ? (search?.lang === "en" ? identity.nameEn : identity.nameAr) : result.salon.name_ar;
@@ -60,15 +61,29 @@ export async function generateMetadata({params,searchParams}:{params:Promise<{sl
   return {title,description,alternates:{canonical:"/s/"+result.salon.slug},openGraph:{type:"website",title,description,url:"/s/"+result.salon.slug},robots:{index:true,follow:true}};
 }
 
-export default async function PublicSalonPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{template?:string;lang?:string}>}) {
+export default async function PublicSalonPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{lang?:string;template?:string}>}) {
   const [{slug},search] = await Promise.all([params,searchParams]);
-  const requestedTemplate = search?.template;
   const english = search?.lang === "en";
-  const templateKey = requestedTemplate && ["atelier","oasis","rose"].includes(requestedTemplate) ? requestedTemplate : undefined;
   const result = await getSalon(slug);
   if (!result) notFound();
   const {salon,services,barbers,hours,media} = result;
-  const activeTemplate = templateKey || salon.template_key || "atelier";
+  const requestedTemplate = search?.template;
+  let previewTemplate: string | undefined;
+  if (requestedTemplate && ["atelier","oasis","rose"].includes(requestedTemplate)) {
+    const authDb = await createSupabaseServerClient();
+    const { data: authData, error: authError } = await authDb.auth.getClaims();
+    const userId = !authError && typeof authData?.claims?.sub === "string" ? authData.claims.sub : null;
+    if (userId) {
+      const { data: membership } = await authDb.from("salon_members")
+        .select("salon_id")
+        .eq("salon_id", salon.id)
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .maybeSingle();
+      if (membership) previewTemplate = requestedTemplate;
+    }
+  }
+  const activeTemplate = previewTemplate || salon.template_key || "atelier";
   const isDemoSalon = /^(atelier|oasis|rose)(-|$)/i.test(salon.slug);
   const themeIdentity = THEME_IDENTITIES[activeTemplate as keyof typeof THEME_IDENTITIES] || THEME_IDENTITIES.atelier;
   const displaySalonNameAr = isDemoSalon ? (salon.name_ar && !["أتيليه 09","Atelier 09"].includes(salon.name_ar) ? salon.name_ar : themeIdentity.nameAr) : (isUnfinishedCopy(salon.name_ar) ? "صالون العناية" : salon.name_ar);
@@ -81,7 +96,7 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
   const wa = rawWa.startsWith("00") ? rawWa.slice(2) : rawWa.startsWith("0") ? "966"+rawWa.slice(1) : /^[5][0-9]{8}$/.test(rawWa) ? "966"+rawWa : rawWa;
   const location = isDemoSalon ? (english ? DEMO_CONTACT.address_en : (salon.address_ar || DEMO_CONTACT.address_ar)) : [salon.address_ar,salon.city].filter(Boolean).join("، ");
   const mapHref = salon.google_maps_url || (isDemoSalon ? DEMO_CONTACT.map_url : location ? "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location) : null);
-  const bookingHref = (serviceId?:string) => { const params = new URLSearchParams(); if (templateKey) params.set("template", templateKey); if (english) params.set("lang", "en"); if (serviceId) params.set("service", serviceId); return (params.size ? "?"+params.toString() : "")+"#booking"; };
+  const bookingHref = (serviceId?:string) => { const params = new URLSearchParams(); if (previewTemplate) params.set("template", previewTemplate); if (english) params.set("lang", "en"); if (serviceId) params.set("service", serviceId); return (params.size ? "?"+params.toString() : "")+"#booking"; };
   const socialLinks = [
     { label:"Instagram", href:salon.instagram_url },
     { label:"TikTok", href:salon.tiktok_url },
@@ -129,8 +144,8 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
     <div className={styles.topline}><span>{english ? "A considered grooming experience" : "تجربة صالونك، بتفاصيله"}</span><span>{english ? "A salon experience by Menuun" : "تجربة صالون عبر Menuun"}</span></div>
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={displaySalonNameAr}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{english ? (displaySalonNameEn) : displaySalonNameAr}</strong><small>{displaySalonNameEn || "SALON EXPERIENCE"}</small></span></a>
-      <nav aria-label={english ? "Main navigation" : "التنقل الرئيسي"}><a href="#services">{english ? "Services" : "الخدمات"}</a><a href="#booking">{english ? "Booking" : "الحجز"}</a><a href="#work">{english ? "Our work" : "أعمالنا"}</a><a href="#hours">{english ? "Visit us" : "معلومات الزيارة"}</a></nav><a className={styles.languageToggle} href={"?template="+activeTemplate+"&lang="+(english?"ar":"en")} lang={english?"ar":"en"}>{english ? "العربية" : "English"}</a>
-      <SalonQrShare slug={salon.slug} salonName={displaySalonNameAr} />
+      <nav aria-label={english ? "Main navigation" : "التنقل الرئيسي"}><a href="#services">{english ? "Services" : "الخدمات"}</a><a href="#booking">{english ? "Booking" : "الحجز"}</a><a href="#work">{english ? "Our work" : "أعمالنا"}</a><a href="#hours">{english ? "Visit us" : "معلومات الزيارة"}</a></nav><a className={styles.languageToggle} href={"?"+(previewTemplate?"template="+encodeURIComponent(previewTemplate)+"&":"")+"lang="+(english?"ar":"en")} lang={english?"ar":"en"}>{english ? "العربية" : "English"}</a>
+      <SalonQrShare slug={salon.slug} salonName={displaySalonNameAr} templateName={salon.template_key === "atelier" ? "Atelier" : salon.template_key === "oasis" ? "Oasis" : "Forge Men"} publicOrigin={getMenuunPublicOrigin()} />
     </header>
     <section className={styles.hero} id="home">
       <div className={styles.heroCopy}><p className={styles.eyebrow}>{english ? "YOUR GROOMING RITUAL" : "مساحتك للعناية والتجديد"}</p><h1>{english ? "Good grooming. Thoughtful details." : (displayTaglineAr || "تفاصيل صغيرة، تجربة مختلفة.")}</h1><p className={styles.description}>{english ? "A considered grooming experience built around precision, comfort and personal style." : (displayDescriptionAr || "أهلًا بك في "+displaySalonNameAr+". اكتشف خدماتنا واختر ما يناسبك، وتواصل معنا لتنسيق موعدك.")}</p>

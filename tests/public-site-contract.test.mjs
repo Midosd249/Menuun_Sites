@@ -53,7 +53,7 @@ test("responsive, focus-visible, and reduced-motion styles exist", () => {
   assert.doesNotMatch(styles, /align-items:end/, "avoid unsupported CSS end alignment values");
 });
 
-test("Next.js is the build framework and legacy static routes are preserved", () => {
+test("Next.js owns the owner workspace and retained Atelier route stays static", () => {
   assert.ok(pkg.dependencies.next, "Next.js dependency is required");
   assert.equal(vercelConfig.framework, "nextjs", "Vercel must use the Next.js framework adapter");
   assert.equal(vercelConfig.outputDirectory, ".next", "Vercel output directory must match the Next.js build directory");
@@ -61,10 +61,11 @@ test("Next.js is the build framework and legacy static routes are preserved", ()
   assert.match(pkg.scripts.build, /next build/);
   const tsconfig = JSON.parse(readFileSync(new URL("../tsconfig.json", import.meta.url), "utf8"));
   assert.ok(tsconfig.exclude.includes("vite.config.ts"), "legacy Vite config must not be part of Next.js typecheck");
-  assert.match(staticCopy, /"owner", "public\/owner"/);
+  assert.doesNotMatch(staticCopy, /"owner", "public\/owner"/);
   assert.match(staticCopy, /"templates", "public\/templates"/);
   assert.match(staticCopy, /assets\/brand\/menuun/);
-  assert.match(nextConfig, /owner\/index\.html/);
+  assert.doesNotMatch(nextConfig, /owner\/index\.html/);
+  assert.match(readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8"), /TemplatePicker/);
   assert.match(nextConfig, /templates\/atelier-09\/index\.html/);
 });
 

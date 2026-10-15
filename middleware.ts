@@ -2,11 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { getSupabasePublicConfig } from "@/lib/supabase/config";
 
-// /owner is a static HTML app with its own Supabase sign-in/session lifecycle.
-// Protecting it here redirected users to the marketing site's staged /login
-// screen, which does not authenticate anyone. The owner app must load so its
-// own sign-in UI can run; its database access remains enforced by Supabase RLS.
-// Keep server-middleware protection on Next.js application routes.
+// Protect all private Next.js surfaces, including /owner. Verify identity with Supabase SSR and fail closed when auth is unavailable; tenant membership is enforced separately by RLS and workspace queries.
 const PRIVATE_ROUTE_PREFIXES = ["/app", "/platform-admin", "/owner"];
 
 function isPrivateRoute(pathname: string): boolean {

@@ -15,12 +15,15 @@ jobs:
         with:
           node-version: 22
       - name: Install app dependencies
+        id: install-deps
         run: npm install --no-audit --no-fund
       - name: Test platform contracts
         run: npm test
       - name: Typecheck Next.js application
+        if: ${{ always() && steps.install-deps.outcome == 'success' }}
         run: npm run typecheck
       - name: Build Next.js application
+        if: ${{ always() && steps.install-deps.outcome == 'success' }}
         run: npm run build
 
   inline-js-and-assets:
@@ -34,5 +37,3 @@ jobs:
           node-version: 22
       - name: Check inline JavaScript and local assets
         run: node scripts/check-inline-js.mjs
-      - name: Check Supabase browser config syntax
-        run: node --check owner/config.js

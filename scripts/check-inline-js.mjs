@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
-const htmlFiles = ["index.html", "owner/index.html"];
+const htmlFiles = ["templates/atelier-09/index.html"];
 const tempDir = mkdtempSync(join(tmpdir(), "menuun-inline-check-"));
 let failures = 0;
 
@@ -33,39 +33,19 @@ try {
   }
 
   const localAssets = [
-    ["index.html", "/assets/images/branding/84247619_1791778020070999.jpg", "public/assets/images/branding/84247619_1791778020070999.jpg"],
-    ["owner/index.html", "./config.js", "owner/config.js"]
+    ["templates/atelier-09/index.html", "/assets/images/branding/84247619_1791778020070999.jpg", "public/assets/images/branding/84247619_1791778020070999.jpg"],
+    ["templates/atelier-09/index.html", "/api/supabase-config", "app/api/supabase-config/route.ts"]
   ];
   for (const [source, reference, target] of localAssets) {
     if (!existsSync(resolve(target))) {
       failures++;
-      process.stderr.write("[missing local asset] " + source + " references " + reference + " but " + target + " does not exist\n");
+      process.stderr.write("[missing local asset] " + source + " references " + reference + " but " + target + " does not exist\\n");
     } else {
-      process.stdout.write("[asset ok] " + source + " -> " + target + "\n");
+      process.stdout.write("[asset ok] " + source + " -> " + target + "\\n");
     }
   }
 } finally {
   rmSync(tempDir, { recursive: true, force: true });
-}
-
-const ownerHtml = readFileSync(resolve("owner/index.html"), "utf8");
-const ownerOnboardingContracts = [
-  ['onboarding view', /id="onboardingView"/],
-  ['onboarding form', /id="onboardingForm"/],
-  ['onboarding notice', /id="onboardingNotice"/],
-  ['salon Arabic name input', /id="salonNameAr"/],
-  ['salon English name input', /id="salonNameEn"/],
-  ['salon slug input', /id="salonSlug"/],
-  ['create salon submit button', /id="createSalon"/],
-  ['null-safe view switching', /const el=\$\(id\);if\(el\)el\.classList\.toggle\("hidden"/]
-];
-for (const [label, pattern] of ownerOnboardingContracts) {
-  if (!pattern.test(ownerHtml)) {
-    failures++;
-    process.stderr.write("[owner onboarding regression] Missing " + label + "\\n");
-  } else {
-    process.stdout.write("[owner onboarding ok] " + label + "\\n");
-  }
 }
 
 if (failures) process.exit(1);
