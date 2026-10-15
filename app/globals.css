@@ -131,3 +131,5 @@
 
 .owner-hours-row{grid-column:1/-1;display:grid;grid-template-columns:minmax(90px,1fr) repeat(3,minmax(0,1fr));gap:12px;align-items:flex-end;padding:12px 0;border-bottom:1px solid #edf0e9;min-width:0}.owner-hours-row>strong{font-size:12px;align-self:center}.owner-hours-closed{display:flex!important;grid-template-columns:auto 1fr!important;align-items:center;gap:8px!important}.owner-hours-closed input{width:18px!important;min-height:18px!important;justify-self:start}
 @media(max-width:640px){.owner-hours-row{grid-template-columns:1fr 1fr;gap:10px}.owner-hours-row>strong{grid-column:1/-1}}
+
+.owner-form-grid textarea{width:100%;min-width:0;min-height:84px;resize:vertical;border:1px solid #dfe4da;background:#fff;border-radius:8px;padding:11px 12px;color:var(--ow-ink);font:inherit;font-size:12px;line-height:1.6}
