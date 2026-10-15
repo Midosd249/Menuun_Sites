@@ -17,6 +17,12 @@ export type PortfolioImage = {
   category_en: string;
 };
 
+export const THEME_IDENTITIES = {
+  atelier: { nameAr: "أتولييه للحلاقة والعناية", nameEn: "Atelier Grooming Studio", taglineAr: "تفاصيل صغيرة، تجربة مختلفة." },
+  oasis: { nameAr: "واحة العناية الرجالية", nameEn: "Oasis Grooming Studio", taglineAr: "عناية طبيعية، وأناقة بلا تكلّف." },
+  rose: { nameAr: "فورج للرجال", nameEn: "Forge Men", taglineAr: "حضور هادئ، وتفاصيل تصنع الفرق." },
+} as const;
+
 export const DEMO_CONTACT = {
   phone: "+966549598318",
   whatsapp: "966549598318",
@@ -79,8 +85,8 @@ export const LOCATION_IMAGES = {
   },
   rose: {
     src: "https://images.unsplash.com/photo-1512690459411-b9245aed614b?auto=format&fit=crop&w=1800&q=84",
-    alt_ar: "مساحة عناية أنيقة بلمسات تحريرية ناعمة",
-    alt_en: "Refined grooming space with a soft editorial feel",
+    alt_ar: "مساحة عناية رجالية بتفاصيل فحمية ولمسات برونزية",
+    alt_en: "Men’s grooming space with charcoal details and bronze accents",
     objectPosition: "center 48%",
   },
 } as const;
