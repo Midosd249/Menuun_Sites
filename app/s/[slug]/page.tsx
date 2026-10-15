@@ -34,9 +34,9 @@ async function getSalon(slug:string) {
     error = fallback.error;
   }
   if (error || !salon) return null;
-  let sr:any = await db.from("services").select("id,name_ar,description_ar,price_sar,duration_minutes,sort_order,image_url").eq("salon_id",salon.id).eq("is_active",true).order("sort_order");
+  let sr:any = await db.from("services").select("id,name_ar,name_en,description_ar,description_en,price_sar,duration_minutes,sort_order,image_url").eq("salon_id",salon.id).eq("is_active",true).order("sort_order");
   if (sr.error && /image_url/.test(sr.error.message||"")) {
-    sr = await db.from("services").select("id,name_ar,description_ar,price_sar,duration_minutes,sort_order").eq("salon_id",salon.id).eq("is_active",true).order("sort_order");
+    sr = await db.from("services").select("id,name_ar,name_en,description_ar,description_en,price_sar,duration_minutes,sort_order").eq("salon_id",salon.id).eq("is_active",true).order("sort_order");
     sr.data = (sr.data || []).map((service:any)=>({...service,image_url:null}));
   }
   const [br,hr,mr] = await Promise.all([
