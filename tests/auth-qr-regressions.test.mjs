@@ -29,5 +29,5 @@ test("salon QR uses a server-provided canonical origin and shows the saved templ
   assert.doesNotMatch(qr, /window\.location\.origin/);
   assert.match(qr, /templateName|templateLabel|Atelier 09/);
   assert.match(workspace, /template_key/);
-  assert.doesNotMatch(publicPage, /searchParams\.get\(["']template["']\)/);
+  assert.doesNotMatch(publicPage, /requestedTemplate|templateKey|params\.set|\?template=/);
 });
