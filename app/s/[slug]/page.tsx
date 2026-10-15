@@ -7,6 +7,7 @@ import SalonQrShare from "./qr-share";
 import { getMenuunPublicOrigin } from "@/lib/public-origin";
 import PublicBookingForm from "./booking-form";
 import SalonImage from "./salon-image";
+import { resolveSalonBrandNames } from "./salon-branding";
 import { BARBER_IMAGE_FALLBACKS, DEMO_CONTACT, DEMO_SERVICES, GROOM_PACKAGE, HERO_IMAGE_FALLBACK as HERO_FALLBACK, LOCATION_IMAGES, OUR_WORK_IMAGES, SERVICE_IMAGE_FALLBACKS, THEME_IDENTITIES } from "./salon-demo-content";
 
 export const dynamic = "force-dynamic";
@@ -53,7 +54,8 @@ export async function generateMetadata({params,searchParams}:{params:Promise<{sl
   const [{slug},search] = await Promise.all([params,searchParams]);
   const result = await getSalon(slug);
   if (!result) return {title:"الصفحة غير متاحة",robots:{index:false,follow:false}};
-  const salonName = (result.salon.name_ar || result.salon.name_en || "صالون").trim();
+  const metadataNames = resolveSalonBrandNames(result.salon, /^(atelier|oasis|rose)(-|$)/i.test(result.salon.slug));
+  const salonName = search.lang === "en" ? metadataNames.nameEn : metadataNames.nameAr;
   const title = salonName;
   const rawDescription = result.salon.description_ar;
   const topServices = result.services.slice(0, 3).map(service => service.name_ar).filter(Boolean);
@@ -87,8 +89,7 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
   const activeTemplate = previewTemplate || salon.template_key || "atelier";
   const isDemoSalon = /^(atelier|oasis|rose)(-|$)/i.test(salon.slug);
   const themeIdentity = THEME_IDENTITIES[activeTemplate as keyof typeof THEME_IDENTITIES] || THEME_IDENTITIES.atelier;
-  const displaySalonNameAr = isDemoSalon ? (salon.name_ar && !["أتيليه 09","Atelier 09"].includes(salon.name_ar) ? salon.name_ar : themeIdentity.nameAr) : (isUnfinishedCopy(salon.name_ar) ? "صالون العناية" : salon.name_ar);
-  const displaySalonNameEn = isDemoSalon ? (salon.name_en && !["ATELIER 09","Atelier 09"].includes(salon.name_en) ? salon.name_en : themeIdentity.nameEn) : (isUnfinishedCopy(salon.name_en) ? "Grooming Studio" : (salon.name_en || displaySalonNameAr));
+  const { nameAr: displaySalonNameAr, nameEn: displaySalonNameEn } = resolveSalonBrandNames(salon, isDemoSalon);
   const displayTaglineAr = isDemoSalon ? themeIdentity.taglineAr : (isUnfinishedCopy(salon.tagline_ar) ? null : salon.tagline_ar);
   const displayDescriptionAr = isDemoSalon ? "تجربة عناية متقنة تجمع بين القص الدقيق، وراحة الزيارة، والاهتمام بالتفاصيل." : (isUnfinishedCopy(salon.description_ar) ? null : salon.description_ar);
   const displayPhone = isDemoSalon ? (salon.phone || DEMO_CONTACT.phone) : salon.phone;
@@ -147,12 +148,12 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={displaySalonNameAr}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{english ? (displaySalonNameEn) : displaySalonNameAr}</strong><small>{displaySalonNameEn || "SALON EXPERIENCE"}</small></span></a>
       <nav aria-label={english ? "Main navigation" : "التنقل الرئيسي"}><a href="#services">{english ? "Services" : "الخدمات"}</a><a href="#booking">{english ? "Booking" : "الحجز"}</a><a href="#work">{english ? "Our work" : "أعمالنا"}</a><a href="#hours">{english ? "Visit us" : "معلومات الزيارة"}</a></nav><a className={styles.languageToggle} href={"?"+(previewTemplate?"template="+encodeURIComponent(previewTemplate)+"&":"")+"lang="+(english?"ar":"en")} lang={english?"ar":"en"}>{english ? "العربية" : "English"}</a>
-      <SalonQrShare slug={salon.slug} salonName={displaySalonNameAr} templateName={salon.template_key === "atelier" ? "Atelier" : salon.template_key === "oasis" ? "Oasis" : "Forge Men"} publicOrigin={getMenuunPublicOrigin()} />
+      <SalonQrShare slug={salon.slug} salonName={displaySalonNameAr} templateName={english ? "Salon website" : "موقع الصالون"} publicOrigin={getMenuunPublicOrigin()} />
     </header>
     <section className={styles.hero} id="home">
-      <div className={styles.heroCopy}><p className={styles.eyebrow}>{english ? "YOUR GROOMING RITUAL" : "مساحتك للعناية والتجديد"}</p><h1>{english ? "Good grooming. Thoughtful details." : (displayTaglineAr || "تفاصيل صغيرة، تجربة مختلفة.")}</h1><p className={styles.description}>{english ? "A considered grooming experience built around precision, comfort and personal style." : (displayDescriptionAr || "أهلًا بك في "+displaySalonNameAr+". اكتشف خدماتنا واختر ما يناسبك، وتواصل معنا لتنسيق موعدك.")}</p>
+      <div className={styles.heroCopy}><p className={styles.eyebrow}>{english ? "YOUR GROOMING RITUAL" : "مساحتك للعناية والتجديد"}</p><h1>{english ? "Good grooming. Thoughtful details." : (displayTaglineAr || "تفاصيل صغيرة، تجربة مختلفة.")}</h1>{!english && activeTemplate === "atelier" && displayPhone && <a className={styles.atelierPhone} href={"tel:"+displayPhone}>☎ {displayPhone}</a>}<p className={styles.description}>{english ? "A considered grooming experience built around precision, comfort and personal style." : (displayDescriptionAr || "أهلًا بك في "+displaySalonNameAr+". اكتشف خدماتنا واختر ما يناسبك، وتواصل معنا لتنسيق موعدك.")}</p>
         <div className={styles.heroActions}><a className={styles.primaryButton} href={services.length ? "#booking" : wa ? waHref(english ? "Hello, I would like to book an appointment at "+displaySalonNameEn : "مرحبًا، أرغب في حجز موعد لدى "+displaySalonNameAr) : "#services"} target={!services.length && wa ? "_blank" : undefined} rel={!services.length && wa ? "noreferrer" : undefined}>{english ? "Book an appointment" : "احجز موعدك"} ↙</a>{wa && <a className={styles.secondaryButton} href={waHref(english ? "Hello, I would like to book an appointment at "+(displaySalonNameEn) : "مرحبًا، أرغب في حجز موعد لدى "+displaySalonNameAr)} target="_blank" rel="noopener noreferrer">{english ? "Book on WhatsApp" : "احجز عبر واتساب"} ↗</a>}<a className={styles.secondaryButton} href="#services">{english ? "Explore services" : "تصفّح الخدمات"}</a></div>
-        <div className={styles.quickFacts}>{location && <span>⌖ {location}</span>}{displayPhone && <a href={"tel:"+displayPhone}>☎ {displayPhone}</a>}</div>
+        <div className={styles.quickFacts}>{location && <span>⌖ {location}</span>}{displayPhone && (english || activeTemplate !== "atelier") && <a href={"tel:"+displayPhone}>{english ? "" : "☎ "}{displayPhone}</a>}</div>
       </div>
       <div className={styles.heroVisual}>{heroVideo?.public_url?<video className={styles.heroImage} src={heroVideo.public_url} poster={hero} autoPlay muted loop playsInline aria-label={english?(heroVideo.alt_en||"Hero video"):(heroVideo.alt_ar||"فيديو الواجهة الرئيسية")} />:<SalonImage className={styles.heroImage} src={hero} fallbackSrc={HERO_FALLBACK} alt={english ? (heroImage?.alt_en || "Contemporary men's grooming salon interior") : (heroImage?.alt_ar || "أجواء صالون رجالي معاصر للعناية والتصفيف")} fetchPriority="high" loading="eager" />}<div className={styles.visualCaption}><span>{english ? "A space designed around you" : "مساحة مصممة حولك"}</span><span>01 — 04</span></div></div>
     </section>

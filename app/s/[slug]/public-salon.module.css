@@ -488,3 +488,10 @@
   .hero h1,.description{overflow-wrap:anywhere}
   .heroVisual{min-height:300px}
 }
+
+/* Responsive salon logo sizing preserves each uploaded logo's intrinsic aspect ratio. */
+.brand img{width:auto;height:68px;max-width:180px;object-fit:contain;border-radius:0;flex:0 0 auto}
+.quickFacts a{direction:ltr;unicode-bidi:isolate;display:inline-block;max-width:100%;overflow-wrap:anywhere}
+.atelierPhone{display:inline-flex;align-items:center;gap:8px;margin:0 0 18px;color:var(--salon-accent);font:600 16px "DM Sans",Arial,sans-serif;direction:ltr;unicode-bidi:isolate;text-align:start;max-width:100%;overflow-wrap:anywhere;white-space:normal}
+@media(max-width:640px){.brand img{height:54px;max-width:112px}}
+@media(max-width:360px){.header{min-height:auto;flex-wrap:wrap;gap:8px;padding-inline:12px}.brand{flex:1 1 100%;gap:6px}.brand img{height:52px;max-width:90px}.brand small{display:none}.brand strong{overflow-wrap:anywhere}.shareButton{padding:8px 9px;font-size:9px}.languageToggle{padding:8px 9px}}
