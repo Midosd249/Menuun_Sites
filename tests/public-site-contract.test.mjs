@@ -61,10 +61,10 @@ test("Next.js owns the owner workspace and retained Atelier route stays static",
   assert.match(pkg.scripts.build, /next build/);
   const tsconfig = JSON.parse(readFileSync(new URL("../tsconfig.json", import.meta.url), "utf8"));
   assert.ok(tsconfig.exclude.includes("vite.config.ts"), "legacy Vite config must not be part of Next.js typecheck");
-  assert.doesNotMatch(staticCopy, /"owner", "public\\/owner"/);
+  assert.doesNotMatch(staticCopy, /"owner", "public\/owner"/);
   assert.match(staticCopy, /"templates", "public\/templates"/);
   assert.match(staticCopy, /assets\/brand\/menuun/);
-  assert.doesNotMatch(nextConfig, /owner\\/index\\.html/);
+  assert.doesNotMatch(nextConfig, /owner\/index\.html/);
   assert.match(readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8"), /TemplatePicker/);
   assert.match(nextConfig, /templates\/atelier-09\/index\.html/);
 });
