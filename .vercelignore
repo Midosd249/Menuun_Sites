@@ -1,0 +1,7 @@
+# Next.js build needs scripts/copy-static.mjs to preserve the legacy owner and template routes.
+# Anchor exclusions at the repository root: a bare `supabase/` pattern also excludes
+# lib/supabase/**, which contains the SSR client required by the Next.js build.
+/.github/
+/docs/
+/tests/
+/supabase/
