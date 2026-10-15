@@ -20,7 +20,7 @@ test("owner QR uses canonical server origin and saved template state",async()=>{
  assert.match(layout,/getMenuunPublicOrigin/);
  assert.match(origin,/MENUUN_PUBLIC_ORIGIN/);
  assert.match(qr,/usePublicOrigin/);
- assert.match(qr,/useTemplateState/);
+ assert.match(qr,/TEMPLATE_NAMES\[templateKey \|\| "atelier"\]/);
  assert.doesNotMatch(qr,/window\.location\.origin/);
  assert.match(publicQr,/publicOrigin/);
  assert.doesNotMatch(publicQr,/window\.location\.origin/);

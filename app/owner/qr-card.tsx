@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { ExternalLink, QrCode, Copy, Download } from "lucide-react";
 import { usePublicOrigin } from "./public-origin-provider";
-import { useTemplateState } from "./template-state";
 
 const TEMPLATE_NAMES: Record<string, string> = {
   atelier: "Atelier",
@@ -23,11 +22,10 @@ export default function SalonQrCard({
   templateKey?: string;
 }) {
   const publicOrigin = usePublicOrigin();
-  const { templateKey: sharedTemplateKey } = useTemplateState();
   const [copied, setCopied] = useState(false);
   const origin = publicOrigin.replace(/\/+$/, "");
   const url = origin && slug ? `${origin}/s/${encodeURIComponent(slug)}` : "";
-  const templateName = TEMPLATE_NAMES[sharedTemplateKey || templateKey || "atelier"] || TEMPLATE_NAMES.atelier;
+  const templateName = TEMPLATE_NAMES[templateKey || "atelier"] || TEMPLATE_NAMES.atelier;
   const qr = url ? "https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&format=png&data=" + encodeURIComponent(url) : "";
 
   async function copy() {
