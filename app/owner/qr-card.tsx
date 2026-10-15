@@ -23,11 +23,11 @@ export default function SalonQrCard({
   templateKey?: string;
 }) {
   const publicOrigin = usePublicOrigin();
-  const { templateKey } = useTemplateState();
+  const { templateKey: sharedTemplateKey } = useTemplateState();
   const [copied, setCopied] = useState(false);
   const origin = publicOrigin.replace(/\/+$/, "");
   const url = origin && slug ? `${origin}/s/${encodeURIComponent(slug)}` : "";
-  const templateName = TEMPLATE_NAMES[templateKey] || TEMPLATE_NAMES.atelier;
+  const templateName = TEMPLATE_NAMES[sharedTemplateKey || templateKey || "atelier"] || TEMPLATE_NAMES.atelier;
   const qr = url ? "https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&format=png&data=" + encodeURIComponent(url) : "";
 
   async function copy() {
