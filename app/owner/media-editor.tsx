@@ -6,7 +6,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 const BUCKET = "salon-public-media";
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const ACCEPTED_IMAGES = "image/jpeg,image/png,image/webp,image/avif";
-type MediaAsset = { id: string; kind: string; storage_path: string; public_url: string | null; alt_ar: string | null; sort_order: number };
+type MediaAsset = { id: string; kind: string; storage_path: string; public_url: string | null; alt_ar: string | null; alt_en: string | null; sort_order: number };
 type ServiceAsset = { id: string; name_ar: string; image_url: string | null; price_sar: number; duration_minutes: number };
 type BarberAsset = { id: string; display_name: string; image_url: string | null; bio_ar: string | null };
 type SocialLinks = { instagram_url: string; tiktok_url: string; snapchat_url: string; facebook_url: string; google_maps_url: string; website_url: string };
@@ -37,6 +37,8 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
   const [db] = useState(() => createSupabaseBrowserClient());
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
   const [media, setMedia] = useState<MediaAsset[]>([]);
+  const [heroMedia, setHeroMedia] = useState<MediaAsset | null>(null);
+  const [locationMedia, setLocationMedia] = useState<MediaAsset | null>(null);
   const [services, setServices] = useState<ServiceAsset[]>([]);
   const [barbers, setBarbers] = useState<BarberAsset[]>([]);
   const [links, setLinks] = useState<SocialLinks>(EMPTY_LINKS);
@@ -47,14 +49,17 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
 
   async function load() {
     const [mediaResult, serviceResult, barberResult, socialResult] = await Promise.all([
-      db.from("media_assets").select("id,kind,storage_path,public_url,alt_ar,sort_order").eq("salon_id", salonId).eq("kind", "gallery").order("sort_order"),
+      db.from("media_assets").select("id,kind,storage_path,public_url,alt_ar,alt_en,sort_order").eq("salon_id", salonId).in("kind", ["gallery", "hero_poster", "location_image"]).order("sort_order"),
       db.from("services").select("id,name_ar,image_url,price_sar,duration_minutes").eq("salon_id", salonId).eq("is_active", true).order("sort_order"),
       db.from("barbers").select("id,display_name,image_url,bio_ar").eq("salon_id", salonId).eq("is_active", true).order("sort_order"),
       db.from("salons").select("id,instagram_url,tiktok_url,snapchat_url,facebook_url,google_maps_url,website_url").eq("id", salonId).maybeSingle()
     ]);
     if (mediaResult.error) throw mediaResult.error;
     if (barberResult.error) throw barberResult.error;
-    setMedia((mediaResult.data || []) as MediaAsset[]);
+    const mediaRows = (mediaResult.data || []) as MediaAsset[];
+    setMedia(mediaRows.filter(item => item.kind === "gallery"));
+    setHeroMedia(mediaRows.find(item => item.kind === "hero_poster") || null);
+    setLocationMedia(mediaRows.find(item => item.kind === "location_image") || null);
     setBarbers((barberResult.data || []) as BarberAsset[]);
     if (serviceResult.error && /image_url/.test(serviceResult.error.message || "")) {
       setServiceImagesAvailable(false);
@@ -135,6 +140,49 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
     if (oldPath) await db.storage.from(BUCKET).remove([oldPath]);
   }
 
+  async function uploadSpecialImage(event: ChangeEvent<HTMLInputElement>, kind: "hero_poster" | "location_image", current: MediaAsset | null) {
+    const input = event.currentTarget, file = input.files?.[0]; input.value = "";
+    if (!file) return;
+    setBusy(true); setNotice("");
+    let path = "";
+    try {
+      validateImage(file);
+      const { data: { user } } = await db.auth.getUser();
+      path = salonId + "/" + kind + "/" + crypto.randomUUID() + "-" + safeName(file.name);
+      const { error: uploadError } = await db.storage.from(BUCKET).upload(path, file, { contentType: file.type, cacheControl: "3600", upsert: false });
+      if (uploadError) throw uploadError;
+      const publicUrl = db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+      const isHero = kind === "hero_poster";
+      const { data, error } = await db.from("media_assets").insert({
+        salon_id: salonId, kind, storage_path: path, public_url: publicUrl, mime_type: file.type, byte_size: file.size,
+        alt_ar: isHero ? "الصورة الرئيسية لصالون فورج للعناية الرجالية" : "صورة موقع الصالون وأجوائه",
+        alt_en: isHero ? "Forge Men salon hero image" : "Salon location and interior image",
+        sort_order: 0, is_active: true, is_public: true, created_by: user?.id || null
+      }).select("id").maybeSingle();
+      if (error || !data) {
+        await db.storage.from(BUCKET).remove([path]);
+        if (error) throw error;
+        throw new Error("لا توجد صلاحية لحفظ الصورة.");
+      }
+      if (current) {
+        const { error: deleteError } = await db.from("media_assets").delete().eq("id", current.id).eq("salon_id", salonId);
+        if (deleteError) throw deleteError;
+        const oldPath = pathFromPublicUrl(current.public_url);
+        if (oldPath) await db.storage.from(BUCKET).remove([oldPath]);
+      }
+      await load();
+      setNotice(isHero ? "تم تحديث الصورة الرئيسية." : "تم تحديث صورة الموقع.");
+    } catch (e: any) { setNotice(e?.message || "تعذر رفع الصورة."); }
+    finally { setBusy(false); }
+  }
+
+  async function saveAltText(item: MediaAsset, field: "alt_ar" | "alt_en", value: string) {
+    const { error } = await db.from("media_assets").update({ [field]: value.trim() || null }).eq("id", item.id).eq("salon_id", salonId);
+    if (error) { setNotice(error.message || "تعذر حفظ النص البديل."); return; }
+    await load();
+    setNotice("تم حفظ النص البديل للصورة.");
+  }
+
   async function uploadServiceImage(event: ChangeEvent<HTMLInputElement>, service: ServiceAsset) {
     const input = event.currentTarget, file = input.files?.[0]; input.value = "";
     if (!file) return;
@@ -191,24 +239,35 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
 
   return <section className="owner-panel">
     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><ImagePlus size={19}/><h2 style={{margin:0}}>صور وهوية الصالون</h2></div>
-    <p style={{fontSize:12,color:"#697469",lineHeight:1.9,marginTop:0}}>ارفع صورًا أصلية للخدمات والحلاقين والمكان. ستظهر الصور في الصفحة العامة، مع صور استرشادية مؤقتة حتى ترفع صورك الحقيقية.</p>
+    <p style={{fontSize:12,color:"#697469",lineHeight:1.9,marginTop:0}}>أدر صور الهوية والخدمات والفريق ومعرض الأعمال وصورة الموقع من هنا. استخدم صورًا تملك حق استخدامها، ويمكنك استبدال أي صورة في أي وقت.</p>
     <div className="menuun-media-logo">{logoUrl?<img src={logoUrl} alt="شعار الصالون الحالي"/>:<div className="menuun-media-placeholder">لا يوجد شعار بعد</div>}<div><strong>شعار الصالون</strong><small>JPG أو PNG أو WebP أو AVIF — حتى 10 ميجابايت</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{busy?"جارٍ العمل…":"رفع / استبدال الشعار"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={uploadLogo}/></label></div></div>
+
+    <div className="menuun-owner-media-grid" style={{marginTop:20}}>
+      {([{kind:"hero_poster",title:"الصورة الرئيسية",item:heroMedia},{kind:"location_image",title:"صورة الموقع",item:locationMedia}] as const).map(slot=><article className="menuun-owner-media-card" key={slot.kind}>
+        {slot.item?.public_url?<img src={slot.item.public_url} alt={slot.item.alt_ar||slot.title}/>:<div className="menuun-media-placeholder">{slot.title}</div>}
+        <div><strong>{slot.title}</strong><small>{slot.kind==="hero_poster"?"تظهر في واجهة الصالون الرئيسية.":"تظهر في نهاية الصفحة بجوار معلومات الموقع."}</small>
+          <label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{slot.item?"استبدال الصورة":"إضافة صورة"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={e=>uploadSpecialImage(e,slot.kind,slot.item)}/></label>
+          {slot.item&&<button type="button" className="owner-small-danger" disabled={busy} onClick={()=>removeImage(slot.item!)}><Trash2 size={14}/> حذف الصورة</button>}
+          {slot.item&&<><label>النص البديل بالعربية<input defaultValue={slot.item.alt_ar||""} maxLength={250} onBlur={e=>saveAltText(slot.item!,"alt_ar",e.currentTarget.value)}/></label><label>Alt text in English<input defaultValue={slot.item.alt_en||""} maxLength={250} onBlur={e=>saveAltText(slot.item!,"alt_en",e.currentTarget.value)}/></label></>}
+        </div>
+      </article>)}
+    </div>
 
     <div style={{marginTop:26}}>
       <h3 style={{fontSize:15,margin:"0 0 12px"}}>صور الخدمات</h3>
       {!serviceImagesAvailable && <p role="status" className="owner-notice">تحديث قاعدة البيانات مطلوب لحفظ صور الخدمات. الصور الاسترشادية ستبقى ظاهرة إلى حين تطبيق التحديث.</p>}
-      <div className="menuun-owner-media-grid">{services.map(service=><article className="menuun-owner-media-card" key={service.id}>{service.image_url?<img src={service.image_url} alt={service.name_ar}/>:<div className="menuun-media-placeholder">صورة استرشادية<br/>{service.name_ar}</div>}<div><strong>{service.name_ar}</strong><small>{service.duration_minutes} دقيقة · {service.price_sar} ر.س</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{service.image_url?"تغيير الصورة":"رفع صورة الخدمة"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy||!serviceImagesAvailable} onChange={e=>uploadServiceImage(e,service)}/></label></div></article>)}</div>
+      <div className="menuun-owner-media-grid">{services.map(service=><article className="menuun-owner-media-card" key={service.id}>{service.image_url?<img src={service.image_url} alt={service.name_ar}/>:<div className="menuun-media-placeholder">صورة الخدمة<br/>{service.name_ar}</div>}<div><strong>{service.name_ar}</strong><small>{service.duration_minutes} دقيقة · {service.price_sar} ر.س</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{service.image_url?"تغيير الصورة":"رفع صورة الخدمة"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy||!serviceImagesAvailable} onChange={e=>uploadServiceImage(e,service)}/></label></div></article>)}</div>
       {services.length===0 && <p className="empty">أضف الخدمات أولًا، ثم ارفع صورة لكل خدمة.</p>}
     </div>
 
     <div style={{marginTop:26}}>
       <h3 style={{fontSize:15,margin:"0 0 12px"}}>صور الحلاقين وفريق العمل</h3>
-      <div className="menuun-owner-media-grid">{barbers.map(barber=><article className="menuun-owner-media-card" key={barber.id}>{barber.image_url?<img src={barber.image_url} alt={barber.display_name}/>:<div className="menuun-media-placeholder">صورة استرشادية<br/>{barber.display_name}</div>}<div><strong>{barber.display_name}</strong><small>{barber.bio_ar||"أضف نبذة عن خبرة الحلاق من إعدادات الفريق."}</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{barber.image_url?"تغيير الصورة":"رفع صورة الحلاق"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={e=>uploadBarberImage(e,barber)}/></label></div></article>)}</div>
+      <div className="menuun-owner-media-grid">{barbers.map(barber=><article className="menuun-owner-media-card" key={barber.id}>{barber.image_url?<img src={barber.image_url} alt={barber.display_name}/>:<div className="menuun-media-placeholder">صورة الفريق<br/>{barber.display_name}</div>}<div><strong>{barber.display_name}</strong><small>{barber.bio_ar||"أضف نبذة عن خبرة الحلاق من إعدادات الفريق."}</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{barber.image_url?"تغيير الصورة":"رفع صورة الحلاق"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={e=>uploadBarberImage(e,barber)}/></label></div></article>)}</div>
       {barbers.length===0 && <p className="empty">أضف أعضاء الفريق من تبويب «فريق العمل» ثم ارفع صورهم من هنا.</p>}
     </div>
 
     <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginTop:28,marginBottom:12,flexWrap:"wrap"}}><h3 style={{margin:0,fontSize:15}}>معرض الصور ({media.length})</h3><label className="owner-primary menuun-upload-button"><ImagePlus size={15}/>إضافة صور<input type="file" multiple accept={ACCEPTED_IMAGES} disabled={busy} onChange={uploadGallery}/></label></div>
-    <div className="menuun-gallery-grid">{media.map(item=><article className="menuun-gallery-item" key={item.id}>{item.public_url&&<img src={item.public_url} alt={item.alt_ar||"صورة من الصالون"}/>}<span>{item.alt_ar||"صورة الصالون"}</span><button type="button" className="owner-small-danger" disabled={busy} onClick={()=>removeImage(item)} aria-label="حذف الصورة"><Trash2 size={14}/> حذف</button></article>)}</div>
+    <div className="menuun-gallery-grid">{media.map(item=><article className="menuun-gallery-item" key={item.id}>{item.public_url&&<img src={item.public_url} alt={item.alt_ar||"صورة من الصالون"}/>}<span>{item.alt_ar||"صورة الصالون"}</span><label>النص البديل بالعربية<input defaultValue={item.alt_ar||""} maxLength={250} onBlur={e=>saveAltText(item,"alt_ar",e.currentTarget.value)}/></label><label>Alt text in English<input defaultValue={item.alt_en||""} maxLength={250} onBlur={e=>saveAltText(item,"alt_en",e.currentTarget.value)}/></label><button type="button" className="owner-small-danger" disabled={busy} onClick={()=>removeImage(item)} aria-label="حذف الصورة"><Trash2 size={14}/> حذف</button></article>)}</div>
 
     <form onSubmit={saveSocialLinks} className="menuun-social-form">
       <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><Globe size={18}/><h3 style={{margin:0,fontSize:15}}>الموقع وروابط التواصل الاجتماعي</h3></div>
