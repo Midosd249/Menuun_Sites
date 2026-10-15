@@ -479,7 +479,7 @@
 
 
 /* Keep the public salon usable on very narrow devices (including 270px). */
-:global(body){min-width:0!important}
+:global(body):has(.site){min-width:0!important}
 @media(max-width:319px){
   .site{width:100%;min-width:0}
   .hero{grid-template-columns:minmax(0,1fr);padding-inline:12px;overflow:hidden}
