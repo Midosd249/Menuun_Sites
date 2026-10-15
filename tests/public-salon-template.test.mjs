@@ -36,7 +36,7 @@ test("salon QR controls provide stable page URL, copy and download actions", () 
   assert.match(page, /Book this service/);
   assert.match(qr, /create-qr-code/);
   assert.match(qr, /templateName/);
-  assert.match(page, /templateName=\{salon\.template_key === "atelier" \? "Atelier"/);
+  assert.match(page, /templateName=\{english \? "Salon website" : "موقع الصالون"\}/);
   assert.match(qr, /navigator\.clipboard\.writeText/);
   assert.match(qr, /download/);
   assert.match(ownerQr, /published/);
