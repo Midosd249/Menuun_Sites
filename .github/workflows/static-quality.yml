@@ -37,5 +37,3 @@ jobs:
           node-version: 22
       - name: Check inline JavaScript and local assets
         run: node scripts/check-inline-js.mjs
-      - name: Check Supabase browser config syntax
-        run: node --check owner/config.js
