@@ -4,6 +4,7 @@ import { Check, ExternalLink, Palette, RefreshCw } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { useTemplateState } from "./template-state";
+import { persistTemplate } from "./template-save.mjs";
 
 const templates = [
   { id: "atelier", name: "Atelier", label: "تحريري داكن", description: "أسود فحمي ولمسات ليمونية ومساحات فنية." },
@@ -40,13 +41,7 @@ export default function TemplatePicker({ salonId, slug, selected, onSaved }: { s
     setBusy(true); setNotice(""); setChoice(target); setTemplateKey(target);
     try {
       const db = createSupabaseBrowserClient();
-      const { data, error } = await db.from("salons").update({ template_key: target } as any).eq("id", salonId).select("id,template_key").maybeSingle();
-      if (error) throw error;
-      if (!data || data.id !== salonId || data.template_key !== target) {
-        const missing = new Error("Template update returned no matching salon row");
-        (missing as Error & { code: string }).code = "TPL-403";
-        throw missing;
-      }
+      const data = await persistTemplate(db, salonId, target);
       setChoice(target); setFailedChoice(null); setTemplateKey(target);
       onSaved(target);
       setNotice("تم حفظ القالب بنجاح. / Template saved.");
