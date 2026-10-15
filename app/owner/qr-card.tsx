@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ExternalLink, QrCode, Copy, Download } from "lucide-react";
+import { usePublicOrigin } from "./public-origin-provider";
 
 const TEMPLATE_NAMES: Record<string, string> = {
   atelier: "Atelier 09",
@@ -14,14 +15,14 @@ export default function SalonQrCard({
   salonName,
   published,
   templateKey,
-  publicOrigin,
+  templateKey,
 }: {
   slug: string;
   salonName: string;
   published: boolean;
   templateKey: string;
-  publicOrigin: string;
 }) {
+  const publicOrigin = usePublicOrigin();
   const [copied, setCopied] = useState(false);
   const origin = publicOrigin.replace(/\/+$/, "");
   const url = origin && slug ? `${origin}/s/${encodeURIComponent(slug)}` : "";
