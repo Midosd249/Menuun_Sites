@@ -2,7 +2,6 @@ import { cpSync, existsSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 
 const copies = [
-  ["owner", "public/owner"],
   ["templates", "public/templates"],
   ["assets/brand/menuun", "public/assets/brand/menuun"]
 ];
