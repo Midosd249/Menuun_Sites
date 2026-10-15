@@ -1,3 +1,18 @@
+## Current task — production QA follow-up (2026-10-15)
+
+- [x] Squash-merge PR #17 to main: fe24e9052cda5dfdc3b8c239fcb44a7cd8fe7195.
+- [x] Confirm Static Quality 38678593699 and Supabase RLS/pgTAP 38678593706 PASS on final PR head.
+- [x] Add Production MENUUN_PUBLIC_ORIGIN=https://menuun-sites.vercel.app; verify Supabase URL and publishable-key environment values.
+- [x] Deploy merged SHA to Production: dpl_FLKMF3NwUcNg2e18ZWNMhokrGqjB READY.
+- [x] Request one password-recovery email with production redirect target (HTTP 200); do not request another.
+- [ ] Fix 270px horizontal overflow (this follow-up branch) and re-run production responsive checks after deployment.
+- [ ] Verify login with account credentials and confirm recovery email link/callback; mailbox click-through is not available in this run.
+- [ ] Authenticated owner-workspace QA: template picker, social/map links, hours editor, salon switcher, media upload persistence, QR label/URL, and CTA behavior. Do not submit a real booking.
+- [ ] Inspect Oasis card layout and Atelier image/text overlap in an authenticated/member template preview.
+- [ ] After full QA, update this checklist with results and retain production rollback deployment dpl_5cHA72s7xNuPiJjMxUiRgnLzsSRR.
+
+---
+
 # Tasks
 
 ## Active task
