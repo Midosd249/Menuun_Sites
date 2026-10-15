@@ -476,3 +476,15 @@
 .templateRose .socialLinks a{border-color:#59604f;color:#d29a70}
 .templateRose .socialLinks a:hover{background:#c58b63;color:#202421}
 .templateRose .bookingFields input,.templateRose .bookingFields select,.templateRose .bookingFields textarea{border-radius:8px}
+
+
+/* Keep the public salon usable on very narrow devices (including 270px). */
+:global(body):has(.site){min-width:0!important}
+@media(max-width:319px){
+  .site{width:100%;min-width:0}
+  .hero{grid-template-columns:minmax(0,1fr);padding-inline:12px;overflow:hidden}
+  .heroCopy,.heroVisual{min-width:0;width:100%}
+  .heroCopy{overflow-wrap:anywhere}
+  .hero h1,.description{overflow-wrap:anywhere}
+  .heroVisual{min-height:300px}
+}

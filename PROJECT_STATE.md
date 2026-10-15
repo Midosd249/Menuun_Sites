@@ -1,3 +1,23 @@
+## Latest verified state — 2026-10-15 (PR #17 merged; production build READY)
+
+- **Main commit:** fe24e9052cda5dfdc3b8c239fcb44a7cd8fe7195 — squash-merged PR #17, “Owner workspace auth, canonical QR links, and legacy retirement.”
+- **Production deployment:** dpl_FLKMF3NwUcNg2e18ZWNMhokrGqjB, READY and serving merged commit fe24e9052cda5dfdc3b8c239fcb44a7cd8fe7195; production alias is https://menuun-sites.vercel.app.
+- **Rollback point before merge:** main 6e7c22996448bccc7f77189837ace8c898fcb238; production deployment dpl_5cHA72s7xNuPiJjMxUiRgnLzsSRR (READY URL https://menuun-sites-n4zmgf71t-midosd2s-projects.vercel.app).
+- **CI evidence on final PR head 6fd04d68c427967d0c3748402eeee1e449c343ff:** Static Quality run 38678593699 PASS; Supabase RLS/pgTAP run 38678593706 PASS. Vercel production check on merged SHA is SUCCESS.
+- **Production environment:** NEXT_PUBLIC_SUPABASE_URL matches this Supabase project; NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY is a publishable key (not a service-role key); MENUUN_PUBLIC_ORIGIN=https://menuun-sites.vercel.app is set for Production. The public origin can later be changed through that variable plus redeploy.
+- **Observed public salon:** /s/atelier-09 renders Atelier in Arabic RTL. Anonymous ?template=oasis does not override the saved/public template. /login returns 200; unauthenticated /owner redirects to login. One production password-recovery request for ahmed16060080@gmail.com was accepted with redirect target https://menuun-sites.vercel.app/reset-password; mailbox/link click-through is not verified.
+- **Responsive QA finding:** production browser run found no console errors and no horizontal overflow at 320, 360, 390, 430, 768, and 1440px, but the 270px viewport had a 50px horizontal overflow from the global 320px body minimum. This follow-up PR adds a narrow-width CSS fix; re-run the full viewport matrix after it deploys.
+- **Still UNKNOWN:** successful credential sign-in (password not available to this test), recovery email link click-through/callback exchange, owner workspace editor/salon switcher, upload persistence, QR UI label/URL inside authenticated workspace, Oasis card overlap, button destination interaction, and browser console on authenticated routes. No real booking was submitted. No Supabase schema/data or DNS/domain was changed.
+
+### Later switch to site.menuun.com
+1. Add site.menuun.com to the Vercel project and complete Vercel's domain verification.
+2. Set the requested DNS CNAME at the DNS provider to the Vercel target shown by Vercel; do not replace unrelated records.
+3. Change Production MENUUN_PUBLIC_ORIGIN to https://site.menuun.com and redeploy.
+4. In Supabase Auth URL Configuration, set Site URL to https://site.menuun.com and add https://site.menuun.com/owner/ and https://site.menuun.com/** to Redirect URLs.
+5. Test login, password recovery, auth callback, public salon and QR on the new origin. No DNS/domain changes have been made by automation.
+
+---
+
 # Project State — Menuun
 
 ## Latest verified update — 2026-10-14 (signature salon template redesign)

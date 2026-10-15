@@ -1,3 +1,24 @@
+## Current verified handoff — 2026-10-15
+
+- Repository: Midosd249/Menuun_Sites; main is at fe24e9052cda5dfdc3b8c239fcb44a7cd8fe7195 after squash-merging PR #17.
+- Production deployment READY: dpl_FLKMF3NwUcNg2e18ZWNMhokrGqjB, commit fe24e9052cda5dfdc3b8c239fcb44a7cd8fe7195, URL https://menuun-sites-pmi87b0jr-midosd2s-projects.vercel.app, alias https://menuun-sites.vercel.app.
+- Rollback point: pre-merge main 6e7c22996448bccc7f77189837ace8c898fcb238, READY deployment dpl_5cHA72s7xNuPiJjMxUiRgnLzsSRR at https://menuun-sites-n4zmgf71t-midosd2s-projects.vercel.app.
+- Final PR head CI: Static Quality 38678593699 PASS; Supabase RLS/pgTAP 38678593706 PASS. Merged SHA Vercel check SUCCESS.
+- Production env: Supabase URL correct, publishable key verified with sb_publishable_ prefix, and MENUUN_PUBLIC_ORIGIN=https://menuun-sites.vercel.app now targets Production.
+- One password-recovery request was accepted with redirect_to=https://menuun-sites.vercel.app/reset-password; the mailbox/link and actual callback exchange remain UNKNOWN. No sign-in password was provided to the test, so successful authenticated login is UNKNOWN.
+- Public /s/atelier-09 visibly renders Atelier Arabic RTL. Anonymous ?template=oasis is ignored, as intended. /login is HTTP 200 and anonymous /owner redirects to login.
+- Production browser QA found no JS console errors; no horizontal overflow at 320/360/390/430/768/1440px. A 270px overflow was identified (body min-width 320px) and this follow-up branch adds a fix. Authenticated owner flows, uploads, QR UI, CTA interaction, Oasis layout and link-click behavior remain UNKNOWN until QA after fix deploy.
+- No live DB schema/data changes, no DNS/domain changes, and no real booking submitted.
+
+### Switch to site.menuun.com later
+1. Add site.menuun.com in the Vercel project and complete Vercel verification.
+2. At the DNS provider, add only the CNAME Vercel specifies for site.menuun.com; preserve unrelated records.
+3. Set Production MENUUN_PUBLIC_ORIGIN=https://site.menuun.com, then redeploy.
+4. Supabase Auth URL Configuration: Site URL https://site.menuun.com; Redirect URLs https://site.menuun.com/owner/ and https://site.menuun.com/**.
+5. Test production login, recovery, callback, /s/atelier-09, and QR destination. Automation has not touched DNS or domains.
+
+---
+
 # Menuun — Session Handoff
 
 **Updated:** 2026-10-13  
