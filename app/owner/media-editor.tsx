@@ -102,6 +102,36 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
     finally { setBusy(false); }
   }
 
+  async function removeLogo() {
+    if (busy || !logoUrl || !window.confirm("هل تريد إزالة شعار الصالون؟")) return;
+    setBusy(true); setNotice("");
+    try {
+      const { data, error } = await db.from("salons").update({ logo_url: null }).eq("id", salonId).select("id").maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error("لا توجد صلاحية لتعديل هذا الصالون.");
+      const oldPath = pathFromPublicUrl(logoUrl);
+      if (oldPath) await db.storage.from(BUCKET).remove([oldPath]);
+      setLogoUrl(null); setNotice("تمت إزالة الشعار.");
+    } catch (e: any) { setNotice(e?.message || "تعذر إزالة الشعار."); }
+    finally { setBusy(false); }
+  }
+
+  async function removeTargetImage(kind: "services" | "barbers", item: ServiceAsset | BarberAsset) {
+    if (busy || !window.confirm("هل تريد إزالة الصورة الحالية؟")) return;
+    setBusy(true); setNotice("");
+    try {
+      const table = kind === "services" ? "services" : "barbers";
+      const { data, error } = await db.from(table).update({ image_url: null }).eq("id", item.id).eq("salon_id", salonId).select("id").maybeSingle();
+      if (error) throw error;
+      if (!data) throw new Error("لا توجد صلاحية لتعديل هذا العنصر.");
+      const oldPath = pathFromPublicUrl(item.image_url);
+      if (oldPath) await db.storage.from(BUCKET).remove([oldPath]);
+      await load();
+      setNotice("تمت إزالة الصورة وسيظهر بديل مناسب في الصفحة.");
+    } catch (e: any) { setNotice(e?.message || "تعذر إزالة الصورة."); }
+    finally { setBusy(false); }
+  }
+
   async function uploadGallery(event: ChangeEvent<HTMLInputElement>) {
     const input = event.currentTarget, files = Array.from(input.files || []); input.value = "";
     if (!files.length) return;
@@ -240,7 +270,7 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
   return <section className="owner-panel">
     <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}><ImagePlus size={19}/><h2 style={{margin:0}}>صور وهوية الصالون</h2></div>
     <p style={{fontSize:12,color:"#697469",lineHeight:1.9,marginTop:0}}>أدر صور الهوية والخدمات والفريق ومعرض الأعمال وصورة الموقع من هنا. استخدم صورًا تملك حق استخدامها، ويمكنك استبدال أي صورة في أي وقت.</p>
-    <div className="menuun-media-logo">{logoUrl?<img src={logoUrl} alt="شعار الصالون الحالي"/>:<div className="menuun-media-placeholder">لا يوجد شعار بعد</div>}<div><strong>شعار الصالون</strong><small>JPG أو PNG أو WebP أو AVIF — حتى 10 ميجابايت</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{busy?"جارٍ العمل…":"رفع / استبدال الشعار"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={uploadLogo}/></label></div></div>
+    <div className="menuun-media-logo">{logoUrl?<img src={logoUrl} alt="شعار الصالون الحالي"/>:<div className="menuun-media-placeholder">لا يوجد شعار بعد</div>}<div><strong>شعار الصالون</strong><small>JPG أو PNG أو WebP أو AVIF — حتى 10 ميجابايت</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{busy?"جارٍ العمل…":"رفع / استبدال الشعار"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={uploadLogo}/></label>{logoUrl&&<button type="button" className="owner-small-danger" disabled={busy} onClick={removeLogo}><Trash2 size={14}/> إزالة الشعار</button>}</div></div>
 
     <div className="menuun-owner-media-grid" style={{marginTop:20}}>
       {([{kind:"hero_poster",title:"الصورة الرئيسية",item:heroMedia},{kind:"location_image",title:"صورة الموقع",item:locationMedia}] as const).map(slot=><article className="menuun-owner-media-card" key={slot.kind}>
@@ -256,13 +286,13 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
     <div style={{marginTop:26}}>
       <h3 style={{fontSize:15,margin:"0 0 12px"}}>صور الخدمات</h3>
       {!serviceImagesAvailable && <p role="status" className="owner-notice">تحديث قاعدة البيانات مطلوب لحفظ صور الخدمات. الصور الاسترشادية ستبقى ظاهرة إلى حين تطبيق التحديث.</p>}
-      <div className="menuun-owner-media-grid">{services.map(service=><article className="menuun-owner-media-card" key={service.id}>{service.image_url?<img src={service.image_url} alt={service.name_ar}/>:<div className="menuun-media-placeholder">صورة الخدمة<br/>{service.name_ar}</div>}<div><strong>{service.name_ar}</strong><small>{service.duration_minutes} دقيقة · {service.price_sar} ر.س</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{service.image_url?"تغيير الصورة":"رفع صورة الخدمة"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy||!serviceImagesAvailable} onChange={e=>uploadServiceImage(e,service)}/></label></div></article>)}</div>
+      <div className="menuun-owner-media-grid">{services.map(service=><article className="menuun-owner-media-card" key={service.id}>{service.image_url?<img src={service.image_url} alt={service.name_ar}/>:<div className="menuun-media-placeholder">صورة الخدمة<br/>{service.name_ar}</div>}<div><strong>{service.name_ar}</strong><small>{service.duration_minutes} دقيقة · {service.price_sar} ر.س</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{service.image_url?"تغيير الصورة":"رفع صورة الخدمة"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy||!serviceImagesAvailable} onChange={e=>uploadServiceImage(e,service)}/></label>{service.image_url&&<button type="button" className="owner-small-danger" disabled={busy} onClick={()=>removeTargetImage("services",service)}><Trash2 size={14}/> إزالة الصورة</button>}</div></article>)}</div>
       {services.length===0 && <p className="empty">أضف الخدمات أولًا، ثم ارفع صورة لكل خدمة.</p>}
     </div>
 
     <div style={{marginTop:26}}>
       <h3 style={{fontSize:15,margin:"0 0 12px"}}>صور الحلاقين وفريق العمل</h3>
-      <div className="menuun-owner-media-grid">{barbers.map(barber=><article className="menuun-owner-media-card" key={barber.id}>{barber.image_url?<img src={barber.image_url} alt={barber.display_name}/>:<div className="menuun-media-placeholder">صورة الفريق<br/>{barber.display_name}</div>}<div><strong>{barber.display_name}</strong><small>{barber.bio_ar||"أضف نبذة عن خبرة الحلاق من إعدادات الفريق."}</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{barber.image_url?"تغيير الصورة":"رفع صورة الحلاق"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={e=>uploadBarberImage(e,barber)}/></label></div></article>)}</div>
+      <div className="menuun-owner-media-grid">{barbers.map(barber=><article className="menuun-owner-media-card" key={barber.id}>{barber.image_url?<img src={barber.image_url} alt={barber.display_name}/>:<div className="menuun-media-placeholder">صورة الفريق<br/>{barber.display_name}</div>}<div><strong>{barber.display_name}</strong><small>{barber.bio_ar||"أضف نبذة عن خبرة الحلاق من إعدادات الفريق."}</small><label className="owner-small-primary menuun-upload-button"><Upload size={14}/>{barber.image_url?"تغيير الصورة":"رفع صورة الحلاق"}<input type="file" accept={ACCEPTED_IMAGES} disabled={busy} onChange={e=>uploadBarberImage(e,barber)}/></label>{barber.image_url&&<button type="button" className="owner-small-danger" disabled={busy} onClick={()=>removeTargetImage("barbers",barber)}><Trash2 size={14}/> إزالة الصورة</button>}</div></article>)}</div>
       {barbers.length===0 && <p className="empty">أضف أعضاء الفريق من تبويب «فريق العمل» ثم ارفع صورهم من هنا.</p>}
     </div>
 
