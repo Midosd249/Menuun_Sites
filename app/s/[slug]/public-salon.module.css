@@ -52,7 +52,7 @@
 .templateRose .topline,.templateRose .header{border-color:#ffffff24;color:#c0c0b4}
 .templateRose .brand strong,.templateRose .footerBrand,.templateRose .hero h1,.templateRose .sectionHeading h2,.templateRose .infoIntro h2{color:#f2eee4}
 .templateRose .brand small,.templateRose .header nav a,.templateRose .quickFacts,.templateRose .footer{color:#c0c0b4}
-.templateRose .brandMark{border-color:#b77a52;color:#b77a52}
+.templateRose .brandMark{border-color:#c58b63;color:#c58b63}
 .templateRose .header nav a:hover,.templateRose .quickFacts a:hover,.templateRose .footer>a:last-child:hover{color:#d29a70}
 .templateRose .shareButton,.templateRose .secondaryButton{border-color:#ffffff45;color:#f2eee4;border-radius:24px}
 .templateRose .shareButton:hover,.templateRose .secondaryButton:hover{border-color:#b77a52;color:#d29a70}
@@ -60,7 +60,7 @@
 .templateRose .artCard{background:radial-gradient(ellipse at 48% 43%,#b77a5220,transparent 40%),linear-gradient(145deg,#252a26,#343a33);border:1px solid #b77a5255;border-radius:200px 200px 12px 12px}
 .templateRose .artCard small,.templateRose .artNumber{color:#c1b8a6}
 .templateRose .artCard strong{color:#f2eee4}
-.templateRose .artGlyph{color:#b77a52}
+.templateRose .artGlyph{color:#c58b63}
 .templateRose .eyebrow{color:#d29a70}
 .templateRose .description,.templateRose .sectionHeading>p,.templateRose .serviceInfo p,.templateRose .serviceInfo>span,.templateRose .person p{color:#c0c0b4}
 .templateRose .primaryButton,.templateRose .bookingSubmit{background:#b77a52;border-color:#b77a52;color:#f2eee4;border-radius:24px}
@@ -431,7 +431,7 @@
 .templateRose .artGlyph{color:#b77a52}
 .templateRose .eyebrow{color:#c58b63}
 .templateRose .description,.templateRose .sectionHeading>p,.templateRose .serviceInfo p,.templateRose .serviceInfo>span,.templateRose .person p{color:#c0c0b4}
-.templateRose .primaryButton,.templateRose .bookingSubmit{background:#b77a52;border-color:#b77a52;color:#202421}
+.templateRose .primaryButton,.templateRose .bookingSubmit{background:#c58b63;border-color:#c58b63;color:#202421}
 .templateRose .primaryButton:hover{background:#cb9167;color:#202421}
 .templateRose .services{border-color:#454b43}
 .templateRose .service{background:#292e2a;border-color:#4a5248}
@@ -458,7 +458,7 @@
 .templateRose .bookingForm input,.templateRose .bookingForm select,.templateRose .bookingForm textarea,.templateRose .bookingFields input,.templateRose .bookingFields select,.templateRose .bookingFields textarea{background:#1e221f;border-color:#4a5248;color:#f2eee4;color-scheme:dark}
 .templateRose .slotButton{border-color:#59604f;color:#f2eee4}
 .templateRose .slotButton:hover{border-color:#b77a52}
-.templateRose .slotSelected{background:#b77a52;border-color:#b77a52;color:#202421}
+.templateRose .slotSelected{background:#c58b63;border-color:#c58b63;color:#202421}
 .templateRose .bookingSuccess{background:#333c31;border-color:#687c5c}
 .templateRose .bookingSuccess h3,.templateRose .bookingSuccess small,.templateRose .successMark{color:#d4dfc8;border-color:#839574}
 .templateRose .bookingSuccess p{color:#d0d2c7}
@@ -474,5 +474,5 @@
 .templateRose .locationFeature{background:#252a26;color:#f2eee4}
 .templateRose .locationFeatureCopy h2{color:#f2eee4}
 .templateRose .socialLinks a{border-color:#59604f;color:#d29a70}
-.templateRose .socialLinks a:hover{background:#b77a52;color:#202421}
+.templateRose .socialLinks a:hover{background:#c58b63;color:#202421}
 .templateRose .bookingFields input,.templateRose .bookingFields select,.templateRose .bookingFields textarea{border-radius:8px}
