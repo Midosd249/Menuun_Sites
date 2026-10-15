@@ -96,3 +96,11 @@ alter table public.salons
   add column if not exists facebook_url text,
   add column if not exists google_maps_url text,
   add column if not exists website_url text;
+
+
+-- Allow an owner-managed location image in addition to the existing gallery and hero media.
+alter table public.media_assets
+  drop constraint if exists media_assets_kind_check;
+alter table public.media_assets
+  add constraint media_assets_kind_check
+  check (kind in ('logo', 'hero_video', 'hero_poster', 'location_image', 'gallery', 'barber_portrait', 'service_image'));
