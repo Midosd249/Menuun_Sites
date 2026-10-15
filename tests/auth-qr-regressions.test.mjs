@@ -22,13 +22,15 @@ test("login route provides Supabase password auth, recovery, and a validated own
   assert.doesNotMatch(form, /window\.location\.origin/);
 });
 
-test("salon QR uses a server-provided canonical origin and shows the saved template", async () => {
+test("salon QR uses a canonical origin and public previews require verified salon membership", async () => {
   const qr = await read("../app/owner/qr-card.tsx");
   const workspace = await read("../app/owner/page.tsx");
   const publicPage = await read("../app/s/[slug]/page.tsx");
   assert.match(qr, /MENUUN_PUBLIC_ORIGIN|publicOrigin/);
   assert.doesNotMatch(qr, /window\.location\.origin/);
-  assert.match(qr, /templateName|templateLabel|Atelier 09/);
+  assert.match(qr, /templateName|templateLabel/);
   assert.match(workspace, /template_key/);
-  assert.doesNotMatch(publicPage, /requestedTemplate|templateKey|params\.set\(["']template["']|\?template=/);
+  assert.match(publicPage, /authDb\.auth\.getClaims\(\)/);
+  assert.match(publicPage, /from\("salon_members"\)/);
+  assert.match(publicPage, /previewTemplate \|\| salon\.template_key/);
 });

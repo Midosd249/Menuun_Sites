@@ -24,7 +24,7 @@ test("owner QR uses canonical server origin and saved template state",async()=>{
  assert.doesNotMatch(qr,/window\.location\.origin/);
  assert.match(publicQr,/publicOrigin/);
  assert.doesNotMatch(publicQr,/window\.location\.origin/);
- assert.doesNotMatch(picker,/\?template=/);
- assert.match(publicPage,/const activeTemplate = salon\.template_key \|\| "atelier"/);
- assert.doesNotMatch(publicPage,/requestedTemplate|templateKey|\?template=/);
+ assert.match(picker,/\?template=/);
+ assert.match(publicPage,/previewTemplate \|\| salon\.template_key/);
+ assert.match(publicPage,/authDb\.auth\.getClaims\(\)/); assert.match(publicPage,/from\("salon_members"\)/); assert.match(publicPage,/previewTemplate \|\| salon\.template_key/);
 });
