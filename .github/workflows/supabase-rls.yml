@@ -45,6 +45,7 @@ jobs:
           supabase/tests/appointment_authorization.test.sql
           supabase/tests/tenant_surface_authorization.test.sql
           supabase/tests/public_booking_rpc.test.sql
+          supabase/tests/template_access.test.sql
 
       - name: Stop local Supabase
         if: always()

@@ -12,7 +12,7 @@ import { BARBER_IMAGE_FALLBACKS, DEMO_CONTACT, DEMO_SERVICES, GROOM_PACKAGE, HER
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-type Salon = { id:string; slug:string; name_ar:string; name_en:string|null; tagline_ar:string|null; description_ar:string|null; logo_url:string|null; phone:string|null; whatsapp:string|null; address_ar:string|null; city:string|null; timezone:string; currency_code:string; primary_color:string; accent_color:string; template_key:string; instagram_url:string|null; tiktok_url:string|null; snapchat_url:string|null; facebook_url:string|null; google_maps_url:string|null; website_url:string|null };
+type Salon = { id:string; slug:string; name_ar:string; name_en:string|null; tagline_ar:string|null; description_ar:string|null; logo_url:string|null; phone:string|null; whatsapp:string|null; address_ar:string|null; city:string|null; timezone:string; currency_code:string; primary_color:string; accent_color:string; template_key:string; hero_mode?:string; instagram_url:string|null; tiktok_url:string|null; snapchat_url:string|null; facebook_url:string|null; google_maps_url:string|null; website_url:string|null };
 type Service = { id:string; name_ar:string; name_en?:string|null; description_ar:string|null; description_en?:string|null; price_sar:number; duration_minutes:number; sort_order:number; image_url:string|null };
 type Barber = { id:string; display_name:string; display_name_en?:string|null; title_ar?:string|null; title_en?:string|null; bio_ar:string|null; bio_en?:string|null; specialties_ar?:string|null; specialties_en?:string|null; availability_ar?:string|null; availability_en?:string|null; booking_url?:string|null; image_url:string|null; sort_order:number };
 type Hours = { weekday:number; opens_at:string|null; closes_at:string|null; is_closed:boolean };
@@ -25,13 +25,13 @@ async function getSalon(slug:string) {
   const db = await createSupabaseServerClient();
   const legacySalonColumns = "id,slug,name_ar,name_en,tagline_ar,description_ar,logo_url,phone,whatsapp,address_ar,city,timezone,currency_code,primary_color,accent_color,is_active,is_published";
   let salon:any,error:any;
-  ({data:salon,error}=await db.from("salons").select(legacySalonColumns+",template_key,instagram_url,tiktok_url,snapchat_url,facebook_url,google_maps_url,website_url").eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle());
-  if (error && /template_key|instagram_url|tiktok_url|snapchat_url|facebook_url|google_maps_url|website_url/.test(error.message||"")) {
+  ({data:salon,error}=await db.from("salons").select(legacySalonColumns+",template_key,hero_mode,instagram_url,tiktok_url,snapchat_url,facebook_url,google_maps_url,website_url").eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle());
+  if (error && /template_key|instagram_url|tiktok_url|snapchat_url|facebook_url|google_maps_url|website_url|hero_mode/.test(error.message||"")) {
     const hasTemplateColumn = !/template_key/.test(error.message||"");
     const select = legacySalonColumns + (hasTemplateColumn ? ",template_key" : "");
     const fallback = await db.from("salons").select(select).eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle();
     const fallbackRow = fallback.data as any;
-    salon = fallbackRow ? { ...fallbackRow, template_key: fallbackRow.template_key || "atelier", instagram_url:null, tiktok_url:null, snapchat_url:null, facebook_url:null, google_maps_url:null, website_url:null } : null;
+    salon = fallbackRow ? { ...fallbackRow, template_key: fallbackRow.template_key || "atelier", hero_mode:"image", instagram_url:null, tiktok_url:null, snapchat_url:null, facebook_url:null, google_maps_url:null, website_url:null } : null;
     error = fallback.error;
   }
   if (error || !salon) return null;
@@ -53,11 +53,12 @@ export async function generateMetadata({params,searchParams}:{params:Promise<{sl
   const [{slug},search] = await Promise.all([params,searchParams]);
   const result = await getSalon(slug);
   if (!result) return {title:"الصفحة غير متاحة",robots:{index:false,follow:false}};
-  const requested = result.salon.template_key || "atelier";
-  const demo = /^(atelier|oasis|rose)(-|$)/i.test(slug);
-  const identity = THEME_IDENTITIES[requested as keyof typeof THEME_IDENTITIES] || THEME_IDENTITIES.atelier;
-  const title = demo ? (search?.lang === "en" ? identity.nameEn : identity.nameAr) : result.salon.name_ar;
-  const description = result.salon.description_ar || "الخدمات والأسعار ومعلومات الصالون وطرق التواصل والحجز.";
+  const salonName = (result.salon.name_ar || result.salon.name_en || "صالون").trim();
+  const title = salonName;
+  const rawDescription = result.salon.description_ar;
+  const topServices = result.services.slice(0, 3).map(service => service.name_ar).filter(Boolean);
+  const neutralDescription = [`خدمات ${salonName}`, result.salon.city ? `في ${result.salon.city}` : null, topServices.length ? `تشمل ${topServices.join("، ")}` : "للعناية الشخصية والحجز والتواصل"].filter(Boolean).join("، ") + ".";
+  const description = isUnfinishedCopy(rawDescription) || !rawDescription?.trim() ? neutralDescription : rawDescription.trim();
   return {title,description,alternates:{canonical:"/s/"+result.salon.slug},openGraph:{type:"website",title,description,url:"/s/"+result.salon.slug},robots:{index:true,follow:true}};
 }
 
@@ -132,6 +133,7 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
   ] : []);
   const gallery = media.filter(x=>x.kind==="gallery" && x.public_url);
   const heroImage = media.find(x=>x.kind==="hero_poster" && x.public_url) || null;
+  const heroVideo = salon.hero_mode === "video" ? media.find(x=>x.kind==="hero_video" && x.public_url) || null : null;
   const hero = heroImage?.public_url || HERO_FALLBACK;
   const locationPhoto = media.find(x=>x.kind==="location_image" && x.public_url) || null;
   const locationImageConfig = LOCATION_IMAGES[activeTemplate as keyof typeof LOCATION_IMAGES] || LOCATION_IMAGES.atelier;
@@ -152,7 +154,7 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
         <div className={styles.heroActions}><a className={styles.primaryButton} href={services.length ? "#booking" : wa ? waHref(english ? "Hello, I would like to book an appointment at "+displaySalonNameEn : "مرحبًا، أرغب في حجز موعد لدى "+displaySalonNameAr) : "#services"} target={!services.length && wa ? "_blank" : undefined} rel={!services.length && wa ? "noreferrer" : undefined}>{english ? "Book an appointment" : "احجز موعدك"} ↙</a>{wa && <a className={styles.secondaryButton} href={waHref(english ? "Hello, I would like to book an appointment at "+(displaySalonNameEn) : "مرحبًا، أرغب في حجز موعد لدى "+displaySalonNameAr)} target="_blank" rel="noopener noreferrer">{english ? "Book on WhatsApp" : "احجز عبر واتساب"} ↗</a>}<a className={styles.secondaryButton} href="#services">{english ? "Explore services" : "تصفّح الخدمات"}</a></div>
         <div className={styles.quickFacts}>{location && <span>⌖ {location}</span>}{displayPhone && <a href={"tel:"+displayPhone}>☎ {displayPhone}</a>}</div>
       </div>
-      <div className={styles.heroVisual}><SalonImage className={styles.heroImage} src={hero} fallbackSrc={HERO_FALLBACK} alt={english ? (heroImage?.alt_en || "Contemporary men's grooming salon interior") : (heroImage?.alt_ar || "أجواء صالون رجالي معاصر للعناية والتصفيف")} fetchPriority="high" loading="eager" /><div className={styles.visualCaption}><span>{english ? "A space designed around you" : "مساحة مصممة حولك"}</span><span>01 — 04</span></div></div>
+      <div className={styles.heroVisual}>{heroVideo?.public_url?<video className={styles.heroImage} src={heroVideo.public_url} poster={hero} autoPlay muted loop playsInline aria-label={english?(heroVideo.alt_en||"Hero video"):(heroVideo.alt_ar||"فيديو الواجهة الرئيسية")} />:<SalonImage className={styles.heroImage} src={hero} fallbackSrc={HERO_FALLBACK} alt={english ? (heroImage?.alt_en || "Contemporary men's grooming salon interior") : (heroImage?.alt_ar || "أجواء صالون رجالي معاصر للعناية والتصفيف")} fetchPriority="high" loading="eager" />}<div className={styles.visualCaption}><span>{english ? "A space designed around you" : "مساحة مصممة حولك"}</span><span>01 — 04</span></div></div>
     </section>
     <section className={styles.section} id="services"><div className={styles.sectionHeading}><div><p className={styles.eyebrow}>{english ? "THE SERVICE MENU" : "قائمة الخدمات"}</p><h2>{english ? "Choose your next ritual." : "اختر تجربتك القادمة."}</h2></div><p>{english ? "Thoughtful services, clear starting prices and time estimates." : "خدمات واضحة، أسعار معلنة، ووقت تعرفه قبل أن تبدأ."}</p></div>
       <div className={styles.services}>{displayServices.map((service,index)=>{const label=english&&isDemoSalon?(service.name_en || DEMO_SERVICES[index]?.name_en || service.name_ar):service.name_ar;const description=english&&isDemoSalon?(service.description_en || DEMO_SERVICES[index]?.description_en || service.description_ar):service.description_ar;const price=isDemoSalon?((english?"From ":"ابتداءً من ")+Number(service.price_sar)+(english?" SAR":" ر.س.")):Number(service.price_sar)>0?money(Number(service.price_sar),salon.currency_code):(english?"Ask for price":"تواصل لمعرفة السعر");const isStored=services.some(item=>item.id===service.id);return <article className={styles.service} key={service.id}><div className={styles.serviceImage}><SalonImage src={service.image_url || SERVICE_IMAGE_FALLBACKS[index % SERVICE_IMAGE_FALLBACKS.length]} fallbackSrc={SERVICE_IMAGE_FALLBACKS[(index+1) % SERVICE_IMAGE_FALLBACKS.length]} alt={label} loading="lazy" /></div><span className={styles.serviceIndex}>{String(index+1).padStart(2,"0")}</span><div className={styles.serviceInfo}><h3>{label}</h3>{description && <p>{description}</p>}<span>◷ {service.duration_minutes} {english?"min":"دقيقة"}</span></div><strong className={styles.price}>{price}</strong><div className={styles.serviceActions}>{isStored ? <a className={styles.serviceAction} href={bookingHref(service.id)} aria-label={(english?"Book service ":"حجز خدمة ")+label}>{english?"Book this service":"احجز الخدمة"} ↗</a> : wa && <a className={styles.serviceAction} target="_blank" rel="noopener noreferrer" href={waHref((english?"Hello, I would like to book ":"مرحبًا، أرغب في حجز خدمة ")+label+(english?" at ":" لدى ")+(english?(displaySalonNameEn):displaySalonNameAr))} aria-label={(english?"Book service ":"حجز خدمة ")+label}>{english?"Book this service":"احجز الخدمة"} ↗</a>}</div></article>})}</div>

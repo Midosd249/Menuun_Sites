@@ -1,0 +1,1 @@
+export function persistTemplate(db: { from: (table: string) => any }, salonId: string, target: "atelier" | "oasis" | "rose"): Promise<{ id: string; template_key: "atelier" | "oasis" | "rose" }>;
