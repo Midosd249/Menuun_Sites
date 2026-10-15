@@ -298,7 +298,7 @@ test("Forge Men source no longer contains the old pink color tokens", () => {
 test("opening hours are editable by the owner and rendered from the shared salon data", () => {
   const ownerPage = readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8");
   assert.match(ownerPage, /from\("business_hours"\)\.upsert/);
-  assert.match(ownerPage, /name=\{"opens_\+"\+h\.weekday\}/);
+  assert.match(ownerPage, /name=\{"opens_"\+h\.weekday\}/);
   assert.match(page, /const shownHours = hours\.length \?/);
   assert.match(page, /h\.is_closed/);
 });
