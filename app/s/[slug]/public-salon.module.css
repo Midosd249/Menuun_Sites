@@ -48,50 +48,50 @@
 .templateOasis .bookingSuccess small,.templateOasis .successMark{color:#526d4c;border-color:#617a59}
 .templateOasis .bookingError{color:#8b3c30;background:#fbece7}
 /* Alternate salon template: Rose Studio — warm, boutique and softly rounded. */
-.templateRose{background:#f8efed;color:#39272d;--salon-ink:#f8efed;--salon-accent:#b65e70}
-.templateRose .topline,.templateRose .header{border-color:#39272d22;color:#816d70}
-.templateRose .brand strong,.templateRose .footerBrand,.templateRose .hero h1,.templateRose .sectionHeading h2,.templateRose .infoIntro h2{color:#39272d}
-.templateRose .brand small,.templateRose .header nav a,.templateRose .quickFacts,.templateRose .footer{color:#816d70}
-.templateRose .brandMark{border-color:#b65e70;color:#b65e70}
-.templateRose .header nav a:hover,.templateRose .quickFacts a:hover,.templateRose .footer>a:last-child:hover{color:#8b3f51}
-.templateRose .shareButton,.templateRose .secondaryButton{border-color:#39272d40;color:#39272d;border-radius:24px}
-.templateRose .shareButton:hover,.templateRose .secondaryButton:hover{border-color:#b65e70;color:#8b3f51}
-.templateRose .heroVisual{border:0;border-radius:220px 220px 18px 18px;overflow:hidden;background:#ead8d8}
-.templateRose .artCard{background:radial-gradient(ellipse at 48% 43%,#b65e7025,transparent 40%),linear-gradient(145deg,#f0dedd,#d9b9bc);border:1px solid #b65e7040;border-radius:200px 200px 12px 12px}
-.templateRose .artCard small,.templateRose .artNumber{color:#81505b}
-.templateRose .artCard strong{color:#39272d}
-.templateRose .artGlyph{color:#b65e70}
-.templateRose .eyebrow{color:#9b4e61}
-.templateRose .description,.templateRose .sectionHeading>p,.templateRose .serviceInfo p,.templateRose .serviceInfo>span,.templateRose .person p{color:#816d70}
-.templateRose .primaryButton,.templateRose .bookingSubmit{background:#b65e70;border-color:#b65e70;color:#fff8f6;border-radius:24px}
-.templateRose .primaryButton:hover{background:#98475a}
+.templateRose{background:#202421;color:#f2eee4;--salon-ink:#202421;--salon-accent:#b77a52}
+.templateRose .topline,.templateRose .header{border-color:#ffffff24;color:#c0c0b4}
+.templateRose .brand strong,.templateRose .footerBrand,.templateRose .hero h1,.templateRose .sectionHeading h2,.templateRose .infoIntro h2{color:#f2eee4}
+.templateRose .brand small,.templateRose .header nav a,.templateRose .quickFacts,.templateRose .footer{color:#c0c0b4}
+.templateRose .brandMark{border-color:#b77a52;color:#b77a52}
+.templateRose .header nav a:hover,.templateRose .quickFacts a:hover,.templateRose .footer>a:last-child:hover{color:#d29a70}
+.templateRose .shareButton,.templateRose .secondaryButton{border-color:#ffffff45;color:#f2eee4;border-radius:24px}
+.templateRose .shareButton:hover,.templateRose .secondaryButton:hover{border-color:#b77a52;color:#d29a70}
+.templateRose .heroVisual{border:0;border-radius:220px 220px 18px 18px;overflow:hidden;background:#343a33}
+.templateRose .artCard{background:radial-gradient(ellipse at 48% 43%,#b77a5220,transparent 40%),linear-gradient(145deg,#252a26,#343a33);border:1px solid #b77a5255;border-radius:200px 200px 12px 12px}
+.templateRose .artCard small,.templateRose .artNumber{color:#c1b8a6}
+.templateRose .artCard strong{color:#f2eee4}
+.templateRose .artGlyph{color:#b77a52}
+.templateRose .eyebrow{color:#d29a70}
+.templateRose .description,.templateRose .sectionHeading>p,.templateRose .serviceInfo p,.templateRose .serviceInfo>span,.templateRose .person p{color:#c0c0b4}
+.templateRose .primaryButton,.templateRose .bookingSubmit{background:#b77a52;border-color:#b77a52;color:#f2eee4;border-radius:24px}
+.templateRose .primaryButton:hover{background:#cb9167}
 .templateRose .services{border-top:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.templateRose .service{grid-template-columns:34px minmax(0,1fr);gap:12px;border:1px solid #e5d2d1;background:#fff9f7;border-radius:18px;padding:22px}
-.templateRose .serviceIndex{grid-column:1;grid-row:1;color:#9b4e61}
+.templateRose .service{grid-template-columns:34px minmax(0,1fr);gap:12px;border:1px solid #4a5248;background:#292e2a;border-radius:18px;padding:22px}
+.templateRose .serviceIndex{grid-column:1;grid-row:1;color:#d29a70}
 .templateRose .serviceInfo{grid-column:2;grid-row:1}
-.templateRose .price{grid-column:2;grid-row:2;justify-self:start;color:#39272d}
-.templateRose .serviceAction{grid-row:3;display:inline-flex;margin-top:8px;color:#9b4e61}
-.templateRose .teamSection{border-color:#39272d20}
-.templateRose .personImage{background:#ead8d8;border-color:#e5d2d1;border-radius:140px 140px 12px 12px;overflow:hidden}
-.templateRose .personImage span{color:#9b4e61}
-.templateRose .gallery img{border-color:#e5d2d1;border-radius:16px}
-.templateRose .infoSection{background:#f0e1df;color:#39272d}
-.templateRose .hoursCard{border-color:#39272d30;border-radius:18px}
-.templateRose .hoursRow{border-color:#39272d20}
-.templateRose .phoneLink{color:#9b4e61}
-.templateRose .empty{border-color:#d9bfc1;color:#816d70}
-.templateRose .bookingSection{background:#f0e1df;color:#39272d}
-.templateRose .bookingSection .sectionHeading h2{color:#39272d}
-.templateRose .bookingSection .sectionHeading>p,.templateRose .bookingHint,.templateRose .bookingDisclaimer{color:#816d70}
-.templateRose .bookingForm{border-color:#e5d2d1;background:#fff9f7;border-radius:18px}
-.templateRose .bookingForm label{color:#51383e}
-.templateRose .bookingForm input,.templateRose .bookingForm select,.templateRose .bookingForm textarea{background:#fff;border-color:#e5d2d1;color:#39272d;border-radius:10px}
-.templateRose .slotButton{border-color:#e5d2d1;color:#39272d;border-radius:12px}
-.templateRose .slotSelected{background:#b65e70;border-color:#b65e70;color:#fff}
-.templateRose .bookingSuccess{background:#b65e700d;border-color:#b65e7066}
-.templateRose .bookingSuccess p{color:#816d70}
-.templateRose .bookingSuccess small,.templateRose .successMark{color:#9b4e61;border-color:#b65e70}
-.templateRose .bookingError{color:#8b3c30;background:#fbece7}
+.templateRose .price{grid-column:2;grid-row:2;justify-self:start;color:#f2eee4}
+.templateRose .serviceAction{grid-row:3;display:inline-flex;margin-top:8px;color:#d29a70}
+.templateRose .teamSection{border-color:#ffffff20}
+.templateRose .personImage{background:#343a33;border-color:#4a5248;border-radius:140px 140px 12px 12px;overflow:hidden}
+.templateRose .personImage span{color:#d29a70}
+.templateRose .gallery img{border-color:#4a5248;border-radius:16px}
+.templateRose .infoSection{background:#ebe6dc;color:#f2eee4}
+.templateRose .hoursCard{border-color:#ffffff30;border-radius:18px}
+.templateRose .hoursRow{border-color:#ffffff20}
+.templateRose .phoneLink{color:#d29a70}
+.templateRose .empty{border-color:#59604f;color:#c0c0b4}
+.templateRose .bookingSection{background:#ebe6dc;color:#f2eee4}
+.templateRose .bookingSection .sectionHeading h2{color:#f2eee4}
+.templateRose .bookingSection .sectionHeading>p,.templateRose .bookingHint,.templateRose .bookingDisclaimer{color:#c0c0b4}
+.templateRose .bookingForm{border-color:#4a5248;background:#292e2a;border-radius:18px}
+.templateRose .bookingForm label{color:#e5e0d4}
+.templateRose .bookingForm input,.templateRose .bookingForm select,.templateRose .bookingForm textarea{background:#fff;border-color:#4a5248;color:#f2eee4;border-radius:10px}
+.templateRose .slotButton{border-color:#4a5248;color:#f2eee4;border-radius:12px}
+.templateRose .slotSelected{background:#b77a52;border-color:#b77a52;color:#fff}
+.templateRose .bookingSuccess{background:#b77a520d;border-color:#b77a5266}
+.templateRose .bookingSuccess p{color:#c0c0b4}
+.templateRose .bookingSuccess small,.templateRose .successMark{color:#d29a70;border-color:#b77a52}
+.templateRose .bookingError{color:#ffcfbf;background:#422e29}
 @media(max-width:640px){.templateOasis .services,.templateRose .services{grid-template-columns:1fr}.templateOasis .service,.templateRose .service{padding:17px}}
 
 /* Media-rich service cards and real team portraits */
@@ -189,55 +189,55 @@
 @media(max-width:640px){.templateOasis .hero{grid-template-columns:1fr}.templateOasis .heroVisual{min-height:390px;aspect-ratio:4/4.5}.templateOasis .services{grid-template-columns:1fr;gap:14px}.templateOasis .service{display:grid;grid-template-columns:92px minmax(0,1fr);align-items:start;padding:0 0 16px;gap:10px}.templateOasis .serviceImage{grid-row:span 4;aspect-ratio:3/4;height:100%;min-height:150px}.templateOasis .serviceIndex{padding:12px 12px 0}.templateOasis .serviceInfo{padding-inline:12px}.templateOasis .serviceInfo h3{margin-top:0}.templateOasis .price,.templateOasis .serviceActions{padding-inline:12px}.templateOasis .price{grid-column:2}.templateOasis .serviceActions{grid-column:2}}
 
 /* ROSE STUDIO — fashion-editorial beauty, sculpted arches and couture details. */
-.templateRose .topline{background:#f1e2e1}
+.templateRose .topline{background:#252a26}
 .templateRose .hero{grid-template-columns:minmax(0,1.08fr) minmax(290px,.92fr);gap:clamp(30px,6vw,84px)}
-.templateRose .heroVisual{min-height:clamp(470px,54vw,670px);aspect-ratio:3/4;border-radius:48% 48% 12px 12px;border:1px solid #b65e7040;box-shadow:0 22px 55px #8f4a5718}
+.templateRose .heroVisual{min-height:clamp(470px,54vw,670px);aspect-ratio:3/4;border-radius:48% 48% 12px 12px;border:1px solid #b77a5255;box-shadow:0 22px 55px #0003}
 .templateRose .heroImage{opacity:1;filter:saturate(.78) contrast(1.02)}
-.templateRose .heroVisual:after{background:linear-gradient(180deg,transparent 46%,#39272dc2 100%)}
-.templateRose .visualCaption{color:#fff7f5}
+.templateRose .heroVisual:after{background:linear-gradient(180deg,transparent 46%,#202421d9 100%)}
+.templateRose .visualCaption{color:#f2eee4}
 .templateRose .hero h1,.templateRose .sectionHeading h2,.templateRose .infoIntro h2{font-family:"Noto Naskh Arabic","IBM Plex Sans Arabic",serif;letter-spacing:0;line-height:1.55}
-.templateRose .eyebrow{letter-spacing:.08em;color:#9a4c60}
-.templateRose .primaryButton{background:#a84f64;color:#fff8f6;border-color:#a84f64;border-radius:4px 18px 4px 18px;padding-inline:22px}
-.templateRose .primaryButton:hover{background:#8c3c50;color:#fff}
+.templateRose .eyebrow{letter-spacing:.08em;color:#c58b63}
+.templateRose .primaryButton{background:#b77a52;color:#f2eee4;border-color:#b77a52;border-radius:4px 18px 4px 18px;padding-inline:22px}
+.templateRose .primaryButton:hover{background:#cb9167;color:#fff}
 .templateRose .services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;border:0}
-.templateRose .service{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:12px 16px;padding:0 0 18px;border:1px solid #ead5d5;border-radius:18px;background:#fff8f6;overflow:hidden}
-.templateRose .serviceImage{grid-column:1/-1;width:100%;aspect-ratio:16/9;border:0;background:#ead8d8}
+.templateRose .service{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:12px 16px;padding:0 0 18px;border:1px solid #4a5248;border-radius:18px;background:#f2eee4;overflow:hidden}
+.templateRose .serviceImage{grid-column:1/-1;width:100%;aspect-ratio:16/9;border:0;background:#343a33}
 .templateRose .serviceImage img{filter:saturate(.8);transition:transform .5s}
-.templateRose .serviceIndex{grid-column:1/-1;padding:0 18px;color:#b65e70}
+.templateRose .serviceIndex{grid-column:1/-1;padding:0 18px;color:#b77a52}
 .templateRose .serviceInfo{padding-inline:18px}
-.templateRose .serviceInfo h3{font-family:"Noto Naskh Arabic","IBM Plex Sans Arabic",serif;font-size:18px;color:#39272d}
-.templateRose .serviceInfo p,.templateRose .serviceInfo>span{color:#816d70}
-.templateRose .price{align-self:center;padding-inline:18px;color:#9d465c}
+.templateRose .serviceInfo h3{font-family:"Noto Naskh Arabic","IBM Plex Sans Arabic",serif;font-size:18px;color:#f2eee4}
+.templateRose .serviceInfo p,.templateRose .serviceInfo>span{color:#c0c0b4}
+.templateRose .price{align-self:center;padding-inline:18px;color:#d29a70}
 .templateRose .serviceActions{grid-column:1/-1;display:flex;gap:14px;padding:0 18px}
-.templateRose .serviceAction{color:#98475b}
-.templateRose .teamSection{border-color:#ead5d5}
+.templateRose .serviceAction{color:#d29a70}
+.templateRose .teamSection{border-color:#4a5248}
 .templateRose .teamGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
-.templateRose .personImage{aspect-ratio:4/5;border:1px solid #ead1d3;border-radius:48% 48% 10px 10px;background:#f0dddd}
-.templateRose .person h3{font-family:"Noto Naskh Arabic","IBM Plex Sans Arabic",serif;font-size:16px;color:#39272d}
-.templateRose .person p{color:#816d70}
-.templateRose .gallery img{border:1px solid #e4c8cc;border-radius:90px 90px 12px 12px}
-.templateRose .infoSection{background:#f0dedd}
-.templateRose .infoIntro .eyebrow{color:#98475b}
-.templateRose .hoursCard{border-color:#d9bfc2;border-radius:18px;background:#fbf4f1}
-.templateRose .hoursRow{border-color:#ead5d5}
-.templateRose .socialLinks a{border-radius:4px 14px 4px 14px;border-color:#d9bfc2;color:#98475b}
-.templateRose .socialLinks a:hover{background:#a84f64;color:#fff}
-.templateRose .bookingSection{border-color:#ead5d5}
-.templateRose .bookingForm{background:#fff8f6;border-color:#ead5d5;border-radius:18px}
-.templateRose .bookingFields label{color:#62444b}
-.templateRose .bookingFields input,.templateRose .bookingFields select,.templateRose .bookingFields textarea{background:#fffdfb;color:#39272d;border-color:#dfc5c9;border-radius:8px;color-scheme:light}
-.templateRose .slotBlock{border-color:#ead5d5}
-.templateRose .slotHeading h3{color:#39272d}
-.templateRose .slotButton{border-color:#dfc5c9;color:#62444b}
-.templateRose .slotButton:hover{border-color:#a84f64}
-.templateRose .slotSelected{background:#a84f64;color:#fff;border-color:#a84f64}
-.templateRose .bookingHint,.templateRose .bookingDisclaimer{color:#816d70}
-.templateRose .bookingSubmit{background:#a84f64;color:#fff;border-color:#a84f64;border-radius:4px 16px 4px 16px}
-.templateRose .bookingSuccess{background:#f6e7e5;border-color:#d9aeb7}
-.templateRose .bookingSuccess h3{color:#39272d}
-.templateRose .bookingSuccess p{color:#816d70}
-.templateRose .bookingSuccess small{color:#98475b}
-.templateRose .successMark{color:#98475b;border-color:#b65e70}
+.templateRose .personImage{aspect-ratio:4/5;border:1px solid #59604f;border-radius:48% 48% 10px 10px;background:#343a33}
+.templateRose .person h3{font-family:"Noto Naskh Arabic","IBM Plex Sans Arabic",serif;font-size:16px;color:#f2eee4}
+.templateRose .person p{color:#c0c0b4}
+.templateRose .gallery img{border:1px solid #59604f;border-radius:90px 90px 12px 12px}
+.templateRose .infoSection{background:#252a26}
+.templateRose .infoIntro .eyebrow{color:#d29a70}
+.templateRose .hoursCard{border-color:#c6c2b7;border-radius:18px;background:#f5f1e8}
+.templateRose .hoursRow{border-color:#4a5248}
+.templateRose .socialLinks a{border-radius:4px 14px 4px 14px;border-color:#c6c2b7;color:#d29a70}
+.templateRose .socialLinks a:hover{background:#b77a52;color:#fff}
+.templateRose .bookingSection{border-color:#4a5248}
+.templateRose .bookingForm{background:#f2eee4;border-color:#4a5248;border-radius:18px}
+.templateRose .bookingFields label{color:#e5e0d4}
+.templateRose .bookingFields input,.templateRose .bookingFields select,.templateRose .bookingFields textarea{background:#f2eee4;color:#f2eee4;border-color:#4a5248;border-radius:8px;color-scheme:light}
+.templateRose .slotBlock{border-color:#4a5248}
+.templateRose .slotHeading h3{color:#f2eee4}
+.templateRose .slotButton{border-color:#4a5248;color:#e5e0d4}
+.templateRose .slotButton:hover{border-color:#b77a52}
+.templateRose .slotSelected{background:#b77a52;color:#fff;border-color:#b77a52}
+.templateRose .bookingHint,.templateRose .bookingDisclaimer{color:#c0c0b4}
+.templateRose .bookingSubmit{background:#b77a52;color:#fff;border-color:#b77a52;border-radius:4px 16px 4px 16px}
+.templateRose .bookingSuccess{background:#333c31;border-color:#687c5c}
+.templateRose .bookingSuccess h3{color:#f2eee4}
+.templateRose .bookingSuccess p{color:#c0c0b4}
+.templateRose .bookingSuccess small{color:#d29a70}
+.templateRose .successMark{color:#d29a70;border-color:#b77a52}
 @media(max-width:900px){.templateRose .services{grid-template-columns:repeat(2,minmax(0,1fr))}.templateRose .teamGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.templateRose .hero{grid-template-columns:1fr}.templateRose .heroVisual{min-height:390px;aspect-ratio:4/4.7}.templateRose .services{grid-template-columns:1fr;gap:14px}.templateRose .service{grid-template-columns:minmax(0,1fr) auto}.templateRose .serviceImage{grid-column:1/-1;aspect-ratio:16/10}.templateRose .serviceInfo{padding-inline:14px}.templateRose .serviceInfo h3{margin-top:0}.templateRose .price{padding-inline:14px}.templateRose .serviceActions{padding-inline:14px}}
 @media(prefers-reduced-motion:reduce){.templateOasis .service,.templateOasis .serviceImage img,.templateRose .serviceImage img{transition:none}.templateOasis .service:hover{transform:none}}
@@ -287,15 +287,15 @@
 .templateOasis .workItem figcaption span:last-child{color:#617a59}
 .templateOasis .locationFeature{background:#f3f0e6;color:#263529}
 .templateOasis .locationFeatureCopy h2{font-family:"Noto Naskh Arabic","IBM Plex Sans Arabic",serif}
-.templateRose .groomPackage{background:#fff9f7;color:#553b43;border:1px solid #e5d2d1;border-radius:20px}
-.templateRose .groomCopy>p:not(.eyebrow){color:#816d70}
-.templateRose .groomMeta{color:#9b4e61}
-.templateRose .groomCopy .serviceAction{border:1px solid #e2c4c9;border-radius:999px;padding:10px 14px}
-.templateRose .workItem{background:#fff9f7;border-color:#e5d2d1;border-radius:18px}
+.templateRose .groomPackage{background:#292e2a;color:#f2eee4;border:1px solid #4a5248;border-radius:20px}
+.templateRose .groomCopy>p:not(.eyebrow){color:#c0c0b4}
+.templateRose .groomMeta{color:#d29a70}
+.templateRose .groomCopy .serviceAction{border:1px solid #59604f;border-radius:999px;padding:10px 14px}
+.templateRose .workItem{background:#292e2a;border-color:#4a5248;border-radius:18px}
 .templateRose .workItem img{border-radius:18px 18px 0 0}
-.templateRose .workItem figcaption{color:#816d70}
-.templateRose .workItem figcaption span:last-child{color:#9b4e61}
-.templateRose .locationFeature{background:#f9eeeb;color:#563f46}
+.templateRose .workItem figcaption{color:#c0c0b4}
+.templateRose .workItem figcaption span:last-child{color:#d29a70}
+.templateRose .locationFeature{background:#252a26;color:#f2eee4}
 .templateRose .locationFeatureCopy h2{font-family:"Noto Naskh Arabic","IBM Plex Sans Arabic",serif}
 @media(max-width:900px){
  .templateAtelier .service{grid-template-columns:100px 25px minmax(0,1fr) auto;gap:12px}
