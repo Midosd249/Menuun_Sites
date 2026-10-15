@@ -238,7 +238,8 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
       const { data, error } = await db.from("media_assets").delete().eq("id", item.id).eq("salon_id", salonId).select("id").maybeSingle();
       if (error) throw error;
       if (!data) throw new Error("لا توجد صلاحية لحذف هذه الصورة.");
-      const { error: storageError } = await db.storage.from(BUCKET).remove([item.storage_path]);
+      const ownedPath = pathFromPublicUrl(item.public_url);
+      const { error: storageError } = ownedPath ? await db.storage.from(BUCKET).remove([ownedPath]) : { error: null };
       await load();
       setNotice(storageError ? "أزيلت الصورة من الصفحة، لكن تعذر تنظيف ملف التخزين." : "تم حذف الصورة.");
     } catch (e: any) { setNotice(e?.message || "تعذر حذف الصورة."); }
