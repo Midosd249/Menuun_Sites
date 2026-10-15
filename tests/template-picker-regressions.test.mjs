@@ -4,14 +4,15 @@ import { readFile } from "node:fs/promises";
 
 test("template picker reports safe codes and rolls back optimistic state on failure", async () => {
   const source = await readFile(new URL("../app/owner/template-picker.tsx", import.meta.url), "utf8");
+  const persistence = await readFile(new URL("../app/owner/template-save.mjs", import.meta.url), "utf8");
   assert.match(source, /TPL-403/);
   assert.match(source, /TPL-404/);
   assert.match(source, /TPL-500/);
   assert.match(source, /console\.error\("\[template-picker\] save failed"/);
   assert.match(source, /setChoice\(previous\); setTemplateKey\(previous\); setFailedChoice\(target\)/);
   assert.match(source, /إعادة المحاولة \/ Retry/);
-  assert.match(source, /maybeSingle\(\)/);
-  assert.match(source, /if \(!data \|\| data\.id !== salonId/);
+  assert.match(persistence, /maybeSingle\(\)/);
+  assert.match(persistence, /if \(!data \|\| data\.id !== salonId/);
 });
 
 test("public metadata uses salon name and rejects demo/placeholder copy", async () => {
