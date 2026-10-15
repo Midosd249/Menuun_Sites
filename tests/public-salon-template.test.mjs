@@ -35,6 +35,8 @@ test("salon QR controls provide stable page URL, copy and download actions", () 
   assert.match(page, /waHref\(/);
   assert.match(page, /Book this service/);
   assert.match(qr, /create-qr-code/);
+  assert.match(qr, /templateName/);
+  assert.match(page, /templateName=\{salon\.template_key === "atelier" \? "Atelier"/);
   assert.match(qr, /navigator\.clipboard\.writeText/);
   assert.match(qr, /download/);
   assert.match(ownerQr, /published/);
@@ -73,7 +75,7 @@ test("salon owner can choose one of three saved visual templates", () => {
 
 test("owner can upload salon branding and public gallery images to the dedicated public-media bucket", () => {
   const mediaEditor = readFileSync(new URL("../app/owner/media-editor.tsx", import.meta.url), "utf8");
-  const migration = readFileSync(new URL("../supabase/migrations/20261014120000_salon_templates_public_media.sql", import.meta.url), "utf8");
+  const migration = readFileSync(new URL("../supabase/migrations/20261015001644_salon_templates_public_media.sql", import.meta.url), "utf8");
   assert.match(mediaEditor, /salon-public-media/);
   assert.match(mediaEditor, /BUCKET = "salon-public-media"/);
   assert.match(mediaEditor, /storage\.from\(BUCKET\)\.upload/);
@@ -118,7 +120,7 @@ test("public salon always shows real service imagery and barber portraits with u
 
 test("owner can manage service photos, barber portraits and social/location links", () => {
   const mediaEditor = readFileSync(new URL("../app/owner/media-editor.tsx", import.meta.url), "utf8");
-  const migration = readFileSync(new URL("../supabase/migrations/20261014120000_salon_templates_public_media.sql", import.meta.url), "utf8");
+  const migration = readFileSync(new URL("../supabase/migrations/20261015001644_salon_templates_public_media.sql", import.meta.url), "utf8");
   for (const value of ["uploadServiceImage", "uploadBarberImage", "instagram_url", "tiktok_url", "snapchat_url", "facebook_url", "google_maps_url", "website_url"]) {
     assert.ok(mediaEditor.includes(value), "expected owner editor to include " + value);
   }

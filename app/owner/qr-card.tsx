@@ -6,7 +6,7 @@ import { usePublicOrigin } from "./public-origin-provider";
 import { useTemplateState } from "./template-state";
 
 const TEMPLATE_NAMES: Record<string, string> = {
-  atelier: "Atelier 09",
+  atelier: "Atelier",
   oasis: "Oasis",
   rose: "Forge Men",
 };
