@@ -108,6 +108,7 @@ alter table public.media_assets
 
 -- Optional bilingual profile fields for a data-driven team section.
 alter table public.barbers
+  add column if not exists display_name_en text,
   add column if not exists title_ar text,
   add column if not exists title_en text,
   add column if not exists specialties_ar text,
