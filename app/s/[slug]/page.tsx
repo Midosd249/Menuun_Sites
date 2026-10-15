@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./public-salon.module.css";
 import SalonQrShare from "./qr-share";
+import { getMenuunPublicOrigin } from "@/lib/public-origin";
 import PublicBookingForm from "./booking-form";
 import SalonImage from "./salon-image";
 import { BARBER_IMAGE_FALLBACKS, DEMO_CONTACT, DEMO_SERVICES, GROOM_PACKAGE, HERO_IMAGE_FALLBACK as HERO_FALLBACK, LOCATION_IMAGES, OUR_WORK_IMAGES, SERVICE_IMAGE_FALLBACKS, THEME_IDENTITIES } from "./salon-demo-content";
@@ -128,7 +129,7 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
     <header className={styles.header}>
       <a className={styles.brand} href="#home" aria-label={displaySalonNameAr}>{salon.logo_url ? <img src={salon.logo_url} alt="" /> : <span className={styles.brandMark}>✳</span>}<span><strong>{english ? (displaySalonNameEn) : displaySalonNameAr}</strong><small>{displaySalonNameEn || "SALON EXPERIENCE"}</small></span></a>
       <nav aria-label={english ? "Main navigation" : "التنقل الرئيسي"}><a href="#services">{english ? "Services" : "الخدمات"}</a><a href="#booking">{english ? "Booking" : "الحجز"}</a><a href="#work">{english ? "Our work" : "أعمالنا"}</a><a href="#hours">{english ? "Visit us" : "معلومات الزيارة"}</a></nav><a className={styles.languageToggle} href={"?lang="+(english?"ar":"en")} lang={english?"ar":"en"}>{english ? "العربية" : "English"}</a>
-      <SalonQrShare slug={salon.slug} salonName={displaySalonNameAr} />
+      <SalonQrShare slug={salon.slug} salonName={displaySalonNameAr} publicOrigin={getMenuunPublicOrigin()} />
     </header>
     <section className={styles.hero} id="home">
       <div className={styles.heroCopy}><p className={styles.eyebrow}>{english ? "YOUR GROOMING RITUAL" : "مساحتك للعناية والتجديد"}</p><h1>{english ? "Good grooming. Thoughtful details." : (displayTaglineAr || "تفاصيل صغيرة، تجربة مختلفة.")}</h1><p className={styles.description}>{english ? "A considered grooming experience built around precision, comfort and personal style." : (displayDescriptionAr || "أهلًا بك في "+displaySalonNameAr+". اكتشف خدماتنا واختر ما يناسبك، وتواصل معنا لتنسيق موعدك.")}</p>
