@@ -71,16 +71,16 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
   const activeTemplate = templateKey || salon.template_key || "atelier";
   const isDemoSalon = /^(atelier|oasis|rose)(-|$)/i.test(salon.slug);
   const themeIdentity = THEME_IDENTITIES[activeTemplate as keyof typeof THEME_IDENTITIES] || THEME_IDENTITIES.atelier;
-  const displaySalonNameAr = isDemoSalon ? themeIdentity.nameAr : (isUnfinishedCopy(salon.name_ar) ? "صالون العناية" : salon.name_ar);
-  const displaySalonNameEn = isDemoSalon ? themeIdentity.nameEn : (isUnfinishedCopy(salon.name_en) ? "Grooming Studio" : (salon.name_en || displaySalonNameAr));
+  const displaySalonNameAr = isDemoSalon ? (salon.name_ar && !["أتيليه 09","Atelier 09"].includes(salon.name_ar) ? salon.name_ar : themeIdentity.nameAr) : (isUnfinishedCopy(salon.name_ar) ? "صالون العناية" : salon.name_ar);
+  const displaySalonNameEn = isDemoSalon ? (salon.name_en && !["ATELIER 09","Atelier 09"].includes(salon.name_en) ? salon.name_en : themeIdentity.nameEn) : (isUnfinishedCopy(salon.name_en) ? "Grooming Studio" : (salon.name_en || displaySalonNameAr));
   const displayTaglineAr = isDemoSalon ? themeIdentity.taglineAr : (isUnfinishedCopy(salon.tagline_ar) ? null : salon.tagline_ar);
   const displayDescriptionAr = isDemoSalon ? "تجربة عناية متقنة تجمع بين القص الدقيق، وراحة الزيارة، والاهتمام بالتفاصيل." : (isUnfinishedCopy(salon.description_ar) ? null : salon.description_ar);
-  const displayPhone = isDemoSalon ? DEMO_CONTACT.phone : salon.phone;
-  const displayWhatsapp = isDemoSalon ? DEMO_CONTACT.whatsapp : (salon.whatsapp || salon.phone || "");
+  const displayPhone = isDemoSalon ? (salon.phone || DEMO_CONTACT.phone) : salon.phone;
+  const displayWhatsapp = isDemoSalon ? (salon.whatsapp || DEMO_CONTACT.whatsapp) : (salon.whatsapp || salon.phone || "");
   const rawWa = displayWhatsapp.replace(/[^0-9]/g,"");
   const wa = rawWa.startsWith("00") ? rawWa.slice(2) : rawWa.startsWith("0") ? "966"+rawWa.slice(1) : /^[5][0-9]{8}$/.test(rawWa) ? "966"+rawWa : rawWa;
-  const location = isDemoSalon ? (english ? DEMO_CONTACT.address_en : DEMO_CONTACT.address_ar) : [salon.address_ar,salon.city].filter(Boolean).join("، ");
-  const mapHref = (isDemoSalon ? DEMO_CONTACT.map_url : salon.google_maps_url) || (location ? "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location) : null);
+  const location = isDemoSalon ? (english ? DEMO_CONTACT.address_en : (salon.address_ar || DEMO_CONTACT.address_ar)) : [salon.address_ar,salon.city].filter(Boolean).join("، ");
+  const mapHref = salon.google_maps_url || (isDemoSalon ? DEMO_CONTACT.map_url : location ? "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(location) : null);
   const bookingHref = (serviceId?:string) => { const params = new URLSearchParams(); if (templateKey) params.set("template", templateKey); if (english) params.set("lang", "en"); if (serviceId) params.set("service", serviceId); return (params.size ? "?"+params.toString() : "")+"#booking"; };
   const socialLinks = [
     { label:"Instagram", href:salon.instagram_url },
