@@ -96,10 +96,14 @@ test("public salon remains available before the optional template migration is a
   assert.match(page, /template_key: fallbackRow\.template_key \|\| "atelier"/);
 });
 
-test("public salon uses the saved template and ignores query overrides", () => {
-  assert.match(page, /const activeTemplate = salon\.template_key \|\| "atelier"/);
-  assert.doesNotMatch(page, /requestedTemplate|templateKey|\?template=/);
-  assert.doesNotMatch(picker, /\?template=/);
+test("public salon uses the saved template unless an authenticated salon member requests a preview", () => {
+  assert.match(page, /authDb\.auth\.getClaims\(\)/);
+  assert.match(page, /from\("salon_members"\)/);
+  assert.match(page, /\.eq\("salon_id", salon\.id\)/);
+  assert.match(page, /previewTemplate \|\| salon\.template_key \|\| "atelier"/);
+  assert.match(picker, /\?template=/);
+  assert.match(qr, /templateName/);
+  assert.match(picker, /name: "Forge Men"/);
 });
 
 test("public salon always shows real service imagery and barber portraits with useful fallbacks", () => {

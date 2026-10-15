@@ -5,7 +5,7 @@
 ## Verified live state
 
 - Supabase migration history already contains version `20261015001644`, name `salon_templates_public_media`.
-- The SQL stored in `supabase_migrations.schema_migrations.statements` is byte-for-byte equal after newline normalization to the checked-in file `20261014120000_salon_templates_public_media.sql`.
+- The SQL stored in `supabase_migrations.schema_migrations.statements` is byte-for-byte equal after newline normalization to the checked-in file `20261015001644_salon_templates_public_media.sql`.
 - The repository filename version is therefore stale. Do not apply the migration again. Rename/version alignment is pending the explicit file-deletion approval requested in chat.
 
 ## What this migration changed
