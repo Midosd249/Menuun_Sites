@@ -1,5 +1,4 @@
-// Public browser configuration only. Never put a Supabase service-role/secret key here.
-window.MENUUN_SUPABASE_CONFIG = Object.freeze({
-  supabaseUrl: "https://kphypflbkbcvgcaupxxm.supabase.co",
-  publishableKey: "sb_publishable_om2kJFvfgquK0OvUsTRXcg_BVT6Yx_J"
-});
+// Retired legacy static-owner configuration. The retained Atelier template
+// loads its publishable Supabase settings from /api/supabase-config, backed by
+// NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY.
+// This file intentionally contains no project keys and is not copied to public/.
