@@ -53,11 +53,12 @@ export async function generateMetadata({params,searchParams}:{params:Promise<{sl
   const [{slug},search] = await Promise.all([params,searchParams]);
   const result = await getSalon(slug);
   if (!result) return {title:"الصفحة غير متاحة",robots:{index:false,follow:false}};
-  const requested = result.salon.template_key || "atelier";
-  const demo = /^(atelier|oasis|rose)(-|$)/i.test(slug);
-  const identity = THEME_IDENTITIES[requested as keyof typeof THEME_IDENTITIES] || THEME_IDENTITIES.atelier;
-  const title = demo ? (search?.lang === "en" ? identity.nameEn : identity.nameAr) : result.salon.name_ar;
-  const description = result.salon.description_ar || "الخدمات والأسعار ومعلومات الصالون وطرق التواصل والحجز.";
+  const salonName = (result.salon.name_ar || result.salon.name_en || "صالون").trim();
+  const title = salonName;
+  const rawDescription = result.salon.description_ar;
+  const topServices = result.services.slice(0, 3).map(service => service.name_ar).filter(Boolean);
+  const neutralDescription = [`خدمات ${salonName}`, result.salon.city ? `في ${result.salon.city}` : null, topServices.length ? `تشمل ${topServices.join("، ")}` : "للعناية الشخصية والحجز والتواصل"].filter(Boolean).join("، ") + ".";
+  const description = isUnfinishedCopy(rawDescription) || !rawDescription?.trim() ? neutralDescription : rawDescription.trim();
   return {title,description,alternates:{canonical:"/s/"+result.salon.slug},openGraph:{type:"website",title,description,url:"/s/"+result.salon.slug},robots:{index:true,follow:true}};
 }
 
