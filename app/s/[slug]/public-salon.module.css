@@ -388,3 +388,91 @@
     overflow-wrap:anywhere;
   }
 }
+
+/* Oasis-only mobile service cards: full-width horizontal composition. In RTL the image is the right column; LTR naturally mirrors it. */
+@media(min-width:320px) and (max-width:640px){
+  .templateOasis .services{display:grid;grid-template-columns:minmax(0,1fr);width:100%;max-width:none;gap:14px}
+  .templateOasis .service{display:grid;grid-template-columns:minmax(0,1fr) minmax(36%,40%);grid-template-rows:auto auto auto auto;align-items:stretch;gap:8px 0;width:100%;max-width:none;min-width:0;padding:0;overflow:hidden}
+  .templateOasis .serviceImage{grid-column:1;grid-row:1/5;width:100%;height:100%;min-height:100%;aspect-ratio:auto;align-self:stretch;overflow:hidden}
+  .templateOasis .serviceImage img{display:block;width:100%;height:100%;min-height:100%;object-fit:cover}
+  .templateOasis .serviceIndex{grid-column:2;grid-row:1;padding:12px 12px 0;min-width:0}
+  .templateOasis .serviceInfo{grid-column:2;grid-row:2;padding:0 12px;min-width:0;overflow-wrap:anywhere}
+  .templateOasis .serviceInfo h3,.templateOasis .serviceInfo p{overflow-wrap:anywhere;word-break:normal}
+  .templateOasis .price{grid-column:2;grid-row:3;justify-self:start;white-space:normal;overflow-wrap:anywhere;padding:0 12px;min-width:0}
+  .templateOasis .serviceActions{grid-column:2;grid-row:4;display:flex;flex-wrap:wrap;padding:0 12px 12px;min-width:0}
+  .templateOasis .serviceAction{display:inline-flex;align-items:center;justify-content:center;min-height:44px;white-space:normal;overflow-wrap:anywhere;line-height:1.5}
+}
+@media(max-width:319px){
+  .templateOasis .services{display:grid;grid-template-columns:minmax(0,1fr);width:100%;gap:14px}
+  .templateOasis .service{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto auto auto;width:100%;max-width:none;min-width:0;gap:10px;padding:0 0 14px}
+  .templateOasis .serviceImage{grid-column:1;grid-row:1;width:100%;height:auto;min-height:0;aspect-ratio:16/10}
+  .templateOasis .serviceImage img{height:100%;min-height:0;aspect-ratio:16/10;object-fit:cover}
+  .templateOasis .serviceIndex{grid-column:1;grid-row:2;padding:0 14px}
+  .templateOasis .serviceInfo{grid-column:1;grid-row:3;padding:0 14px}
+  .templateOasis .price{grid-column:1;grid-row:4;padding:0 14px}
+  .templateOasis .serviceActions{grid-column:1;grid-row:5;padding:0 14px}
+}
+/* Forge Men keeps the Rose composition, typography and rounded editorial forms while replacing the entire pink color system. */
+.templateRose{background:#202421;color:#f2eee4;--salon-ink:#202421;--salon-accent:#b77a52}
+.templateRose .topline,.templateRose .header{border-color:#ffffff24;color:#b8b8aa}
+.templateRose .topline{background:#252a26}
+.templateRose .brand strong,.templateRose .footerBrand,.templateRose .hero h1,.templateRose .sectionHeading h2,.templateRose .infoIntro h2{color:#f2eee4}
+.templateRose .brand small,.templateRose .header nav a,.templateRose .quickFacts,.templateRose .footer{color:#b8b8aa}
+.templateRose .brandMark{border-color:#b77a52;color:#b77a52}
+.templateRose .header nav a:hover,.templateRose .quickFacts a:hover,.templateRose .footer>a:last-child:hover{color:#d29a70}
+.templateRose .shareButton,.templateRose .secondaryButton{border-color:#ffffff45;color:#f2eee4}
+.templateRose .shareButton:hover,.templateRose .secondaryButton:hover{border-color:#b77a52;color:#d29a70}
+.templateRose .heroVisual{background:#343a33;border-color:#56604f;box-shadow:0 22px 55px #0003}
+.templateRose .heroImage{filter:saturate(.68) contrast(1.04)}
+.templateRose .heroVisual:after{background:linear-gradient(180deg,transparent 46%,#202421d9 100%)}
+.templateRose .artCard{background:radial-gradient(ellipse at 48% 43%,#b77a5220,transparent 40%),linear-gradient(145deg,#343a33,#202421 75%);border-color:#b77a5255}
+.templateRose .artCard small,.templateRose .artNumber{color:#c1b8a6}
+.templateRose .artCard strong{color:#f2eee4}
+.templateRose .artGlyph{color:#b77a52}
+.templateRose .eyebrow{color:#c58b63}
+.templateRose .description,.templateRose .sectionHeading>p,.templateRose .serviceInfo p,.templateRose .serviceInfo>span,.templateRose .person p{color:#c0c0b4}
+.templateRose .primaryButton,.templateRose .bookingSubmit{background:#b77a52;border-color:#b77a52;color:#202421}
+.templateRose .primaryButton:hover{background:#cb9167;color:#202421}
+.templateRose .services{border-color:#454b43}
+.templateRose .service{background:#292e2a;border-color:#4a5248}
+.templateRose .serviceImage{background:#353b34}
+.templateRose .serviceIndex,.templateRose .serviceAction{color:#d29a70}
+.templateRose .serviceInfo h3,.templateRose .price{color:#f2eee4}
+.templateRose .serviceInfo p,.templateRose .serviceInfo>span{color:#c0c0b4}
+.templateRose .personImage{background:#343a33;border-color:#59604f}
+.templateRose .person h3{color:#f2eee4}
+.templateRose .gallery img{border-color:#59604f}
+.templateRose .infoSection{background:#ebe6dc;color:#252823}
+.templateRose .infoIntro .eyebrow{color:#526b4a}
+.templateRose .infoIntro>p:not(.eyebrow){color:#5d6258}
+.templateRose .hoursCard{background:#f5f1e8;border-color:#c6c2b7}
+.templateRose .hoursRow{border-color:#d8d3c7}
+.templateRose .phoneLink{color:#526b4a}
+.templateRose .location{color:#5d6258}
+.templateRose .empty{border-color:#59604f;color:#c0c0b4}
+.templateRose .bookingSection{background:#292e2a;border-color:#454b43;color:#f2eee4}
+.templateRose .bookingSection .sectionHeading h2{color:#f2eee4}
+.templateRose .bookingSection .sectionHeading>p,.templateRose .bookingHint,.templateRose .bookingDisclaimer{color:#c0c0b4}
+.templateRose .bookingForm{background:#252a26;border-color:#4a5248}
+.templateRose .bookingForm label,.templateRose .bookingFields label{color:#e5e0d4}
+.templateRose .bookingForm input,.templateRose .bookingForm select,.templateRose .bookingForm textarea,.templateRose .bookingFields input,.templateRose .bookingFields select,.templateRose .bookingFields textarea{background:#1e221f;border-color:#4a5248;color:#f2eee4;color-scheme:dark}
+.templateRose .slotButton{border-color:#59604f;color:#f2eee4}
+.templateRose .slotButton:hover{border-color:#b77a52}
+.templateRose .slotSelected{background:#b77a52;border-color:#b77a52;color:#202421}
+.templateRose .bookingSuccess{background:#333c31;border-color:#687c5c}
+.templateRose .bookingSuccess h3,.templateRose .bookingSuccess small,.templateRose .successMark{color:#d4dfc8;border-color:#839574}
+.templateRose .bookingSuccess p{color:#d0d2c7}
+.templateRose .bookingError{color:#ffcfbf;background:#422e29}
+.templateRose .groomPackage{background:#292e2a;color:#f2eee4;border-color:#4a5248}
+.templateRose .groomCopy>p:not(.eyebrow){color:#c0c0b4}
+.templateRose .groomMeta{color:#d29a70}
+.templateRose .groomCopy .serviceAction{border-color:#59604f;color:#d29a70}
+.templateRose .workItem{background:#292e2a;color:#f2eee4;border-color:#4a5248}
+.templateRose .workItem img{border-color:#4a5248}
+.templateRose .workItem figcaption{color:#c0c0b4}
+.templateRose .workItem figcaption span:last-child{color:#d29a70}
+.templateRose .locationFeature{background:#252a26;color:#f2eee4}
+.templateRose .locationFeatureCopy h2{color:#f2eee4}
+.templateRose .socialLinks a{border-color:#59604f;color:#d29a70}
+.templateRose .socialLinks a:hover{background:#b77a52;color:#202421}
+.templateRose .bookingFields input,.templateRose .bookingFields select,.templateRose .bookingFields textarea{border-radius:8px}
