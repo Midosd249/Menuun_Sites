@@ -208,3 +208,54 @@ test("location and hero media use centralized per-theme image configuration", ()
   assert.ok(page.includes("locationImageConfig.objectPosition"));
   assert.ok(salonImage.includes("style={style}"));
 });
+
+
+test("Oasis mobile cards fill the section and keep image and content in separate RTL/LTR columns", () => {
+  assert.match(css, /@media\(min-width:320px\) and \(max-width:640px\)/);
+  assert.match(css, /\.templateOasis \.services\{[^}]*grid-template-columns:minmax\(0,1fr\);[^}]*width:100%/);
+  assert.match(css, /\.templateOasis \.service\{[^}]*grid-template-columns:minmax\(0,1fr\) minmax\(36%,40%\)/);
+  assert.match(css, /\.templateOasis \.serviceImage\{[^}]*grid-column:1;grid-row:1\/5/);
+  assert.match(css, /\.templateOasis \.serviceInfo\{grid-column:2;grid-row:2/);
+  assert.match(css, /\.templateOasis \.serviceActions\{grid-column:2;grid-row:4/);
+  assert.match(css, /@media\(max-width:319px\)/);
+});
+
+test("Forge Men uses a centralized name and a charcoal, olive and bronze palette", () => {
+  const content = readFileSync(new URL("../app/s/[slug]/salon-demo-content.ts", import.meta.url), "utf8");
+  const picker = readFileSync(new URL("../app/owner/template-picker.tsx", import.meta.url), "utf8");
+  assert.match(content, /rose:\s*\{\s*nameAr:\s*"فورج للرجال",\s*nameEn:\s*"Forge Men"/);
+  assert.match(picker, /name: "Forge Men", label: "فورج للرجال"/);
+  assert.match(css, /\.templateRose\{background:#202421;color:#f2eee4;--salon-ink:#202421;--salon-accent:#b77a52\}/);
+  assert.match(css, /\.templateRose \.service\{background:#292e2a;border-color:#4a5248\}/);
+  assert.match(page, /THEME_IDENTITIES/);
+  assert.doesNotMatch(picker, /Rose Studio|درجات وردية/);
+});
+
+test("services, work gallery, and team render from growing collections without a fixed six-item cap", () => {
+  const content = readFileSync(new URL("../app/s/[slug]/salon-demo-content.ts", import.meta.url), "utf8");
+  const workBlock = content.split("export const OUR_WORK_IMAGES")[1].split("export const LOCATION_IMAGES")[0];
+  assert.ok((workBlock.match(/src:/g) || []).length > 6, "fallback work gallery should contain more than six items");
+  assert.match(page, /displayServices\.map\(/);
+  assert.match(page, /displayBarbers\.map\(/);
+  assert.match(page, /portfolio\.map\(/);
+  assert.doesNotMatch(page, /\.slice\(0,6\)/);
+  assert.match(page, /services\.filter\(service => !demoBaseIds\.has\(service\.id\)/);
+});
+
+test("owner media library can replace hero/location images and edit bilingual gallery alt text", () => {
+  const editor = readFileSync(new URL("../app/owner/media-editor.tsx", import.meta.url), "utf8");
+  assert.match(editor, /"hero_poster", "location_image"/);
+  assert.match(editor, /uploadSpecialImage/);
+  assert.match(editor, /saveAltText/);
+  assert.match(editor, /alt_en/);
+  assert.match(editor, /storage\.from\(BUCKET\)\.upload/);
+  assert.match(editor, /removeImage/);
+});
+
+test("demo contact actions and location media are available in the public page", () => {
+  assert.match(page, /href=\{"tel:"\+displayPhone\}/);
+  assert.match(page, /https:\/\/wa\.me\//);
+  assert.match(page, /Open in Google Maps/);
+  assert.match(page, /kind==="location_image"/);
+  assert.match(page, /kind==="hero_poster"/);
+});
