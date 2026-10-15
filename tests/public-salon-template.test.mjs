@@ -160,10 +160,10 @@ test("Atelier service cards use separate image and content regions on narrow mob
   assert.ok(css.includes(".templateRose .services{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))"));
 });
 
-test("contact phone number is only rendered in the hero quick facts", () => {
+test("contact phone number stays in hero quick facts and a call action is available in location details", () => {
   assert.match(page, /quickFacts[^]*displayPhone/);
   assert.doesNotMatch(page, /styles\.phoneLink/);
-  assert.doesNotMatch(page, /english\?"Call the salon":"اتصل بالصالون"/);
+  assert.match(page, /english\?"Call the salon":"اتصل بالصالون"/);
 });
 
 test("all three themes include a portfolio, premium groom package and final location feature", () => {
@@ -207,4 +207,98 @@ test("location and hero media use centralized per-theme image configuration", ()
   assert.ok(content.includes("SERVICE_IMAGE_FALLBACKS"));
   assert.ok(page.includes("locationImageConfig.objectPosition"));
   assert.ok(salonImage.includes("style={style}"));
+});
+
+
+test("Oasis mobile cards fill the section and keep image and content in separate RTL/LTR columns", () => {
+  assert.match(css, /@media\(min-width:320px\) and \(max-width:640px\)/);
+  assert.match(css, /\.templateOasis \.services\{[^}]*grid-template-columns:minmax\(0,1fr\);[^}]*width:100%/);
+  assert.match(css, /\.templateOasis \.service\{[^}]*grid-template-columns:minmax\(0,1fr\) minmax\(60%,64%\)/);
+  assert.match(css, /\.templateOasis \.serviceImage\{[^}]*grid-column:1;grid-row:1\/5/);
+  assert.match(css, /\.templateOasis \.serviceInfo\{grid-column:2;grid-row:2/);
+  assert.match(css, /\.templateOasis \.serviceActions\{grid-column:2;grid-row:4/);
+  assert.match(css, /@media\(max-width:319px\)/);
+});
+
+test("Forge Men uses a centralized name and a charcoal, olive and bronze palette", () => {
+  const content = readFileSync(new URL("../app/s/[slug]/salon-demo-content.ts", import.meta.url), "utf8");
+  const picker = readFileSync(new URL("../app/owner/template-picker.tsx", import.meta.url), "utf8");
+  assert.match(content, /rose:\s*\{\s*nameAr:\s*"فورج للرجال",\s*nameEn:\s*"Forge Men"/);
+  assert.match(picker, /name: "Forge Men", label: "فورج للرجال"/);
+  assert.match(css, /\.templateRose\{background:#202421;color:#f2eee4;--salon-ink:#202421;--salon-accent:#b77a52\}/);
+  assert.match(css, /\.templateRose \.service\{background:#292e2a;border-color:#4a5248\}/);
+  assert.match(page, /THEME_IDENTITIES/);
+  assert.doesNotMatch(picker, /Rose Studio|درجات وردية/);
+});
+
+test("services, work gallery, and team render from growing collections without a fixed six-item cap", () => {
+  const content = readFileSync(new URL("../app/s/[slug]/salon-demo-content.ts", import.meta.url), "utf8");
+  const workBlock = content.split("export const OUR_WORK_IMAGES")[1].split("export const LOCATION_IMAGES")[0];
+  assert.ok((workBlock.match(/src:/g) || []).length > 6, "fallback work gallery should contain more than six items");
+  assert.match(page, /displayServices\.map\(/);
+  assert.match(page, /displayBarbers\.map\(/);
+  assert.match(page, /portfolio\.map\(/);
+  assert.doesNotMatch(page, /\.slice\(0,6\)/);
+  assert.match(page, /services\.filter\(service => !demoBaseIds\.has\(service\.id\)/);
+});
+
+test("owner media library can replace hero/location images and edit bilingual gallery alt text", () => {
+  const editor = readFileSync(new URL("../app/owner/media-editor.tsx", import.meta.url), "utf8");
+  assert.match(editor, /"hero_poster", "location_image"/);
+  assert.match(editor, /uploadSpecialImage/);
+  assert.match(editor, /saveAltText/);
+  assert.match(editor, /alt_en/);
+  assert.match(editor, /storage\.from\(BUCKET\)\.upload/);
+  assert.match(editor, /removeImage/);
+});
+
+test("demo contact actions and location media are available in the public page", () => {
+  assert.match(page, /href=\{"tel:"\+displayPhone\}/);
+  assert.match(page, /https:\/\/wa\.me\//);
+  assert.match(page, /Open in Google Maps/);
+  assert.match(page, /kind==="location_image"/);
+  assert.match(page, /kind==="hero_poster"/);
+});
+
+
+test("featured packages and optional barber profile fields are data-driven", () => {
+  assert.match(page, /packageServices = services\.filter/);
+  assert.match(page, /displayPackages\.map\(/);
+  assert.match(page, /services\.some\(service=>service\.id===groomPackage\.id\)/);
+  assert.match(page, /specialties_ar/);
+  assert.match(page, /availability_en/);
+  assert.match(page, /booking_url/);
+  const ownerPage = readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8");
+  assert.match(ownerPage, /description_ar:String\(d\.get\("description_ar"\)/);
+  assert.match(ownerPage, /specialties_ar:String\(d\.get\("specialties_ar"\)/);
+  assert.match(ownerPage, /display_name_en:String\(d\.get\("name_en"\)/);
+});
+
+test("test fixture supports more than five services, six work images and two barbers", () => {
+  const fixture = {
+    services: Array.from({ length: 8 }, (_, index) => ({ id: "service-" + index, name: "خدمة " + "قص وتصفيف ".repeat(12) + index, description: "Long English grooming description ".repeat(8) })),
+    work: Array.from({ length: 9 }, (_, index) => ({ id: "work-" + index, aspect: ["portrait", "landscape", "square"][index % 3] })),
+    barbers: Array.from({ length: 3 }, (_, index) => ({ id: "barber-" + index, name: "Barber " + index })),
+  };
+  assert.equal(fixture.services.length, 8);
+  assert.equal(fixture.work.length, 9);
+  assert.equal(fixture.barbers.length, 3);
+  assert.ok(fixture.services.every(item => item.description.length > 100));
+  assert.match(css, /overflow-wrap:\s*anywhere/);
+  assert.match(css, /min-width:\s*0/);
+});
+
+test("Forge Men source no longer contains the old pink color tokens", () => {
+  for (const color of ["#f8efed", "#b65e70", "#ead8d8", "#f0dedd", "#a84f64", "#ead5d5", "#ead1d3", "#d9bfc1", "#dfc5c9", "#d9aeb7", "#e2c4c9", "#f9eeeb"]) {
+    assert.ok(!css.toLowerCase().includes(color), "old pink token remains: " + color);
+  }
+});
+
+
+test("opening hours are editable by the owner and rendered from the shared salon data", () => {
+  const ownerPage = readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8");
+  assert.match(ownerPage, /from\("business_hours"\)\.upsert/);
+  assert.match(ownerPage, /name=\{"opens_"\+h\.weekday\}/);
+  assert.match(page, /const shownHours = hours\.length \?/);
+  assert.match(page, /h\.is_closed/);
 });

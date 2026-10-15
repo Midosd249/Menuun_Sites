@@ -6,7 +6,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 const templates = [
   { id: "atelier", name: "Atelier 09", label: "تحريري داكن", description: "أسود فحمي ولمسات ليمونية ومساحات فنية." },
   { id: "oasis", name: "Oasis", label: "طبيعي هادئ", description: "ألوان عاجية وخضراء، بطاقات ناعمة وتركيز على الصور." },
-  { id: "rose", name: "Rose Studio", label: "عصري دافئ", description: "درجات وردية ترابية وتخطيط أنيق للخدمات والفريق." },
+  { id: "rose", name: "Forge Men", label: "فورج للرجال", description: "فحمي عميق، زيتوني هادئ، ولمسات نحاسية راقية." },
 ] as const;
 type TemplateKey = typeof templates[number]["id"];
 

@@ -17,6 +17,12 @@ export type PortfolioImage = {
   category_en: string;
 };
 
+export const THEME_IDENTITIES = {
+  atelier: { nameAr: "أتولييه للحلاقة والعناية", nameEn: "Atelier Grooming Studio", taglineAr: "تفاصيل صغيرة، تجربة مختلفة." },
+  oasis: { nameAr: "واحة العناية الرجالية", nameEn: "Oasis Grooming Studio", taglineAr: "عناية طبيعية، وأناقة بلا تكلّف." },
+  rose: { nameAr: "فورج للرجال", nameEn: "Forge Men", taglineAr: "حضور هادئ، وتفاصيل تصنع الفرق." },
+} as const;
+
 export const DEMO_CONTACT = {
   phone: "+966549598318",
   whatsapp: "966549598318",
@@ -62,6 +68,8 @@ export const OUR_WORK_IMAGES: PortfolioImage[] = [
   { src: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=1000&q=82", alt_ar: "تصفيف شعر بقوام عصري وحركة طبيعية", alt_en: "Textured contemporary styling with natural movement", category_ar: "تصفيف بقوام", category_en: "Textured styling" },
   { src: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=1000&q=82", alt_ar: "لمسات العناية النهائية داخل صالون رجالي", alt_en: "Finishing grooming details inside a men's salon", category_ar: "اللمسات النهائية", category_en: "Grooming finish" },
   { src: "https://images.unsplash.com/photo-1512690459411-b9245aed614b?auto=format&fit=crop&w=1000&q=82", alt_ar: "إطلالة أنيقة لمناسبة خاصة", alt_en: "A polished look for a special occasion", category_ar: "إطلالة المناسبات", category_en: "Premium occasion look" },
+  { src: "https://images.unsplash.com/photo-1622296089863-eb7fc530daa8?auto=format&fit=crop&w=1000&q=82", alt_ar: "قصة متدرجة بتفاصيل نظيفة ومظهر عصري", alt_en: "A modern tapered haircut with clean detailing", category_ar: "تدرّج متقن", category_en: "Precision taper" },
+  { src: "https://images.unsplash.com/photo-1620331311520-246422fd82f9?auto=format&fit=crop&w=1000&q=82", alt_ar: "إطلالة رجالية مرتبة مع تصفيف بقوام طبيعي", alt_en: "A polished men’s look with natural textured styling", category_ar: "تصفيف عصري", category_en: "Modern styling" },
 ];
 
 export const LOCATION_IMAGES = {
@@ -79,8 +87,8 @@ export const LOCATION_IMAGES = {
   },
   rose: {
     src: "https://images.unsplash.com/photo-1512690459411-b9245aed614b?auto=format&fit=crop&w=1800&q=84",
-    alt_ar: "مساحة عناية أنيقة بلمسات تحريرية ناعمة",
-    alt_en: "Refined grooming space with a soft editorial feel",
+    alt_ar: "مساحة عناية رجالية بتفاصيل فحمية ولمسات برونزية",
+    alt_en: "Men’s grooming space with charcoal details and bronze accents",
     objectPosition: "center 48%",
   },
 } as const;
