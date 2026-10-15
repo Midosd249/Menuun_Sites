@@ -1,11 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styles from "./public-salon.module.css";
 
-export default function SalonQrShare({slug,salonName}:{slug:string;salonName:string}) {
-  const [publicUrl,setPublicUrl] = useState("");
+export default function SalonQrShare({slug,salonName,publicOrigin}:{slug:string;salonName:string;publicOrigin:string}) {
   const [open,setOpen] = useState(false);
-  useEffect(()=>setPublicUrl(new URL("/s/"+encodeURIComponent(slug),window.location.origin).toString()),[slug]);
+  const publicUrl = publicOrigin.replace(/\/+$/, "") + "/s/" + encodeURIComponent(slug);
   const [copied,setCopied] = useState(false);
   const qrUrl = publicUrl ? "https://api.qrserver.com/v1/create-qr-code/?size=320x320&margin=12&format=png&data="+encodeURIComponent(publicUrl) : "";
   async function copyLink() {
