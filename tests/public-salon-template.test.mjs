@@ -64,7 +64,7 @@ test("salon owner can choose one of three saved visual templates", () => {
   assert.match(page, /styles\.templateOasis/);
   assert.match(page, /styles\.templateRose/);
   assert.match(page, /searchParams/);
-  assert.match(picker, /\?template=/);
+  assert.doesNotMatch(picker, /\?template=/);
   assert.match(owner, /TemplatePicker/);
   assert.match(owner, /template-picker/);
 });
@@ -94,11 +94,10 @@ test("public salon remains available before the optional template migration is a
   assert.match(page, /template_key: fallbackRow\.template_key \|\| "atelier"/);
 });
 
-test("owner preview links can render a template without saving it to the salon", () => {
-  assert.match(page, /searchParams/);
-  assert.match(page, /requestedTemplate/);
-  assert.match(page, /templateKey/);
-  assert.match(page, /\["atelier","oasis","rose"\]/);
+test("public salon uses the saved template and ignores query overrides", () => {
+  assert.match(page, /const activeTemplate = salon\.template_key \|\| "atelier"/);
+  assert.doesNotMatch(page, /requestedTemplate|templateKey|\?template=/);
+  assert.doesNotMatch(picker, /\?template=/);
 });
 
 test("public salon always shows real service imagery and barber portraits with useful fallbacks", () => {
