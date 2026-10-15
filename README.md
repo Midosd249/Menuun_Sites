@@ -49,3 +49,32 @@ Menuun is an Arabic-first, bilingual SaaS platform for salons, barbershops and o
 ## Release safety
 
 Vercel deployment API previously returned HTTP 402 for a daily deployment quota. Do not retry deployment attempts until the quota is rechecked. Do not merge the active draft PR, change the production domain, modify Vercel settings, or apply database migrations without explicit authorization and verified checks.
+
+
+## Supabase SSR authentication foundation — Phase 2 in progress
+
+This branch adds the SSR client/session foundation only. The login and signup screens remain staged; no account creation is enabled, and a valid identity is **not** yet proof of business membership or tenant authorization.
+
+### Local configuration
+
+1. Copy `.env.example` to `.env.local`.
+2. In the Supabase dashboard, open **Project Settings → API Keys** and copy the project URL and **publishable** key (or the legacy anon key only if the project has not moved to publishable keys).
+3. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in `.env.local`. Never use a secret/service-role key in either variable.
+4. Restart the local Next.js server after editing environment variables.
+5. Keep the real `.env.local` out of Git; only the empty example belongs in the repository.
+
+### Hosting and Supabase dashboard steps — manual, not performed by this change
+
+- Add the same two public values to the Vercel project's **Preview** environment first. Add them to Production only after the auth configuration and release review are approved.
+- In Supabase **Authentication → URL Configuration**, set the Site URL to the intended canonical origin and add exact local/preview callback URLs to Redirect URLs. Avoid broad wildcard patterns in production.
+- Before enabling public signup, separately verify email delivery, recovery templates, rate limits, redirect allowlists, leaked-password protection, and session revocation. The live project's leaked-password protection was reported disabled during the read-only audit.
+- Do not enable signup yet. The UI flow, email lifecycle, business membership checks, RLS validation, and production browser tests are not complete.
+
+### Current security behavior
+
+- Browser and request-scoped server clients use only the public URL and publishable key.
+- `middleware.ts` refreshes/validates Supabase claims and avoids shared caching of refreshed-session responses.
+- `/owner`, `/app`, and `/platform-admin` fail closed when identity cannot be verified; public marketing, login, and signup routes remain reachable.
+- `getVerifiedClaims()` validates identity with `auth.getClaims()`; it intentionally does not treat `getSession()` as proof of identity.
+- Auth callback and sign-out redirects are restricted to local same-origin paths.
+- **Not yet implemented:** login/signup form integration, verified business membership/role checks, tenant provisioning, RLS integration tests, real email delivery/recovery tests, browser E2E, and production enablement.
