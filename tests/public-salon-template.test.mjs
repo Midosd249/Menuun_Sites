@@ -301,3 +301,13 @@ test("opening hours are editable by the owner and rendered from the shared salon
   assert.match(page, /const shownHours = hours\.length \?/);
   assert.match(page, /h\.is_closed/);
 });
+
+test("retained Atelier template loads public Supabase config from environment-backed route", () => {
+  const template = readFileSync(new URL("../templates/atelier-09/index.html", import.meta.url), "utf8");
+  const route = readFileSync(new URL("../app/api/supabase-config/route.ts", import.meta.url), "utf8");
+  assert.match(template, /\/api\/supabase-config/);
+  assert.doesNotMatch(template, /\/owner\/config\.js/);
+  assert.match(route, /NEXT_PUBLIC_SUPABASE_URL/);
+  assert.match(route, /NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY/);
+  assert.doesNotMatch(route, /sb_publishable_/);
+});
