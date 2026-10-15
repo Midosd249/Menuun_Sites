@@ -53,7 +53,7 @@ test("responsive, focus-visible, and reduced-motion styles exist", () => {
   assert.doesNotMatch(styles, /align-items:end/, "avoid unsupported CSS end alignment values");
 });
 
-test("Next.js is the build framework and legacy static routes are preserved", () => {
+test("Next.js owns the owner workspace and retained Atelier route stays static", () => {
   assert.ok(pkg.dependencies.next, "Next.js dependency is required");
   assert.equal(vercelConfig.framework, "nextjs", "Vercel must use the Next.js framework adapter");
   assert.equal(vercelConfig.outputDirectory, ".next", "Vercel output directory must match the Next.js build directory");
