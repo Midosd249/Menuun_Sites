@@ -114,7 +114,7 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
         const { error: uploadError } = await db.storage.from(BUCKET).upload(path, file, { contentType: file.type, cacheControl: "3600", upsert: false });
         if (uploadError) throw uploadError;
         const publicUrl = db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-        const { error } = await db.from("media_assets").insert({ salon_id: salonId, kind: "gallery", storage_path: path, public_url: publicUrl, mime_type: file.type, byte_size: file.size, alt_ar: file.name.replace(/\.[^.]+$/, "").slice(0, 160), sort_order: media.length + index, is_active: true, is_public: true, created_by: user?.id || null });
+        const { error } = await db.from("media_assets").insert({ salon_id: salonId, kind: "gallery", storage_path: path, public_url: publicUrl, mime_type: file.type, byte_size: file.size, alt_ar: "صورة من أعمال الحلاقة والعناية", alt_en: "Men’s haircut and grooming portfolio image", sort_order: media.length + index, is_active: true, is_public: true, created_by: user?.id || null });
         if (error) { await db.storage.from(BUCKET).remove([path]); throw error; }
       }
       await load(); setNotice("تم رفع الصور وإضافتها إلى معرض الصالون.");
