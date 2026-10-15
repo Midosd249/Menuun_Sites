@@ -53,7 +53,7 @@ export async function generateMetadata({params,searchParams}:{params:Promise<{sl
   const [{slug},search] = await Promise.all([params,searchParams]);
   const result = await getSalon(slug);
   if (!result) return {title:"الصفحة غير متاحة",robots:{index:false,follow:false}};
-  const requested = search?.template && ["atelier","oasis","rose"].includes(search.template) ? search.template : result.salon.template_key || "atelier";
+  const requested = result.salon.template_key || "atelier";
   const demo = /^(atelier|oasis|rose)(-|$)/i.test(slug);
   const identity = THEME_IDENTITIES[requested as keyof typeof THEME_IDENTITIES] || THEME_IDENTITIES.atelier;
   const title = demo ? (search?.lang === "en" ? identity.nameEn : identity.nameAr) : result.salon.name_ar;
