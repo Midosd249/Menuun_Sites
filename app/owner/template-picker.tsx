@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Check, ExternalLink, Palette } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { useTemplateState } from "./template-state";
 
 const templates = [
   { id: "atelier", name: "Atelier 09", label: "تحريري داكن", description: "أسود فحمي ولمسات ليمونية ومساحات فنية." },
@@ -11,10 +12,11 @@ const templates = [
 type TemplateKey = typeof templates[number]["id"];
 
 export default function TemplatePicker({ salonId, slug, selected, onSaved }: { salonId: string; slug: string; selected: string; onSaved: (value: TemplateKey) => void }) {
+  const { setTemplateKey } = useTemplateState();
   const [choice, setChoice] = useState<TemplateKey>(templates.some(t => t.id === selected) ? selected as TemplateKey : "atelier");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
-  useEffect(() => { setChoice(templates.some(t => t.id === selected) ? selected as TemplateKey : "atelier"); }, [salonId, selected]);
+  useEffect(() => { const value = templates.some(t => t.id === selected) ? selected as TemplateKey : "atelier"; setChoice(value); setTemplateKey(value); }, [salonId, selected, setTemplateKey]);
   async function save() {
     if (busy) return;
     setBusy(true); setNotice("");
@@ -24,6 +26,7 @@ export default function TemplatePicker({ salonId, slug, selected, onSaved }: { s
       if (error) throw error;
       if (!data) throw new Error("لا توجد صلاحية لتعديل هذا الصالون.");
       onSaved(choice);
+      setTemplateKey(choice);
       setNotice("تم حفظ القالب. ستظهر التغييرات في صفحة الصالون.");
     } catch (error: any) {
       setNotice(error?.message || "تعذر حفظ القالب.");
