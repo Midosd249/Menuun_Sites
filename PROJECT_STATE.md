@@ -1,5 +1,31 @@
 # Project State — Menuun
 
+## Latest verified update — 2026-10-14 (signature salon template redesign)
+- **Active branch:** `feat/salon-templates-owner-media-editor`; **draft PR:** [#13](https://github.com/Midosd249/Menuun_Sites/pull/13).
+- **Verified head:** `e4cd44bee6a44d713b03f8da9d90415da098af13`.
+- **Three templates redesigned:** Atelier is a dark, high-contrast editorial layout with service rows; Oasis uses warm botanical surfaces, an arched hero and photo-led service cards; Rose Studio uses a blush/rose editorial palette, arched imagery and boutique two-column service cards.
+- **Imagery:** fallback images remain category-aligned with the barber-salon demo and are served from verified Unsplash image URLs; owner-uploaded salon/gallery/service media still takes precedence. Broken remote images are handled by a dedicated client-side `SalonImage` component.
+- **Runtime issue found and fixed:** a server component initially passed image `onError` handlers directly to HTML images, which produced HTTP 500 on `/s/[slug]`. Moved the handler into `app/s/[slug]/salon-image.tsx`. On the current preview, the root and all three template routes return HTTP 200; Playwright checks at 390, 768 and 1440 px show no horizontal overflow, all 9/9 page images load after scrolling, and no page/console errors were recorded.
+- **Vercel preview:** deployment `dpl_36cBmox5KXRNeP95YzY5xpWM6y9N` is READY for this head. Preview: `https://menuun-sites-is5x7jltc-midosd2s-projects.vercel.app`; public demo: `https://menuun-sites-is5x7jltc-midosd2s-projects.vercel.app/s/atelier-09`. Template previews use `?template=atelier`, `?template=oasis`, and `?template=rose`.
+- **CI:** Static Quality PASS, run [38624960584](https://github.com/Midosd249/Menuun_Sites/actions/runs/38624960584); Supabase RLS/pgTAP PASS, run [38624960495](https://github.com/Midosd249/Menuun_Sites/actions/runs/38624960495).
+- **Repository research applied:** reviewed `ai-agent-foundation`, `Menu_V3`, `Demo_Site`, and `Menu-V2-Sandbox`; transferred workflow, RTL, visual-QA, preview/data-truth and image-management principles without copying incompatible restaurant schemas or auth/booking stacks. Exa research was used for salon template references. Refero remains unavailable (`NO_SUBSCRIPTION`).
+- **Remaining release gates:** the Supabase migration is committed but not applied; therefore saved template selection, uploaded media persistence and social-link persistence still require migration and owner-path testing. PR remains draft and unmerged; no production deployment or database mutation was performed.
+
+
+---
+
+## Latest verified update — 2026-10-14 (salon media and discovery links)
+- **Active branch:** `feat/salon-templates-owner-media-editor`; **draft PR:** [#13](https://github.com/Midosd249/Menuun_Sites/pull/13).
+- **Implemented in source:** service image URLs with fallback photography; barber portraits with explicitly labeled illustrative fallback photos; owner uploads for service photos and barber portraits; owner-managed Instagram, TikTok, Snapchat, Facebook, Google Maps and website links; public map directions and social links; empty-state sample imagery that tells owners to replace it with real salon content.
+- **Schema migration is staged, not applied:** `supabase/migrations/20261014120000_salon_templates_public_media.sql` now adds service image metadata and social/location URL fields, in addition to template selection and public-media storage policies. Owner upload/persistent links require the migration.
+- **Open-source review:** inspected the MIT-licensed Opencals Frisor Next.js barbershop template and MIT-licensed ShearCraft booking project as reference candidates. Their booking/backend/auth implementations are not copied because they would duplicate or conflict with Menuun's existing Supabase/RPC architecture. The private `Midosd249/ai-agent-foundation` was used as the workflow/security contract; no AI runtime or provider integration was added because the feature is deterministic UI/data management.
+- **Refero status:** searches returned `NO_SUBSCRIPTION`; no Refero styles/screens were retrieved. Exa research and repository evidence informed the feature scope. See `docs/design-research-log.md`.
+- **Verification:** **PASS** on branch head `6c285d239c22cd818256c72500dc6c9ca28fbddb`: Static Quality run `38578266951` (tests, typecheck, build and inline asset checks) and Supabase RLS/pgTAP run `38578266910` both succeeded.
+- **Release blockers:** Vercel rejected a fresh preview deployment with HTTP 402 `api-deployments-free-per-day` and `retryAfter: 86400`. The current shareable preview is an earlier READY build and does not include the latest media/social changes. Do not claim these new features are live until a fresh preview is READY and checked.
+- **Not done:** no Supabase migration applied; no production merge/deployment; no actual owner-upload test, social-link click test, visual browser QA or mobile screenshot review yet.
+- **Next task:** confirm latest Static Quality and Supabase RLS workflow results; fix any regressions; secure a fresh preview build and verify public/owner paths; then request approval before applying the migration.
+
+
 **Updated:** 2026-10-13  
 **Implementation status:** IMPLEMENTATION_IN_PROGRESS — full Arabic/English SVG brand assets restored, landing page curated to three templates, restrained CSS motion added; CI and preview HTTP checks pass; browser visual QA pending  
 **Active branch:** `feat/public-platform-foundation`  
