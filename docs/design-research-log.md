@@ -115,3 +115,8 @@
 - **External media:** the five current salon fallback URLs returned HTTP 200 with `image/jpeg`.
 - **CI:** Static Quality run `38624960584` and Supabase RLS/pgTAP run `38624960495` both passed for the implementation head.
 - **Still intentionally pending:** no Supabase migration was applied; owner-upload persistence, saved template selection, and social-link persistence cannot be claimed until migration and owner-path tests are completed. The PR remains draft/unmerged pending those release decisions.
+
+
+## Owner notification sound — 2026-10-16
+- **Research:** reviewed open-source Web Audio notification implementations for user-gesture unlock, persisted mute/volume preferences, short synthesized tones, and graceful handling of suspended contexts. References: https://github.com/xy200303/spec-kimi-code/blob/main/apps/kimi-web/src/composables/client/useSoundNotification.ts and https://github.com/productdevbook/seslen.
+- **Decision:** use a short two-note synthesized chime in the owner workspace; opt-in via a visible user gesture, persist toggle and volume in localStorage, deduplicate notification IDs, and document that the sound only works while the workspace tab remains open. No third-party implementation was copied wholesale.
