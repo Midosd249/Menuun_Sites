@@ -13,10 +13,12 @@ test("Supabase public env vars are statically referenced for Next.js browser bun
 test("owner QR uses canonical server origin and saved template state",async()=>{
  const qr=await read("../app/owner/qr-card.tsx");
  const layout=await read("../app/owner/layout.tsx");
+ const origin=await read("../lib/public-origin.ts");
  const picker=await read("../app/owner/template-picker.tsx");
  const publicPage=await read("../app/s/[slug]/page.tsx");
  const publicQr=await read("../app/s/[slug]/qr-share.tsx");
- assert.match(layout,/MENUUN_PUBLIC_ORIGIN/);
+ assert.match(layout,/getMenuunPublicOrigin/);
+ assert.match(origin,/MENUUN_PUBLIC_ORIGIN/);
  assert.match(qr,/usePublicOrigin/);
  assert.match(qr,/useTemplateState/);
  assert.doesNotMatch(qr,/window\.location\.origin/);
