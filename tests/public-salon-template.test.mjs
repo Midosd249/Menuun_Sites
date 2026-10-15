@@ -68,7 +68,7 @@ test("salon owner can choose one of three saved visual templates", () => {
   assert.match(page, /styles\.templateOasis/);
   assert.match(page, /styles\.templateRose/);
   assert.match(page, /searchParams/);
-  assert.doesNotMatch(picker, /\?template=/);
+  assert.match(picker, /\?template=/);
   assert.match(owner, /TemplatePicker/);
   assert.match(owner, /template-picker/);
 });
