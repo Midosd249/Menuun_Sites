@@ -259,3 +259,37 @@ test("demo contact actions and location media are available in the public page",
   assert.match(page, /kind==="location_image"/);
   assert.match(page, /kind==="hero_poster"/);
 });
+
+
+test("featured packages and optional barber profile fields are data-driven", () => {
+  assert.match(page, /packageServices = services\.filter/);
+  assert.match(page, /displayPackages\.map\(/);
+  assert.match(page, /services\.some\(service=>service\.id===groomPackage\.id\)/);
+  assert.match(page, /specialties_ar/);
+  assert.match(page, /availability_en/);
+  assert.match(page, /booking_url/);
+  const ownerPage = readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8");
+  assert.match(ownerPage, /description_ar:String\(d\.get\("description_ar"\)/);
+  assert.match(ownerPage, /specialties_ar:String\(d\.get\("specialties_ar"\)/);
+  assert.match(ownerPage, /display_name_en:String\(d\.get\("name_en"\)/);
+});
+
+test("test fixture supports more than five services, six work images and two barbers", () => {
+  const fixture = {
+    services: Array.from({ length: 8 }, (_, index) => ({ id: "service-" + index, name: "خدمة " + "قص وتصفيف ".repeat(12) + index, description: "Long English grooming description ".repeat(8) })),
+    work: Array.from({ length: 9 }, (_, index) => ({ id: "work-" + index, aspect: ["portrait", "landscape", "square"][index % 3] })),
+    barbers: Array.from({ length: 3 }, (_, index) => ({ id: "barber-" + index, name: "Barber " + index })),
+  };
+  assert.equal(fixture.services.length, 8);
+  assert.equal(fixture.work.length, 9);
+  assert.equal(fixture.barbers.length, 3);
+  assert.ok(fixture.services.every(item => item.description.length > 100));
+  assert.match(css, /overflow-wrap:\s*anywhere/);
+  assert.match(css, /min-width:\s*0/);
+});
+
+test("Forge Men source no longer contains the old pink color tokens", () => {
+  for (const color of ["#f8efed", "#b65e70", "#ead8d8", "#f0dedd", "#a84f64", "#ead5d5", "#ead1d3", "#d9bfc1", "#dfc5c9", "#d9aeb7", "#e2c4c9", "#f9eeeb"]) {
+    assert.ok(!css.toLowerCase().includes(color), "old pink token remains: " + color);
+  }
+});
