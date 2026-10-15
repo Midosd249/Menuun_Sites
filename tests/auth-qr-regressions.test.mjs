@@ -12,7 +12,9 @@ test("login route provides Supabase password auth, recovery, and a validated own
   const redirect = await read("../lib/auth/redirect.mjs");
   assert.match(page, /safeRedirect|safe-redirect|safeRedirectPath/);
   assert.match(form, /signInWithPassword/);
-  assert.match(form, /resetPasswordForEmail/);
+  assert.match(recovery, /resetPasswordForEmail/);
+  assert.match(signup, /signUp/);
+  assert.match(signup, /emailRedirectTo/);
   assert.match(form, /signUp|signup|\/signup/);
   assert.match(form, /العربية|English|lang|dir/);
   assert.match(redirect, /\/owner/);
