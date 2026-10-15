@@ -9,3 +9,17 @@ test("workspace supports RTL and narrow mobile layouts",async()=>{const s=await 
 
 test("login persists Supabase auth through the shared SSR cookie client",async()=>{const s=await read("../app/page.tsx");assert.match(s,/createSupabaseBrowserClient/);assert.doesNotMatch(s,/createClient\(url, key, \{ auth: \{ persistSession: true/)});
 test("Supabase public env vars are statically referenced for Next.js browser bundling",async()=>{const s=await read("../lib/supabase/config.ts");assert.ok(s.includes("process.env.NEXT_PUBLIC_SUPABASE_URL"));assert.ok(s.includes("process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"));assert.doesNotMatch(s,/env: NodeJS\.ProcessEnv = process\.env/)});
+
+test("owner QR uses canonical server origin and saved template state",async()=>{
+ const qr=await read("../app/owner/qr-card.tsx");
+ const layout=await read("../app/owner/layout.tsx");
+ const picker=await read("../app/owner/template-picker.tsx");
+ const publicPage=await read("../app/s/[slug]/page.tsx");
+ assert.match(layout,/MENUUN_PUBLIC_ORIGIN/);
+ assert.match(qr,/usePublicOrigin/);
+ assert.match(qr,/useTemplateState/);
+ assert.doesNotMatch(qr,/window\.location\.origin/);
+ assert.doesNotMatch(picker,/\?template=/);
+ assert.match(publicPage,/const activeTemplate = salon\.template_key \|\| "atelier"/);
+ assert.doesNotMatch(publicPage,/requestedTemplate|templateKey|\?template=/);
+});
