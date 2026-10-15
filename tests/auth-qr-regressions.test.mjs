@@ -17,7 +17,8 @@ test("login route provides Supabase password auth, recovery, and a validated own
   assert.match(signup, /emailRedirectTo/);
   assert.match(form, /signUp|signup|\/signup/);
   assert.match(form, /العربية|English|lang|dir/);
-  assert.match(redirect, /\/owner/);
+  assert.match(page, /safeRedirectPath\(candidate, "\/owner\/"\)/);
+  assert.match(redirect, /candidate\.startsWith/);
   assert.doesNotMatch(form, /window\.location\.origin/);
 });
 
