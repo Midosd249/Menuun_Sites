@@ -104,3 +104,14 @@ alter table public.media_assets
 alter table public.media_assets
   add constraint media_assets_kind_check
   check (kind in ('logo', 'hero_video', 'hero_poster', 'location_image', 'gallery', 'barber_portrait', 'service_image'));
+
+
+-- Optional bilingual profile fields for a data-driven team section.
+alter table public.barbers
+  add column if not exists title_ar text,
+  add column if not exists title_en text,
+  add column if not exists specialties_ar text,
+  add column if not exists specialties_en text,
+  add column if not exists availability_ar text,
+  add column if not exists availability_en text,
+  add column if not exists booking_url text;
