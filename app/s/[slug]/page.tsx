@@ -26,7 +26,7 @@ async function getSalon(slug:string) {
   const legacySalonColumns = "id,slug,name_ar,name_en,tagline_ar,description_ar,logo_url,phone,whatsapp,address_ar,city,timezone,currency_code,primary_color,accent_color,is_active,is_published";
   let salon:any,error:any;
   ({data:salon,error}=await db.from("salons").select(legacySalonColumns+",template_key,hero_mode,instagram_url,tiktok_url,snapchat_url,facebook_url,google_maps_url,website_url").eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle());
-  if (error && /template_key|hero_mode|instagram_url|tiktok_url|snapchat_url|facebook_url|google_maps_url|website_url/.test(error.message||"")) {
+  if (error && /template_key|instagram_url|tiktok_url|snapchat_url|facebook_url|google_maps_url|website_url|hero_mode/.test(error.message||"")) {
     const hasTemplateColumn = !/template_key/.test(error.message||"");
     const select = legacySalonColumns + (hasTemplateColumn ? ",template_key" : "");
     const fallback = await db.from("salons").select(select).eq("slug",slug).eq("is_active",true).eq("is_published",true).maybeSingle();
