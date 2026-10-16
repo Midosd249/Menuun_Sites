@@ -5,6 +5,15 @@ VALUES
   ('50000000-0000-4000-8000-000000000001','authenticated','authenticated','fixture-owner@menuun.test',extensions.crypt('FixturePass123!',extensions.gen_salt('bf')),now(),'{"provider":"email","providers":["email"]}','{"full_name":"Fixture Owner"}',now(),now())
 ON CONFLICT (id) DO UPDATE SET encrypted_password=EXCLUDED.encrypted_password,email_confirmed_at=EXCLUDED.email_confirmed_at;
 
+INSERT INTO auth.identities
+  (id,user_id,identity_data,provider,provider_id,last_sign_in_at,created_at,updated_at)
+VALUES
+  ('50000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001',
+   '{"sub":"50000000-0000-4000-8000-000000000001","email":"fixture-owner@menuun.test"}'::jsonb,
+   'email','fixture-owner@menuun.test',now(),now(),now())
+ON CONFLICT (provider_id,provider) DO UPDATE SET
+  user_id=EXCLUDED.user_id,identity_data=EXCLUDED.identity_data,updated_at=now();
+
 INSERT INTO public.salons
   (id,slug,name_ar,name_en,phone,whatsapp,timezone,currency_code,primary_color,accent_color,template_key,logo_url,is_active,is_published,created_by)
 VALUES
