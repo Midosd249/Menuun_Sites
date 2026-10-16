@@ -1,15 +1,15 @@
 -- Local-only deterministic browser-test fixtures. Never run against production.
 INSERT INTO auth.users
-  (instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at)
+  (instance_id,id,aud,role,email,encrypted_password,email_confirmed_at,confirmed_at,raw_app_meta_data,raw_user_meta_data,created_at,updated_at)
 VALUES
-  ('00000000-0000-0000-0000-000000000000','50000000-0000-4000-8000-000000000001','authenticated','authenticated','fixture-owner@menuun.test',extensions.crypt('FixturePass123!',extensions.gen_salt('bf')),now(),'{"provider":"email","providers":["email"]}','{"full_name":"Fixture Owner"}',now(),now())
-ON CONFLICT (id) DO UPDATE SET instance_id=EXCLUDED.instance_id,encrypted_password=EXCLUDED.encrypted_password,email_confirmed_at=EXCLUDED.email_confirmed_at;
+  ('00000000-0000-0000-0000-000000000000','50000000-0000-4000-8000-000000000001','authenticated','authenticated','fixture-owner@menuun.test',extensions.crypt('FixturePass123!',extensions.gen_salt('bf')),now(),now(),'{"provider":"email","providers":["email"]}','{"full_name":"Fixture Owner"}',now(),now())
+ON CONFLICT (id) DO UPDATE SET instance_id=EXCLUDED.instance_id,encrypted_password=EXCLUDED.encrypted_password,email_confirmed_at=EXCLUDED.email_confirmed_at,confirmed_at=EXCLUDED.confirmed_at;
 
 INSERT INTO auth.identities
   (id,user_id,identity_data,provider,provider_id,last_sign_in_at,created_at,updated_at)
 VALUES
-  ('50000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001',
-   '{"sub":"50000000-0000-4000-8000-000000000001","email":"fixture-owner@menuun.test"}'::jsonb,
+  ('50000000-0000-4000-8000-000000000002','50000000-0000-4000-8000-000000000001',
+   '{"sub":"50000000-0000-4000-8000-000000000001","email":"fixture-owner@menuun.test","email_verified":true}'::jsonb,
    'email','50000000-0000-4000-8000-000000000001',now(),now(),now())
 ON CONFLICT (provider_id,provider) DO UPDATE SET
   user_id=EXCLUDED.user_id,identity_data=EXCLUDED.identity_data,updated_at=now();
