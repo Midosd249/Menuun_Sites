@@ -11,9 +11,11 @@ test("fixture owner can switch language, save business names and social links, a
   await expect(page.locator("body")).toContainText(/نظرة عامة|Overview/);
 
   const languageToggle=page.getByRole("button",{name:/English|العربية/}).first();
+  const switchStarted=Date.now();
   await languageToggle.click();
   await expect(page.locator("html")).toHaveAttribute("lang","en");
   await expect(page.locator("body")).toContainText("Overview");
+  console.log("[locale-switch] ar-to-en visible text ms:",Date.now()-switchStarted);
 
   await page.getByRole("button",{name:"Business settings"}).click();
   await page.locator('input[name="name_ar"]').fill("صالون الاختبار");
