@@ -47,3 +47,10 @@ test("browser CI applies local migrations and seed fixtures before authenticated
   const workflow = await read("../.github/workflows/browser-qa.yml");
   assert.match(workflow, /supabase start[\s\S]*?supabase db reset[\s\S]*?npm run build/);
 });
+
+
+test("browser CI provisions the password through local Supabase Auth before browser sign-in", async () => {
+  const workflow = await read("../.github/workflows/browser-qa.yml");
+  assert.match(workflow, /auth\/v1\/admin\/users\/50000000-0000-4000-8000-000000000001/);
+  assert.match(workflow, /FixturePass123!/);
+});
