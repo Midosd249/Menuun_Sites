@@ -21,7 +21,7 @@ test("owner statistics refresh for appointment changes and include collection/so
   assert.match(stats, /table:"appointments"/);
   assert.match(stats, /get_salon_revenue_stats/);
   assert.match(stats, /price_sar_snapshot/);
-  assert.match(stats, /appointment_created/);
+  assert.match(stats, /notificationInsertIsNewBooking/);
   assert.match(stats, /localStorage/);
   assert.match(stats, /This month/);
   assert.match(stats, /غير معيّن/);

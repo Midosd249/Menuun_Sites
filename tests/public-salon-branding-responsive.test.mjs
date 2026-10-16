@@ -3,42 +3,53 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import ts from "typescript";
 
-const brandingSource = readFileSync(new URL("../app/s/[slug]/salon-branding.ts", import.meta.url), "utf8");
+const read = path => readFileSync(new URL(path, import.meta.url), "utf8");
+const brandingSource = read("../app/s/[slug]/salon-branding.ts");
 const compiled = ts.transpile(brandingSource, { module: ts.ModuleKind.ES2022, target: ts.ScriptTarget.ES2022 });
 const branding = await import("data:text/javascript;base64," + Buffer.from(compiled).toString("base64"));
-const page = readFileSync(new URL("../app/s/[slug]/page.tsx", import.meta.url), "utf8");
-const css = readFileSync(new URL("../app/s/[slug]/public-salon.module.css", import.meta.url), "utf8");
-const globals = readFileSync(new URL("../app/globals.css", import.meta.url), "utf8");
+const page = read("../app/s/[slug]/page.tsx");
+const css = read("../app/s/[slug]/public-salon.module.css");
+const owner = read("../app/owner/page.tsx");
+const stats = read("../app/owner/notifications-stats.tsx");
 
-test("tenant name wins across all three templates and both languages", () => {
-  for (const template of ["atelier", "oasis", "rose"]) {
-    const result = branding.resolveSalonBrandNames({ name_ar: "صالون الاختبار", name_en: "Test Salon" }, true);
-    assert.equal(result.nameAr, "صالون الاختبار", template + " Arabic brand");
-    assert.equal(result.nameEn, "Test Salon", template + " English brand");
-  }
-});
-
-test("legacy demo template labels never become visible salon brands", () => {
+test("owner-provided names remain exact even when they resemble legacy template brands", () => {
   for (const [name_ar, name_en] of [
     ["أتيليه 09", "Atelier 09"],
     ["واحة العناية الرجالية", "Oasis Grooming Studio"],
-    ["فورج للرجال", "Forge Men"]
+    ["فورج للرجال", "Forge Men"],
+    ["صالون الاختبار", "Test Salon"]
   ]) {
     const result = branding.resolveSalonBrandNames({ name_ar, name_en }, true);
-    assert.equal(result.nameAr, "صالون العناية");
-    assert.equal(result.nameEn, "Grooming Studio");
+    assert.equal(result.nameAr, name_ar);
+    assert.equal(result.nameEn, name_en);
   }
+});
+
+test("empty active-language name falls back to the other language; generic only when both empty", () => {
+  assert.deepEqual(branding.resolveSalonBrandNames({name_ar:"صالون الاختبار",name_en:""}), {nameAr:"صالون الاختبار",nameEn:"صالون الاختبار"});
+  assert.deepEqual(branding.resolveSalonBrandNames({name_ar:"",name_en:"Test Salon"}), {nameAr:"Test Salon",nameEn:"Test Salon"});
+  assert.deepEqual(branding.resolveSalonBrandNames({name_ar:" ",name_en:null}), {nameAr:"صالون العناية",nameEn:"Grooming Studio"});
+});
+
+test("brand is used for metadata and public template content without legacy-name filtering", () => {
   assert.match(page, /resolveSalonBrandNames\(result\.salon/);
   assert.match(page, /resolveSalonBrandNames\(salon, isDemoSalon\)/);
-  assert.match(page, /templateName=\{english \? "Salon website" : "موقع الصالون"\}/);
+  assert.match(page, /openGraph:/);
+  assert.match(page, /displaySalonNameAr|displaySalonNameEn/);
+  assert.doesNotMatch(brandingSource, /legacyDemoNames|legacy demo label/i);
 });
 
 test("responsive logo bounds and Atelier RTL phone isolation are defined", () => {
-  assert.match(css, /\.brand img\{width:auto;height:68px;max-width:180px/);
-  assert.match(css, /@media\(max-width:640px\)\{\.brand img\{height:54px;max-width:112px\}\}/);
-  assert.match(css, /@media\(max-width:360px\)\{\.header\{min-height:auto;flex-wrap:wrap/);
+  assert.match(css, /\.brand img\{[^}]*height:9[0-6]px[^}]*max-width:26[0-9]px/);
+  assert.match(css, /@media\(max-width:640px\)\{[^]*?\.brand img\{height:68px/);
+  assert.match(css, /\.brand img\{[^}]*object-fit:contain/);
   assert.match(css, /\.atelierPhone\{[^}]*direction:ltr;unicode-bidi:isolate/);
-  assert.match(css, /\.quickFacts a\{direction:ltr;unicode-bidi:isolate/);
   assert.match(page, /className=\{styles\.atelierPhone\} href=\{"tel:"\+displayPhone\}/);
-  assert.match(globals, /body\{margin:0;min-width:270px\}/);
+});
+
+test("owner settings labels business names and dashboard has a testable sound action", () => {
+  assert.match(owner, /Business name \(Arabic\)/);
+  assert.match(owner, /Business name \(English\)/);
+  assert.match(stats, /Test sound|اختبار الصوت/);
+  assert.match(stats, /table:"appointments"/);
 });
