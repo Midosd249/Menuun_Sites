@@ -24,6 +24,7 @@ DECLARE
   v_cancelled bigint;
   v_no_show bigint;
   v_awaiting bigint;
+  v_awaiting_sar numeric;
   v_new bigint;
   v_returning bigint;
   v_expected numeric;
@@ -50,8 +51,9 @@ BEGIN
     count(*) FILTER (WHERE a.status='cancelled'),
     count(*) FILTER (WHERE a.status='no_show'),
     count(*) FILTER (WHERE a.status='completed' AND NOT a.is_paid),
+    COALESCE(sum(a.price_sar_snapshot) FILTER (WHERE a.status='completed' AND NOT a.is_paid),0),
     COALESCE(sum(a.price_sar_snapshot) FILTER (WHERE a.status='completed'),0)
-  INTO v_total,v_completed,v_cancelled,v_no_show,v_awaiting,v_expected
+  INTO v_total,v_completed,v_cancelled,v_no_show,v_awaiting,v_awaiting_sar,v_expected
   FROM public.appointments a
   WHERE a.salon_id=p_salon_id
     AND (a.starts_at AT TIME ZONE 'Asia/Riyadh')::date BETWEEN p_from AND p_to;
@@ -88,6 +90,7 @@ BEGIN
       SELECT regexp_replace(COALESCE(a.customer_phone,''),'[^0-9]','','g') AS digits
       FROM public.appointments a
       WHERE a.salon_id=p_salon_id
+        AND a.status='completed'
         AND (a.starts_at AT TIME ZONE 'Asia/Riyadh')::date BETWEEN p_from AND p_to
     ) d
     WHERE digits <> ''
@@ -103,7 +106,7 @@ BEGIN
       min((a.starts_at AT TIME ZONE 'Asia/Riyadh')::date) AS first_date
     FROM public.appointments a
     CROSS JOIN LATERAL (SELECT regexp_replace(COALESCE(a.customer_phone,''),'[^0-9]','','g') AS digits) n
-    WHERE a.salon_id=p_salon_id AND n.digits <> ''
+    WHERE a.salon_id=p_salon_id AND n.digits <> '' AND a.status='completed'
       AND (a.starts_at AT TIME ZONE 'Asia/Riyadh')::date <= p_to
     GROUP BY 1
   )
@@ -166,7 +169,7 @@ BEGIN
       ) d
     ),'[]'::jsonb),
     'new_vs_returning', jsonb_build_object('new_customers',v_new,'returning_customers',v_returning),
-    'expected_vs_collected', jsonb_build_object('expected_sar',v_expected,'collected_sar',v_collected,'awaiting_collection_sar',GREATEST(v_expected-v_collected,0)),
+    'expected_vs_collected', jsonb_build_object('expected_sar',v_expected,'collected_sar',v_collected,'awaiting_collection_sar',v_awaiting_sar),
     'previous_period', jsonb_build_object(
       'from',v_prev_from,'to',v_prev_to,
       'expected_sar',v_prev_expected,'collected_sar',v_prev_collected,
