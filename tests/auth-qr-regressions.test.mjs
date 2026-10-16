@@ -34,3 +34,10 @@ test("salon QR uses a canonical origin and public previews require verified salo
   assert.match(publicPage, /from\("salon_members"\)/);
   assert.match(publicPage, /previewTemplate \|\| salon\.template_key/);
 });
+
+
+test("local Supabase owner fixture uses the email identity provider ID contract", async () => {
+  const seed = await read("../supabase/seed.sql");
+  assert.match(seed, /INSERT INTO auth\.identities[\s\S]*?provider_id[\s\S]*?'50000000-0000-4000-8000-000000000001'/);
+  assert.doesNotMatch(seed, /'email','fixture-owner@menuun\.test'/);
+});
