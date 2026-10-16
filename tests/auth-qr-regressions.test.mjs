@@ -63,8 +63,9 @@ test("local Supabase fixture user belongs to the active Auth instance", async ()
 });
 
 
-test("local Auth fixture has a confirmed user and a distinct email identity row", async () => {
+test("local Auth fixture respects generated confirmation fields and uses a distinct email identity row", async () => {
   const seed = await read("../supabase/seed.sql");
-  assert.match(seed, /email_confirmed_at,confirmed_at/);
+  assert.match(seed, /email_confirmed_at/);
+  assert.doesNotMatch(seed, /email_confirmed_at,confirmed_at/);
   assert.match(seed, /'50000000-0000-4000-8000-000000000002','50000000-0000-4000-8000-000000000001'/);
 });
