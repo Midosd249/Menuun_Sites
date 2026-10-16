@@ -38,6 +38,7 @@ jobs:
       - name: Start local Supabase with isolated fixture data
         run: |
           supabase start -x studio,mailpit,edge-runtime,logflare,vector
+          supabase db reset
           supabase status -o env > /tmp/supabase.env
           cat /tmp/supabase.env >> "$GITHUB_ENV"
           . /tmp/supabase.env
