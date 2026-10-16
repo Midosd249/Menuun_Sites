@@ -18,10 +18,12 @@ for (const salon of salons) {
         expect(response?.status()).toBe(200);
         await expect(page.locator("body")).toContainText(lang==="ar"?salon.ar:salon.en);
         await expect(page.locator("body")).not.toContainText(/صالون العناية|Grooming Studio/);
+        await expect(page.locator("html")).toHaveAttribute("lang",lang);
+        await expect(page.locator("html")).toHaveAttribute("dir",lang==="ar"?"rtl":"ltr");
         const layout = await page.evaluate(() => {
           const body = document.body;
           const root = document.documentElement;
-          const visible = [...document.querySelectorAll("header, main, footer, .brand, .heroCopy, .owner-panel, .owner-stat")]
+          const visible = [...document.querySelectorAll("header, main, footer, [class*='brand'], [class*='heroCopy'], [class*='owner-panel'], [class*='owner-stat']")]
             .filter(el => (el as HTMLElement).getClientRects().length > 0)
             .map(el => ({tag:el.tagName,className:(el as HTMLElement).className,width:(el as HTMLElement).getBoundingClientRect().width,text:(el.textContent||"").trim()}));
           const broken = [...document.querySelectorAll("*")].some(el => {
@@ -46,7 +48,11 @@ for (const salon of salons) {
         }
         if(salon.slug==="fixture-atelier"&&lang==="ar") {
           const phone=page.locator('a[href^="tel:"]');
-          if(await phone.count()) await expect(phone).toBeVisible();
+          await expect(phone).toBeVisible();
+          const headingBox=await page.getByRole("heading",{level:1}).boundingBox();
+          const phoneBox=await phone.boundingBox();
+          expect(headingBox).not.toBeNull(); expect(phoneBox).not.toBeNull();
+          expect(phoneBox!.y).toBeGreaterThanOrEqual(headingBox!.y+headingBox!.height);
         }
         await page.screenshot({path:testInfo.outputPath(`${salon.template}-${lang}-${width}.png`),fullPage:true});
         expect(errors).toEqual([]);
