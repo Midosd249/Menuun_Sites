@@ -222,8 +222,7 @@ BEGIN
       'awaiting_collection_sar',(SELECT COALESCE(sum(a.price_sar_snapshot),0) FROM public.appointments a WHERE a.salon_id=p_salon_id AND a.barber_id IS NULL AND a.status='completed' AND NOT a.is_paid
         AND (a.starts_at AT TIME ZONE 'Asia/Riyadh')::date BETWEEN p_from AND p_to),
       'utilization_pct',NULL
-    ))
-  ) INTO v_result;
+    )) INTO v_result;
   v_result := v_result || jsonb_build_object('insights',CASE WHEN v_total < 10 THEN '[]'::jsonb ELSE COALESCE((
     SELECT jsonb_agg(jsonb_build_object('code',i.code,'value',i.value))
     FROM (
