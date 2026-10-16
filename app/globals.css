@@ -133,3 +133,13 @@
 @media(max-width:640px){.owner-hours-row{grid-template-columns:1fr 1fr;gap:10px}.owner-hours-row>strong{grid-column:1/-1}}
 
 .owner-form-grid textarea{width:100%;min-width:0;min-height:84px;resize:vertical;border:1px solid #dfe4da;background:#fff;border-radius:8px;padding:11px 12px;color:var(--ow-ink);font:inherit;font-size:12px;line-height:1.6}
+
+
+/* Owner statistics cards stay stacked until there is room for two readable columns. */
+.owner-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.owner-stat-grid>*{min-width:0;overflow-wrap:normal;word-break:normal}
+.owner-stat-grid .owner-panel{width:100%;min-width:min(280px,100%);box-sizing:border-box}
+.owner-stat-grid input[type="range"]{width:min(150px,100%);max-width:100%;min-width:0;accent-color:var(--ow-green)}
+.owner-badge{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:900px){.owner-stat-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:420px){.owner-stat-grid .owner-panel{padding:clamp(12px,4vw,16px)}.owner-stat-grid input[type="range"]{width:100px}}
