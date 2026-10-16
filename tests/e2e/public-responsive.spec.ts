@@ -12,6 +12,8 @@ for (const salon of salons) {
     for (const width of widths) {
       test(`public ${salon.template} ${lang} at ${width}px`, async ({page}, testInfo) => {
         await page.setViewportSize({width,height:900});
+        const errors:string[]=[];
+        page.on("console",message=>{if(message.type()==="error")errors.push(message.text())});
         const response = await page.goto(`/s/${salon.slug}?lang=${lang}`);
         expect(response?.status()).toBe(200);
         await expect(page.locator("body")).toContainText(lang==="ar"?salon.ar:salon.en);
@@ -35,7 +37,7 @@ for (const salon of salons) {
         for (const el of layout.visible.filter(x=>x.text && /owner-panel|owner-stat|brand|heroCopy/.test(x.className))) {
           expect(el.width,JSON.stringify(el)).toBeGreaterThanOrEqual(120);
         }
-        const logo=page.locator("header .brand img").first();
+        const logo=page.locator("header img").first();
         if(await logo.count()) {
           const box=await logo.boundingBox();
           expect(box).not.toBeNull();
@@ -43,11 +45,9 @@ for (const salon of salons) {
           expect(box!.height).toBeLessThanOrEqual(width<=640?72:96);
         }
         if(salon.slug==="fixture-atelier"&&lang==="ar") {
-          const phone=page.locator(".atelierPhone");
+          const phone=page.locator('a[href^="tel:"]');
           if(await phone.count()) await expect(phone).toBeVisible();
         }
-        const errors:string[]=[];
-        page.on("console",message=>{if(message.type()==="error")errors.push(message.text())});
         await page.screenshot({path:testInfo.outputPath(`${salon.template}-${lang}-${width}.png`),fullPage:true});
         expect(errors).toEqual([]);
       });
