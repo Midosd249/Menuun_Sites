@@ -41,7 +41,7 @@ test("brand is used for metadata and public template content without legacy-name
 
 test("responsive logo bounds and Atelier RTL phone isolation are defined", () => {
   assert.match(css, /\.brand img\{[^}]*height:9[0-6]px[^}]*max-width:26[0-9]px/);
-  assert.match(css, /@media\s*\(max-width:\s*640px\)[^{]*\{[^}]*\.brand img\{[^}]*height:6[4-9]px/);
+  assert.match(css, /@media\(max-width:640px\)\{[^]*?\.brand img\{height:68px/);
   assert.match(css, /\.brand img\{[^}]*object-fit:contain/);
   assert.match(css, /\.atelierPhone\{[^}]*direction:ltr;unicode-bidi:isolate/);
   assert.match(page, /className=\{styles\.atelierPhone\} href=\{"tel:"\+displayPhone\}/);
