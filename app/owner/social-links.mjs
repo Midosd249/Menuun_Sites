@@ -14,7 +14,8 @@ export function normalizeSocialUrl(platform, input) {
   if (!config) throw new Error("Unsupported social platform");
   if (platform === "website") {
     let url;
-    try { url = new URL(/^https:\/\//i.test(raw) ? raw : "https://" + raw); } catch { throw new Error("Website must be a valid HTTPS URL"); }
+    if (!/^https:\/\//i.test(raw)) throw new Error("Website must be a valid HTTPS URL");
+    try { url = new URL(raw); } catch { throw new Error("Website must be a valid HTTPS URL"); }
     if (url.protocol !== "https:" || !url.hostname.includes(".") || url.username || url.password) throw new Error("Website must be a valid HTTPS URL");
     return url.toString();
   }
