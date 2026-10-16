@@ -1,68 +1,68 @@
 # Competitive and open-source scan — 2026-10
 
-**Scope:** Public product pages and official repositories reviewed 16 October 2026. This is product research, not a design/code reference. No competitor screenshots, text, assets, or source code are copied into Menuun.
+Reviewed official product/repository pages on 16 October 2026. This is product research only. No competitor code, screenshots, copy, designs or assets were copied.
 
 ## Feature matrix
 
-| Product | Public booking / acquisition | Owner strengths evidenced by official pages | Gap/opportunity for Menuun (inference) |
+| Product | Public booking | Owner-side strengths evidenced by official pages | Menuun opportunity (inference) |
 |---|---|---|---|
-| Fresha | 24/7 booking, marketplace, waitlist, upfront payments | Client profiles/notes, SMS/email/app reminders, CRM, loyalty, finance/client/team reports, checkout and team permissions | Win with faster Arabic-first setup, a tenant-owned brand page, and straightforward local collection workflow. |
-| Booksy | 24/7 booking, marketplace, service photos and reviews | Client cards/tags/notes, reminders, configurable calendar, checkout, deposits/cancellation fees, revenue/cash-flow reports, staff performance | Offer an uncluttered owner inbox and reliable appointment-to-payment trace before adding broad CRM features. |
-| Vagaro | Booking site and marketplace, online booking and social sources | Customizable dashboard widgets, new-vs-returning, booking percentage, sales trends, appointment distribution, notifications and sales breakdown | Prioritize a small set of explainable metrics with clear date bases and low-data safeguards. |
-| Setmore | Shareable booking page, website plugin, social booking, QR | Calendar across devices, payments, automatic confirmations, email/SMS reminders, recurring appointments | Menuun's QR and public page are a useful base; add explicit self-service changes and operational follow-up later. |
-| Square Appointments | Branded booking website, QR, web widget, marketplace | SMS/email reminders, Google Calendar sync, no-show fees, waitlist, multi-location/time-zone support, staff appointments and checkout | Local-market availability matters: do not assume US payment rails fit Saudi salons. |
-| Planity | 24/7 booking, salon listing, social booking, waitlist | Synchronized staff calendars, automated SMS reminders, deposits/prepayment, cancellation policies, checkout and verified reviews | Keep the public page owner-branded and simple; defer marketplace economics and POS complexity. |
+| Fresha — [features](https://www.fresha.com/for-business/features) | 24/7 booking, marketplace, waitlist | CRM/client notes, reminders, deposits, checkout, loyalty, finance/client/team reports and permissions | Stay focused on an owned branded page, Arabic-first setup and simple collection tracking. |
+| Booksy — [features](https://biz.booksy.com/features) | 24/7 booking, marketplace, reviews/photos | Client cards/tags, reminders, configurable calendar, checkout, deposits/cancellation fees, revenue and staff-performance reports | Build a clear booking inbox and appointment-to-payment trace before adding broad CRM. |
+| Vagaro — [Pro](https://www.vagaro.com/pro), [dashboard reports](https://support.vagaro.com/hc/en-us/articles/12731739712667-Dashboard-Reports) | Booking site, marketplace, social sources | Customizable widgets, appointment-source distribution, new vs returning, booking percentage, sales trends and projected sales | Use a small set of explainable KPIs with explicit date bases and low-data safeguards. |
+| Setmore — [features](https://www.setmore.com/features) | Shareable booking page, website/social links, QR | Multi-device calendar, payments, confirmations, email/SMS reminders, recurring bookings | Preserve Menuun's simple QR/public page and later add secure self-service changes. |
+| Square Appointments — [features](https://squareup.com/us/en/appointments/features) | Branded booking site, QR/widget, marketplace | SMS/email reminders, calendar sync, no-show fees, waitlist, multi-location/time-zone support, staff appointments and checkout | Do not assume US payment rails fit Saudi salons; local provider fit is a prerequisite. |
+| Planity — [Pro](https://info.planity.com/solution/logiciel-rendez-vous) | 24/7 booking, social booking, waitlist | Synchronized staff calendar, SMS reminders, deposits/prepayment, cancellation policies, checkout and verified reviews | Keep the owner-branded public page simple; defer marketplace and POS complexity. |
 
 ## Saudi Arabia / GCC signals
 
-- **Shareek Salon** ([shareek.app](https://shareek.app/en)) markets Saudi salon operations: branded booking links, deposits, WhatsApp notifications, packages, financial reports, staff roles and ZATCA-ready invoices.
-- **Mahjoz** ([mahjoz.io](https://mahjoz.io/en)) positions itself for Saudi service businesses with booking, WhatsApp reminders, POS, employee app, and ZATCA Phase 2 / local payment integrations.
-- **Watily** ([watily.com](https://watily.com/booking-system/en/)) markets Arabic-first appointment booking, WhatsApp reminders, deposits, team calendars and post-visit review requests.
-- **Mawid** ([mawid.ai](https://mawid.ai/)) describes Gulf-focused booking links shared through Instagram/WhatsApp, Arabic/English, Hijri/Gregorian calendar support and business-specific booking flows.
+- **Shareek Salon** ([shareek.app](https://shareek.app/en)): Saudi salon positioning, branded booking links, deposits, WhatsApp notifications, packages, reports and ZATCA-ready invoices.
+- **Mahjoz** ([mahjoz.io](https://mahjoz.io/en)): Saudi service-business positioning, booking, WhatsApp reminders, POS, employee app, ZATCA Phase 2 and local payment integrations.
+- **Watily** ([booking system](https://watily.com/booking-system/en/)): Arabic-first booking, WhatsApp reminders, deposits, team calendars and post-visit review requests.
+- **Mawid** ([mawid.ai](https://mawid.ai/)): Gulf booking links for Instagram/WhatsApp, Arabic/English, Hijri/Gregorian calendar and business-specific booking flows.
 
-**Market inference:** A Saudi barbershop owner is likely to value a public booking link that works from WhatsApp/Instagram, clear SAR amounts, Arabic RTL quality, local time correctness, and a fast owner inbox before complex marketplace discovery. These are positioning signals from vendor claims, not independently verified usage/adoption metrics.
+**Inference:** For a Saudi salon, public links that work in WhatsApp/Instagram, Arabic RTL quality, SAR formatting, Riyadh-time correctness, and a fast owner inbox are likely to matter more immediately than a marketplace. Vendor claims are not independent adoption/quality measurements.
 
-## Open-source references and license notes
+## Open-source and permissive libraries
 
-| Source | License evidence | Useful idea only; no code/design copying |
+| Source | License stated by official repository | Safe use for ideas / candidate dependencies |
 |---|---|---|
-| [Cal.diy repository](https://github.com/calcom/cal.diy) | MIT license stated in repository | Availability-first scheduling and clear separation of booking settings from calendars. Cal.com’s historical/main product licensing differs; verify the exact repository and package license before any dependency decision. |
-| [Easy!Appointments](https://github.com/alextselegidis/easyappointments) | GPL-3.0 stated in repository | Self-hosted appointment workflow and service/provider concepts. **Ideas only** under this project's no-GPL/AGPL-copy rule. |
-| [Rallly](https://github.com/lukevella/rallly) | AGPL-3.0 stated in repository | Low-friction shared scheduling and notification patterns. **Ideas only**; no code, CSS, copy, or assets reused. |
-| [Recharts](https://github.com/recharts/recharts) | MIT | Candidate for simple accessible daily trend and revenue charts; not installed by this scan. |
-| [TanStack Table](https://github.com/TanStack/table) | MIT | Candidate if the appointment list grows to require sorting, filtering, and pagination. |
-| [React Hook Form](https://github.com/react-hook-form/react-hook-form) | MIT | Candidate for validated owner settings forms if current native forms become hard to maintain. |
-| [Radix Primitives](https://github.com/radix-ui/primitives) | MIT | Candidate accessible primitives for menus, dialogs, and sliders; retain Menuun's own visual system. |
-| [Zod](https://github.com/colinhacks/zod) | MIT | Candidate for shared form/API validation schemas. |
-| [next-intl](https://github.com/amannn/next-intl) | MIT | Candidate for typed locale dictionaries and App Router locale handling; assess bundle and migration cost first. |
-| Native Web Audio API | Browser API; no third-party library license | Prefer a small local oscillator helper over adding an audio dependency for a two-tone booking alert. |
+| [Cal.diy](https://github.com/calcom/cal.diy) | MIT | Availability-first scheduling concepts. Cal.com has a distinct history/licensing; verify the exact repository/package before any dependency decision. |
+| [Easy!Appointments](https://github.com/alextselegidis/easyappointments) | GPL-3.0 | Self-hosted scheduling concepts only. **No code, CSS, text or assets reused.** |
+| [Rallly](https://github.com/lukevella/rallly) | AGPL-3.0 | Low-friction scheduling/notification concepts only. **No code, CSS, text or assets reused.** |
+| [Recharts](https://github.com/recharts/recharts) | MIT | Candidate for daily trend and revenue charts. |
+| [TanStack Table](https://github.com/TanStack/table) | MIT | Candidate for sortable/filterable appointment tables. |
+| [React Hook Form](https://github.com/react-hook-form/react-hook-form) | MIT | Candidate if owner form complexity grows. |
+| [Radix Primitives](https://github.com/radix-ui/primitives) | MIT | Accessible primitives; retain Menuun's own visual system. |
+| [Zod](https://github.com/colinhacks/zod) | MIT | Shared runtime validation for settings/API payloads. |
+| [next-intl](https://github.com/amannn/next-intl) | MIT | Candidate for typed App Router locale dictionaries; evaluate migration cost first. |
+| Native Web Audio API | Browser API | Keep a tiny local oscillator helper rather than add a sound dependency for a two-tone alert. |
 
-License names above are from the cited official repository/license pages where available. Before adding a package, re-check the exact package version, transitive dependency licenses, and any dual-license terms. GPL/AGPL sources are not implementation sources for Menuun.
+License labels are based on the linked official repository/license pages. Re-check the exact package version and transitive dependencies before adoption. GPL/AGPL projects are ideas-only under Menuun's rule.
 
-## Ten recommendations ranked by impact / effort
+## Ten ranked recommendations
 
-| Rank | Recommendation | Impact | Effort | Decision |
-|---:|---|---|---|---|
-| 1 | Make every new booking visible in a localized notification centre with sound state, deduplication and recovery when Realtime disconnects | High | Medium | Implement/verify now |
-| 2 | Keep the salon's Arabic/English business name authoritative across public page, metadata, QR/share and owner settings | High | Low | Implemented in PR C; browser verification still needed |
-| 3 | Make mobile owner cards one-column, status labels localized, and all controls fit at 270–430px | High | Medium | Implemented partially; Playwright matrix is the release proof |
-| 4 | Distinguish completed work, expected collection, and actually collected revenue with explicit scheduled-date vs payment-date labels | High | Medium | Existing baseline; expand in PR D |
-| 5 | Add per-staff completed jobs, collected/awaiting amounts, and utilization against opening hours, including Unassigned | High | Medium | PR D scope |
-| 6 | Show a daily trend and prior equal-period comparison; suppress insights when samples are too small | High | Medium | PR D scope |
-| 7 | Normalize and validate social links, preserve clearable values, and render only valid HTTPS links | Medium | Low | Implemented partially in PR C; live UI verification needed |
-| 8 | Add customer self-service cancel/reschedule with tenant-safe tokens and explicit policy | High | High | Backlog; design/API/security first |
-| 9 | Add WhatsApp reminders with consent, delivery status, opt-out, and provider failure handling | High | High | Backlog; provider/privacy/compliance review first |
-| 10 | Add customer CRM, reviews, deposits, loyalty, marketplace discovery and POS integrations | Medium–High | High | Backlog; validate demand and Saudi provider fit before selecting |
+| # | Recommendation | Impact / effort | Decision |
+|---:|---|---|---|
+| 1 | Reliable localized booking inbox, sound state, deduplication and disconnect recovery | High / Medium | Implement and verify now |
+| 2 | Preserve owner-entered names across page, metadata and share/QR | High / Low | PR C implementation; browser proof still required |
+| 3 | Single-column mobile owner cards, contained controls and localized statuses | High / Medium | PR C partial; Playwright is release proof |
+| 4 | Separate completed work, expected collection and collected revenue with explicit date bases | High / Medium | Expand in PR D |
+| 5 | Per-staff completed/collected/awaiting and utilization against opening hours, including Unassigned | High / Medium | PR D |
+| 6 | Daily trend, prior equal-period comparison and rule-based insights hidden on thin data | High / Medium | PR D |
+| 7 | Validated editable social links and only filled public links | Medium / Low | PR C partial; verify with browser |
+| 8 | Secure customer self-service cancel/reschedule links | High / High | Backlog; security/policy design first |
+| 9 | WhatsApp reminders with consent, delivery status, opt-out and provider recovery | High / High | Backlog; provider/privacy review first |
+| 10 | CRM, reviews, deposits, loyalty, waitlist and POS integrations | Medium–High / High | Backlog; validate demand/provider fit first |
 
-## Backlog candidates — not built in this scan
+## Backlog candidates — not built by this scan
 
-1. WhatsApp reminders and one-tap confirm/cancel/reschedule.
-2. Customer self-service cancellation/rescheduling with secure, expiring links.
-3. Client list/CRM with normalized phone, visit history, notes, consent and export.
-4. Review request and moderation workflow.
-5. Optional deposits/prepayment after local payment-provider and refund-policy review.
+1. WhatsApp reminders and one-tap confirmation/cancel/reschedule.
+2. Secure expiring self-service cancellation/rescheduling links.
+3. Client list/CRM with normalized phone, visit history, notes, consent and export/deletion.
+4. Post-visit reviews and moderation.
+5. Deposits/prepayment after local provider/refund review.
 6. Waitlist, abandoned-booking recovery, loyalty and packages.
-7. ZATCA/Mada/STC Pay integrations only after a specific provider/compliance plan is approved.
-8. More detailed team permissions and per-staff calendar views.
+7. ZATCA/Mada/STC Pay/Apple Pay integrations after provider and compliance validation.
+8. Expanded team permissions, per-staff calendar and commissions.
 
-**Research limitations:** Official marketing pages are feature claims, not hands-on product testing. Public owner-dashboard details were especially available from Vagaro's support documentation; some competitor dashboards require login/demo access. No private account was accessed and no competitor UI was cloned.
+**Limitations:** These are official marketing claims, not hands-on product tests. Some owner dashboards require a login/demo. No private account was accessed.
