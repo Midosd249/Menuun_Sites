@@ -1,7 +1,7 @@
 -- Additive analytics payload; the existing revenue RPC keys remain intact.
--- Rollback: restore public.get_salon_revenue_stats(uuid,date,date) from
--- migration 20261015231151_owner_scheduled_jobs_collection_stats.sql and drop
--- public.get_salon_analytics_details(uuid,date,date).
+-- Rollback: DROP FUNCTION public.get_salon_revenue_stats(uuid,date,date);
+-- ALTER FUNCTION public.get_salon_revenue_stats_base(uuid,date,date) RENAME TO get_salon_revenue_stats;
+-- DROP FUNCTION public.get_salon_analytics_details(uuid,date,date).
 ALTER FUNCTION public.get_salon_revenue_stats(uuid,date,date)
   RENAME TO get_salon_revenue_stats_base;
 REVOKE ALL ON FUNCTION public.get_salon_revenue_stats_base(uuid,date,date) FROM PUBLIC, anon;
@@ -63,14 +63,18 @@ BEGIN
     AND a.paid_at IS NOT NULL
     AND (a.paid_at AT TIME ZONE 'Asia/Riyadh')::date BETWEEN p_from AND p_to;
 
-  SELECT COALESCE(sum(a.price_sar_snapshot) FILTER (WHERE a.status='completed'),0),
-    COALESCE(sum(a.paid_amount_sar) FILTER (WHERE a.status='completed' AND a.is_paid
-      AND a.paid_at IS NOT NULL
-      AND (a.paid_at AT TIME ZONE 'Asia/Riyadh')::date BETWEEN v_prev_from AND v_prev_to),0)
-  INTO v_prev_expected,v_prev_collected
+  SELECT COALESCE(sum(a.price_sar_snapshot),0)
+  INTO v_prev_expected
   FROM public.appointments a
-  WHERE a.salon_id=p_salon_id
+  WHERE a.salon_id=p_salon_id AND a.status='completed'
     AND (a.starts_at AT TIME ZONE 'Asia/Riyadh')::date BETWEEN v_prev_from AND v_prev_to;
+
+  SELECT COALESCE(sum(a.paid_amount_sar),0)
+  INTO v_prev_collected
+  FROM public.appointments a
+  WHERE a.salon_id=p_salon_id AND a.status='completed' AND a.is_paid
+    AND a.paid_at IS NOT NULL
+    AND (a.paid_at AT TIME ZONE 'Asia/Riyadh')::date BETWEEN v_prev_from AND v_prev_to;
 
   WITH period_phones AS (
     SELECT DISTINCT
@@ -203,8 +207,8 @@ BEGIN
         'utilization_pct',CASE WHEN (SELECT minutes FROM available)>0 THEN round(100.0*b.booked_minutes/(SELECT minutes FROM available),2) ELSE NULL END
       ) ORDER BY b.barber_name)
       FROM barbers b LEFT JOIN collected c ON c.barber_id=b.barber_id
-    ),'[]'::jsonb) ||
-    jsonb_build_object('unassigned_detail',jsonb_build_object(
+    ),'[]'::jsonb),
+    'unassigned_detail',jsonb_build_object(
       'barber_id',NULL,'barber_name','Unassigned',
       'completed_jobs',(SELECT count(*) FROM public.appointments a WHERE a.salon_id=p_salon_id AND a.barber_id IS NULL AND a.status='completed'
         AND (a.starts_at AT TIME ZONE 'Asia/Riyadh')::date BETWEEN p_from AND p_to),
