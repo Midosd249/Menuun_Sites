@@ -15,16 +15,16 @@ test("fixture owner can switch language, save business names and social links, a
   await expect(page.locator("html")).toHaveAttribute("lang","en");
   await expect(page.locator("body")).toContainText("Overview");
 
-  await page.getByRole("button",{name:"Settings"}).click();
+  await page.getByRole("button",{name:"Business settings"}).click();
   await page.locator('input[name="name_ar"]').fill("صالون الاختبار");
   await page.locator('input[name="name_en"]').fill("Test Salon");
   await page.locator('input[name="instagram_url"]').fill("@fixture-salon");
   await page.locator('input[name="website_url"]').fill("https://fixture.example");
-  await page.getByRole("button",{name:"Save"}).click();
+  await page.getByRole("button",{name:"Save changes"}).click();
   await expect(page.locator('input[name="instagram_url"]')).toHaveValue("https://instagram.com/fixture-salon");
   await expect(page.locator('input[name="website_url"]')).toHaveValue("https://fixture.example/");
   await page.reload();
-  await page.getByRole("button",{name:"Settings"}).click();
+  await page.getByRole("button",{name:"Business settings"}).click();
   await expect(page.locator('input[name="name_en"]')).toHaveValue("Test Salon");
   await expect(page.locator('input[name="instagram_url"]')).toHaveValue("https://instagram.com/fixture-salon");
 
