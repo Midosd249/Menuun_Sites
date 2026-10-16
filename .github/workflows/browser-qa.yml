@@ -42,10 +42,10 @@ jobs:
           supabase status -o env > /tmp/supabase.env
           cat /tmp/supabase.env >> "$GITHUB_ENV"
           . /tmp/supabase.env
-          curl --fail-with-body --silent --show-error --request PUT "$API_URL/auth/v1/admin/users/50000000-0000-4000-8000-000000000001" \\
-            --header "apikey: $SERVICE_ROLE_KEY" \\
-            --header "Authorization: Bearer $SERVICE_ROLE_KEY" \\
-            --header "Content-Type: application/json" \\
+          curl --fail-with-body --silent --show-error --request PUT "$API_URL/auth/v1/admin/users/50000000-0000-4000-8000-000000000001" \
+            --header "apikey: $ANON_KEY" \
+            --header "Authorization: Bearer $SERVICE_ROLE_KEY" \
+            --header "Content-Type: application/json" \
             --data '{"password":"FixturePass123!","email_confirm":true}'
           echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL" >> "$GITHUB_ENV"
           echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY" >> "$GITHUB_ENV"
