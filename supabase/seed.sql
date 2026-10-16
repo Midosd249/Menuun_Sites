@@ -10,7 +10,7 @@ INSERT INTO auth.identities
 VALUES
   ('50000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001',
    '{"sub":"50000000-0000-4000-8000-000000000001","email":"fixture-owner@menuun.test"}'::jsonb,
-   'email','fixture-owner@menuun.test',now(),now(),now())
+   'email','50000000-0000-4000-8000-000000000001',now(),now(),now())
 ON CONFLICT (provider_id,provider) DO UPDATE SET
   user_id=EXCLUDED.user_id,identity_data=EXCLUDED.identity_data,updated_at=now();
 
