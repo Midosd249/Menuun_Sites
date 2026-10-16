@@ -61,3 +61,10 @@ test("local Supabase fixture user belongs to the active Auth instance", async ()
   assert.match(seed, /INSERT INTO auth\.users\s*\(instance_id,id,aud,role,email/);
   assert.match(seed, /'00000000-0000-0000-0000-000000000000','50000000-0000-4000-8000-000000000001'/);
 });
+
+
+test("local Auth fixture has a confirmed user and a distinct email identity row", async () => {
+  const seed = await read("../supabase/seed.sql");
+  assert.match(seed, /email_confirmed_at,confirmed_at/);
+  assert.match(seed, /'50000000-0000-4000-8000-000000000002','50000000-0000-4000-8000-000000000001'/);
+});
