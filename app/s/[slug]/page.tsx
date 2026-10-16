@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import styles from "./public-salon.module.css";
 import SalonQrShare from "./qr-share";
 import { getMenuunPublicOrigin } from "@/lib/public-origin";
 import PublicBookingForm from "./booking-form";
 import SalonImage from "./salon-image";
+import LocaleCookieSync from "./locale-cookie-sync";
 import { resolveSalonBrandNames } from "./salon-branding";
 import { BARBER_IMAGE_FALLBACKS, DEMO_CONTACT, DEMO_SERVICES, GROOM_PACKAGE, HERO_IMAGE_FALLBACK as HERO_FALLBACK, LOCATION_IMAGES, OUR_WORK_IMAGES, SERVICE_IMAGE_FALLBACKS, THEME_IDENTITIES } from "./salon-demo-content";
 
@@ -51,11 +53,12 @@ async function getSalon(slug:string) {
 }
 
 export async function generateMetadata({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{lang?:string;template?:string}>}):Promise<Metadata> {
-  const [{slug},search] = await Promise.all([params,searchParams]);
+  const [{slug},search,cookieStore] = await Promise.all([params,searchParams,cookies()]);
   const result = await getSalon(slug);
   if (!result) return {title:"الصفحة غير متاحة",robots:{index:false,follow:false}};
   const metadataNames = resolveSalonBrandNames(result.salon, /^(atelier|oasis|rose)(-|$)/i.test(result.salon.slug));
-  const salonName = search.lang === "en" ? metadataNames.nameEn : metadataNames.nameAr;
+  const locale = search.lang === "en" || (!search.lang && cookieStore.get("menuun-locale")?.value === "en") ? "en" : "ar";
+  const salonName = locale === "en" ? metadataNames.nameEn : metadataNames.nameAr;
   const title = salonName;
   const rawDescription = result.salon.description_ar;
   const topServices = result.services.slice(0, 3).map(service => service.name_ar).filter(Boolean);
@@ -65,8 +68,8 @@ export async function generateMetadata({params,searchParams}:{params:Promise<{sl
 }
 
 export default async function PublicSalonPage({params,searchParams}:{params:Promise<{slug:string}>;searchParams:Promise<{lang?:string;template?:string}>}) {
-  const [{slug},search] = await Promise.all([params,searchParams]);
-  const english = search?.lang === "en";
+  const [{slug},search,cookieStore] = await Promise.all([params,searchParams,cookies()]);
+  const english = search?.lang === "en" || (!search?.lang && cookieStore.get("menuun-locale")?.value === "en");
   const result = await getSalon(slug);
   if (!result) notFound();
   const {salon,services,barbers,hours,media} = result;
@@ -168,5 +171,5 @@ export default async function PublicSalonPage({params,searchParams}:{params:Prom
       <div className={styles.hoursCard}><h3>{english ? "Opening hours" : "أوقات العمل"}</h3>{shownHours.length ? shownHours.map((day:any)=><div className={styles.hoursRow} key={day.weekday}><span>{"display_day" in day ? day.display_day : (english?["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][day.weekday]:weekdays[day.weekday])}</span><strong>{"display_hours" in day ? day.display_hours : (day.is_closed ? (english?"Closed":"مغلق") : time(day.opens_at)+" — "+time(day.closes_at))}</strong></div>) : <p className={styles.empty}>{english?"Contact us for current opening hours.":"تواصل معنا لمعرفة أوقات العمل."}</p>}{location && <p className={styles.location}>⌖ {mapHref ? <a href={mapHref} target="_blank" rel="noopener noreferrer">{location} — {english ? "Open in Google Maps" : "الاتجاهات"} ↗</a> : location}</p>}{socialLinks.length>0 && <div className={styles.socialLinks} aria-label="روابط التواصل الاجتماعي">{socialLinks.map(link=><a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label} ↗</a>)}</div>}</div></section>
     <section className={styles.locationFeature}><div className={styles.locationPhoto}><SalonImage src={locationPhoto?.public_url || locationImageConfig.src} fallbackSrc={HERO_FALLBACK} alt={english?(locationPhoto?.alt_en || locationImageConfig.alt_en):(locationPhoto?.alt_ar || locationImageConfig.alt_ar)} style={{objectPosition:locationImageConfig.objectPosition}} loading="lazy"/></div><div className={styles.locationFeatureCopy}><p className={styles.eyebrow}>{english?"FIND YOUR WAY":"موقعنا"}</p><h2>{english?"A place for your next reset.":"مساحة تستحق زيارتك القادمة."}</h2><p>{location}</p><div className={styles.heroActions}>{mapHref&&<a className={styles.primaryButton} href={mapHref} target="_blank" rel="noopener noreferrer">{english?"Open in Google Maps":"افتح الموقع على خرائط Google"} ↗</a>}{displayPhone&&<a className={styles.secondaryButton} href={"tel:"+displayPhone}>{english?"Call the salon":"اتصل بالصالون"} ↗</a>}{wa&&<a className={styles.secondaryButton} href={waHref(english?"Hello, I would like to book an appointment.":"مرحبًا، أرغب في حجز موعد.")} target="_blank" rel="noopener noreferrer">{english?"WhatsApp":"واتساب"} ↗</a>}</div></div></section>
     <footer className={styles.footer}><a className={styles.footerBrand} href="#home">{english ? displaySalonNameEn : displaySalonNameAr} <span>✳</span></a>{socialLinks.length>0 && <nav className={styles.footerSocials} aria-label={english ? "Social links" : "روابط التواصل"}>{socialLinks.map(link=><a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a>)}</nav>}<span>{english ? "A salon experience by Menuun" : "تجربة صالون عبر Menuun"}</span><a href="#home">{english ? "Back to top" : "العودة للأعلى"} ↑</a></footer>
-  </main>;
+  </main></>;
 }
