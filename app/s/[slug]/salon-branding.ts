@@ -3,25 +3,23 @@ export type SalonBrandInput = {
   name_en: string | null | undefined;
 };
 
-const legacyDemoNames = new Set([
-  "atelier", "atelier 09", "atelier grooming studio", "أتولييه للحلاقة والعناية", "أتيليه 09",
-  "oasis", "oasis grooming studio", "واحة العناية الرجالية",
-  "forge", "forge men", "فورج", "فورج للرجال"
-]);
+const genericArabicName = "صالون العناية";
+const genericEnglishName = "Grooming Studio";
 
-const unfinished = /صورة\s*(إرشادية|استرشادية)|يرجى استبدالها|ملف تجريبي|بيانات تجريبية|بانتظار الإعداد|أضف (اسم|خدمات|السعر)|نموذج استرشادي|placeholder|add (your|a) (barber|service|photo)/i;
-
-function usable(value: string | null | undefined, demo: boolean): string | null {
-  const name = value?.trim();
-  if (!name || unfinished.test(name)) return null;
-  if (demo && legacyDemoNames.has(name.toLocaleLowerCase())) return null;
-  return name;
+function nonEmpty(value: string | null | undefined): string | null {
+  return typeof value === "string" && value.trim().length > 0 ? value : null;
 }
 
-/** Resolve visible brand names from salon data; template identity is never the brand. */
-export function resolveSalonBrandNames(salon: SalonBrandInput, isDemoSalon = false) {
+/**
+ * The salon record is the source of truth for every public brand surface.
+ * Preserve the owner's exact value; only use the other language when the
+ * requested language is empty. Template/demo identity must never override it.
+ */
+export function resolveSalonBrandNames(salon: SalonBrandInput, _isDemoSalon = false) {
+  const nameAr = nonEmpty(salon.name_ar);
+  const nameEn = nonEmpty(salon.name_en);
   return {
-    nameAr: usable(salon.name_ar, isDemoSalon) || "صالون العناية",
-    nameEn: usable(salon.name_en, isDemoSalon) || "Grooming Studio"
+    nameAr: nameAr ?? nameEn ?? genericArabicName,
+    nameEn: nameEn ?? nameAr ?? genericEnglishName
   };
 }
