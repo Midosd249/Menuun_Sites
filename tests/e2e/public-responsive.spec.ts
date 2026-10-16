@@ -45,6 +45,7 @@ for (const salon of salons) {
           expect(box).not.toBeNull();
           expect(box!.height).toBeGreaterThanOrEqual(width<=360?64:width<=640?68:84);
           expect(box!.height).toBeLessThanOrEqual(width<=640?72:96);
+          console.log("[logo-size]",JSON.stringify({slug:salon.slug,lang,width,renderedWidth:box!.width,renderedHeight:box!.height}));
         }
         if(salon.slug==="fixture-atelier"&&lang==="ar") {
           const phone=page.locator('a[href^="tel:"]');
