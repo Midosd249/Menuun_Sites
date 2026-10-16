@@ -42,6 +42,8 @@ jobs:
           supabase status -o env > /tmp/supabase.env
           cat /tmp/supabase.env >> "$GITHUB_ENV"
           . /tmp/supabase.env
+          psql "$DB_URL" --tuples-only --no-align -c "SELECT id || '|' || email || '|' || instance_id || '|' || aud || '|' || role || '|' || COALESCE(email_confirmed_at::text, 'NULL') FROM auth.users WHERE id = '50000000-0000-4000-8000-000000000001';"
+          psql "$DB_URL" --tuples-only --no-align -c "SELECT id || '|' || user_id || '|' || provider || '|' || provider_id FROM auth.identities WHERE user_id = '50000000-0000-4000-8000-000000000001';"
           curl --fail-with-body --silent --show-error --request PUT "$API_URL/auth/v1/admin/users/50000000-0000-4000-8000-000000000001" \
             --header "apikey: $ANON_KEY" \
             --header "Authorization: Bearer $SERVICE_ROLE_KEY" \
