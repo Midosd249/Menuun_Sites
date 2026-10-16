@@ -41,3 +41,9 @@ test("local Supabase owner fixture uses the email identity provider ID contract"
   assert.match(seed, /INSERT INTO auth\.identities[\s\S]*?provider_id[\s\S]*?'50000000-0000-4000-8000-000000000001'/);
   assert.doesNotMatch(seed, /'email','fixture-owner@menuun\.test'/);
 });
+
+
+test("browser CI applies local migrations and seed fixtures before authenticated tests", async () => {
+  const workflow = await read("../.github/workflows/browser-qa.yml");
+  assert.match(workflow, /supabase start[\s\S]*?supabase db reset[\s\S]*?npm run build/);
+});
