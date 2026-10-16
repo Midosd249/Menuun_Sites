@@ -26,10 +26,22 @@ INSERT INTO public.services (id,salon_id,name_ar,name_en,description_ar,descript
 VALUES ('70000000-0000-4000-8000-000000000001','60000000-0000-4000-8000-000000000001','قص شعر','Haircut','قص شعر كلاسيكي','Classic haircut',90,30,true,0)
 ON CONFLICT (id) DO UPDATE SET name_ar=EXCLUDED.name_ar,name_en=EXCLUDED.name_en,price_sar=EXCLUDED.price_sar,duration_minutes=EXCLUDED.duration_minutes,is_active=true;
 
+INSERT INTO public.services (id,salon_id,name_ar,name_en,description_ar,description_en,price_sar,duration_minutes,is_active,sort_order)
+VALUES ('70000000-0000-4000-8000-000000000002','60000000-0000-4000-8000-000000000002','قص شعر','Haircut','قص شعر كلاسيكي','Classic haircut',90,30,true,0)
+ON CONFLICT (id) DO UPDATE SET name_ar=EXCLUDED.name_ar,name_en=EXCLUDED.name_en,price_sar=EXCLUDED.price_sar,duration_minutes=EXCLUDED.duration_minutes,is_active=true;
+
 INSERT INTO public.barbers (id,salon_id,display_name,display_name_en,bio_ar,bio_en,is_active,sort_order)
 VALUES ('80000000-0000-4000-8000-000000000001','60000000-0000-4000-8000-000000000001','حلاق الاختبار','Fixture Barber','فريق الاختبار','Fixture team',true,0)
 ON CONFLICT (id) DO UPDATE SET display_name=EXCLUDED.display_name,display_name_en=EXCLUDED.display_name_en,is_active=true;
 
+INSERT INTO public.barbers (id,salon_id,display_name,display_name_en,bio_ar,bio_en,is_active,sort_order)
+VALUES ('80000000-0000-4000-8000-000000000002','60000000-0000-4000-8000-000000000002','حلاق الاختبار','Fixture Barber','فريق الاختبار','Fixture team',true,0)
+ON CONFLICT (id) DO UPDATE SET display_name=EXCLUDED.display_name,display_name_en=EXCLUDED.display_name_en,is_active=true;
+
 INSERT INTO public.business_hours (salon_id,weekday,opens_at,closes_at,is_closed)
 SELECT '60000000-0000-4000-8000-000000000001',d,'09:00'::time,'18:00'::time,false FROM generate_series(0,6) d
+ON CONFLICT (salon_id,weekday) DO UPDATE SET opens_at=EXCLUDED.opens_at,closes_at=EXCLUDED.closes_at,is_closed=false;
+
+INSERT INTO public.business_hours (salon_id,weekday,opens_at,closes_at,is_closed)
+SELECT '60000000-0000-4000-8000-000000000002',d,'09:00'::time,'18:00'::time,false FROM generate_series(0,6) d
 ON CONFLICT (salon_id,weekday) DO UPDATE SET opens_at=EXCLUDED.opens_at,closes_at=EXCLUDED.closes_at,is_closed=false;
