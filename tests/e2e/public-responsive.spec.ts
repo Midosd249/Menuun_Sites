@@ -48,7 +48,7 @@ for (const salon of salons) {
           console.log("[logo-size]",JSON.stringify({slug:salon.slug,lang,width,renderedWidth:box!.width,renderedHeight:box!.height}));
         }
         if(salon.slug==="fixture-atelier"&&lang==="ar") {
-          const phone=page.locator('a[href^="tel:"]');
+          const phone=page.locator('a[href^="tel:"]').first();
           await expect(phone).toBeVisible();
           const headingBox=await page.getByRole("heading",{level:1}).boundingBox();
           const phoneBox=await phone.boundingBox();
