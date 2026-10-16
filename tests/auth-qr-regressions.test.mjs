@@ -54,3 +54,10 @@ test("browser CI provisions the password through local Supabase Auth before brow
   assert.match(workflow, /auth\/v1\/admin\/users\/50000000-0000-4000-8000-000000000001/);
   assert.match(workflow, /FixturePass123!/);
 });
+
+
+test("local Supabase fixture user belongs to the active Auth instance", async () => {
+  const seed = await read("../supabase/seed.sql");
+  assert.match(seed, /INSERT INTO auth\.users\s*\(instance_id,id,aud,role,email/);
+  assert.match(seed, /'00000000-0000-0000-0000-000000000000','50000000-0000-4000-8000-000000000001'/);
+});
