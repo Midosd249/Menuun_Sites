@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { cookies } from "next/headers";
+import { Cairo } from "next/font/google";
+
+const cairo = Cairo({ subsets: ["arabic", "latin"], display: "swap", preload: true, variable: "--font-cairo" });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.menuun.com";
 
@@ -34,10 +38,11 @@ export const viewport: Viewport = {
   themeColor: "#183d31"
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const locale = (await cookies()).get("menuun-locale")?.value === "en" ? "en" : "ar";
   return (
-    <html lang="ar" dir="rtl">
-      <body>{children}</body>
+    <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
+      <body className={cairo.variable}>{children}</body>
     </html>
   );
 }
