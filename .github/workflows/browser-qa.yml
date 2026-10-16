@@ -43,6 +43,7 @@ jobs:
           . /tmp/supabase.env
           echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL" >> "$GITHUB_ENV"
           echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=$ANON_KEY" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$ANON_KEY" >> "$GITHUB_ENV"
       - name: Build production app
         run: npm run build
       - name: Run Playwright matrix and owner smoke flow
