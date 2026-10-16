@@ -29,17 +29,24 @@ function loginRedirect(request: NextRequest, response: NextResponse, reason?: st
 }
 
 export async function middleware(request: NextRequest) {
+  const requestedLocale = request.nextUrl.searchParams.get("lang");
+  if (requestedLocale === "ar" || requestedLocale === "en") {
+    request.cookies.set("menuun-locale", requestedLocale);
+  }
   const privateRoute = isPrivateRoute(request.nextUrl.pathname);
   const publicConfig = getSupabasePublicConfig();
 
   // Fail closed for private application surfaces. The static owner workspace
   // handles its own login screen and is intentionally excluded above.
   if (!publicConfig) {
-    if (privateRoute) return loginRedirect(request, NextResponse.next({ request }), "auth_unavailable");
-    return NextResponse.next({ request });
+    const response = NextResponse.next({ request });
+    if (requestedLocale === "ar" || requestedLocale === "en") response.cookies.set("menuun-locale", requestedLocale, { path: "/", maxAge: 31536000, sameSite: "lax" });
+    if (privateRoute) return loginRedirect(request, response, "auth_unavailable");
+    return response;
   }
 
   let response = NextResponse.next({ request });
+  if (requestedLocale === "ar" || requestedLocale === "en") response.cookies.set("menuun-locale", requestedLocale, { path: "/", maxAge: 31536000, sameSite: "lax" });
   const supabase = createServerClient(publicConfig.url, publicConfig.publishableKey, {
     cookies: {
       getAll() {

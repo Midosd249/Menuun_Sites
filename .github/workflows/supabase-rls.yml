@@ -49,6 +49,8 @@ jobs:
           supabase/tests/salons_column_grants.test.sql
           supabase/tests/owner_scheduled_stats.test.sql
           supabase/tests/owner_social_link_grants.test.sql
+          supabase/tests/owner_analytics_details.test.sql
+          supabase/tests/notification_payload.test.sql
 
       - name: Stop local Supabase
         if: always()
