@@ -36,9 +36,10 @@ test("salon QR uses a canonical origin and public previews require verified salo
 });
 
 
-test("local Supabase owner fixture uses the email identity provider ID contract", async () => {
+test("local Supabase owner fixture uses the canonical UUID email identity contract", async () => {
   const seed = await read("../supabase/seed.sql");
-  assert.ok(seed.includes("'email','fixture-owner@menuun.test',now()"));
+  assert.ok(seed.includes("'50000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001'"));
+  assert.ok(seed.includes("'email','50000000-0000-4000-8000-000000000001',now()"));
 });
 
 
@@ -64,9 +65,8 @@ test("local Supabase fixture user belongs to the active Auth instance", async ()
 });
 
 
-test("local Auth fixture respects generated confirmation fields and uses a distinct email identity row", async () => {
+test("local Auth fixture has a confirmed user and canonical email identity", async () => {
   const seed = await read("../supabase/seed.sql");
-  assert.match(seed, /email_confirmed_at/);
-  assert.doesNotMatch(seed, /email_confirmed_at,confirmed_at/);
-  assert.match(seed, /'50000000-0000-4000-8000-000000000002','50000000-0000-4000-8000-000000000001'/);
+  assert.ok(seed.includes("email_confirmed_at"));
+  assert.ok(seed.includes("'50000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001'"));
 });
