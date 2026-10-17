@@ -22,7 +22,7 @@ test("a real local public booking INSERT reaches the owner via Realtime and chim
   await page.getByRole("button",{name:"تسجيل الدخول"}).click();
   await expect(page).toHaveURL(/\/owner/);
   await page.locator('select[aria-label="Business"]').selectOption("60000000-0000-4000-8000-000000000002");
-  await expect(page.locator("body")).toContainText("Test Salon");
+  await expect(page.locator("body")).toContainText("صالون الاختبار");
   await page.getByRole("button",{name:/English|العربية/}).first().click();
   await expect(page.locator("html")).toHaveAttribute("lang","en");
   await page.getByRole("button",{name:"Test sound"}).click();
