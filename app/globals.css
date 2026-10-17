@@ -138,7 +138,7 @@
 /* Owner statistics cards stay stacked until there is room for two readable columns. */
 .owner-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .owner-stat-grid>*{min-width:0;overflow-wrap:normal;word-break:normal}
-.owner-stat-grid .owner-panel{width:100%;min-width:min(280px,100%);box-sizing:border-box}
+.owner-stat-grid .owner-panel{width:100%;min-width:0;box-sizing:border-box}
 .owner-stat-grid input[type="range"]{width:min(150px,100%);max-width:100%;min-width:0;accent-color:var(--ow-green)}
 .owner-badge{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 @media(max-width:900px){.owner-stat-grid{grid-template-columns:minmax(0,1fr)}}
@@ -146,3 +146,15 @@
 
 .owner-header-logo{width:132px;height:52px;object-fit:contain;flex:0 0 auto}
 @media(max-width:760px){.owner-header-logo{width:108px;height:40px}}
+
+/* Keep nested analytics grids shrinkable on narrow owner viewports. */
+.owner-stat-grid{min-width:0}
+
+/* Keep owner content and nested grids shrinkable at 270px. */
+.owner-app,.owner-main,.owner-main>*,.owner-main section,.owner-main section>*{min-width:0;max-width:100%}
+.owner-stat-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr));min-width:0;width:100%}
+.owner-stat-grid>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.owner-stat-grid .owner-panel,.owner-panel,.owner-appointment,.owner-data-row,.owner-row-copy{min-width:0;max-width:100%;overflow-wrap:anywhere}
+.owner-stat-grid input,.owner-stat-grid select,.owner-stat-grid button{max-width:100%;min-width:0}
+@media(max-width:900px){.owner-stat-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr))}}
+@media(max-width:300px){.owner-stat-grid{grid-template-columns:minmax(0,1fr)}}
