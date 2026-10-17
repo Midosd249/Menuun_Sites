@@ -8,7 +8,7 @@
 - **Post-deploy finding:** anonymous `/owner/` redirects to the login page but incorrectly shows the generic “sign-in unavailable” alert because middleware adds `error=login_required`. PR #30 (PR E) removes that false error and adds source plus blocking Playwright regression tests.
 - **Existing Supabase advisor findings (not changed here):** leaked-password protection is disabled; three authenticated SECURITY DEFINER analytics RPCs are flagged for review; performance advisor reports unused indexes and multiple permissive notification SELECT policies. The RPCs contain membership checks; do not change live Auth settings or grants without a reviewed security plan.
 - No production rows were modified, no real booking was submitted, and no Auth settings, migrations, DNS or Vercel settings were changed during the post-merge audit.
-- **Current PR:** #30, branch `fix/owner-login-redirect-ux`, head `0b7633683027297c226c17ca31d3ed71764ac9c2`. Static Quality run `39080967236` and Browser QA run `39080967286` are the current CI runs; inspect their final results before merge. RLS/pgTAP is not re-run for PR E because no SQL/migration files changed and the workflow is path-filtered.
+- **Current PR:** #30, branch `fix/owner-login-redirect-ux`. Its current head and latest Static Quality/Browser QA run IDs are available from the live PR page; merge only after both workflows pass on that same final head. RLS/pgTAP is not re-run for PR E because no SQL/migration files changed and the workflow is path-filtered.
 
 ---
 
