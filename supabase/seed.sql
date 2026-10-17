@@ -8,9 +8,9 @@ ON CONFLICT (id) DO UPDATE SET instance_id=EXCLUDED.instance_id,encrypted_passwo
 INSERT INTO auth.identities
   (id,user_id,identity_data,provider,provider_id,last_sign_in_at,created_at,updated_at)
 VALUES
-  ('50000000-0000-4000-8000-000000000002','50000000-0000-4000-8000-000000000001',
+  ('50000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001',
    '{"sub":"50000000-0000-4000-8000-000000000001","email":"fixture-owner@menuun.test","email_verified":true}'::jsonb,
-   'email','fixture-owner@menuun.test',now(),now(),now())
+   'email','50000000-0000-4000-8000-000000000001',now(),now(),now())
 ON CONFLICT (provider_id,provider) DO UPDATE SET
   user_id=EXCLUDED.user_id,identity_data=EXCLUDED.identity_data,updated_at=now();
 
