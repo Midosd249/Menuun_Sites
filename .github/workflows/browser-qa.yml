@@ -56,7 +56,7 @@ jobs:
       - name: Build production app
         run: npm run build
       - name: Run blocking public and owner regression tests
-        run: npx playwright test tests/e2e/public-responsive.spec.ts tests/e2e/owner-responsive.spec.ts tests/e2e/booking-realtime.spec.ts
+        run: npx playwright test tests/e2e/public-responsive.spec.ts tests/e2e/owner-responsive.spec.ts tests/e2e/booking-realtime.spec.ts tests/e2e/owner-auth-redirect.spec.ts
       - name: Run advisory owner smoke flows
         if: always()
         continue-on-error: true
