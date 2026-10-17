@@ -25,6 +25,7 @@ test("a real local public booking INSERT reaches the owner via Realtime and chim
   await expect(page.locator("body")).toContainText("صالون الاختبار");
   await page.getByRole("button",{name:/English|العربية/}).first().click();
   await expect(page.locator("html")).toHaveAttribute("lang","en");
+  await expect(page.getByRole("heading",{level:1})).toHaveText("Test Salon");
   await page.getByRole("button",{name:"Test sound"}).click();
   await expect.poll(()=>page.evaluate(()=>(window as any).__soundStarts||0)).toBeGreaterThanOrEqual(2);
   await expect(page.getByRole("button",{name:"Disable sound"})).toBeVisible();
