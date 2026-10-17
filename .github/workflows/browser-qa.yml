@@ -61,7 +61,9 @@ jobs:
         if: always()
         continue-on-error: true
         env:
-          PLAYWRIGHT_JSON_OUTPUT_FILE: test-results/advisory-results.json
+          PLAYWRIGHT_JSON_OUTPUT_FILE: advisory-test-results/results.json
+          PLAYWRIGHT_OUTPUT_DIR: advisory-test-results
+          PLAYWRIGHT_HTML_OUTPUT_DIR: advisory-playwright-report
         run: npx playwright test tests/e2e/owner-workspace.spec.ts
       - name: Summarize Playwright failures
         if: always()
