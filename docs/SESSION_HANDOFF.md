@@ -5,7 +5,7 @@
 - Production Vercel deployment `dpl_DFtbPjDs6bcrByLaEkR5eK8SrNcC` READY for the merge SHA; alias `https://menuun-sites.vercel.app`. HTTP checks: `/`, `/s/atelier-09`, `/login`, and public salon `?lang=en` all returned 200. This is not full interactive visual QA.
 - Supabase project `kphypflbkbcvgcaupxxm` is ACTIVE_HEALTHY; live migrations include PR D's analytics and structured-notification migrations. Only read-only queries were used.
 - Production finding: anonymous `/owner/` lands on login with a false generic failure alert. PR #30 fixes the redirect reason and adds a source contract plus a blocking Playwright test.
-- **Next action:** inspect Static Quality run `39080967236` and Browser QA run `39080967286` for PR #30 head `0b7633683027297c226c17ca31d3ed71764ac9c2`; fix failures, then merge only if both pass. RLS is not re-run because PR #30 changes no SQL.
+- **Next action:** inspect the latest Static Quality and Browser QA runs for PR #30's current head via the PR page; fix failures, then merge only if both pass on the same final SHA. RLS is not re-run because PR #30 changes no SQL.
 - Existing Supabase advisor findings: leaked-password protection disabled, SECURITY DEFINER analytics RPC review warning, unused indexes and overlapping notification SELECT policies. No live Auth/grant/schema changes were made; review separately.
 - Do not claim production authenticated login, media persistence, or real booking tested. No real booking submitted.
 
