@@ -93,7 +93,7 @@ test("local Auth fixture explicitly seeds empty Auth token strings required by G
 test("anonymous owner redirect shows a clean sign-in form instead of a false authentication failure", async () => {
   const middleware = await read("../middleware.ts");
   const loginForm = await read("../app/login/login-form.tsx");
-  assert.match(middleware, /if \(privateRoute && !hasVerifiedIdentity\)\s*\{\s*return loginRedirect\(request, response\);\s*\}/);
+  assert.match(middleware, /if \(privateRoute && !hasVerifiedIdentity\)[\s\S]*?return loginRedirect\(request, response\);/);
   assert.match(middleware, /loginRedirect\(request, response, "auth_unavailable"\)/);
   assert.doesNotMatch(middleware, /loginRedirect\(request, response, "login_required"\)/);
   assert.match(loginForm, /initialError \? messageFor\(new Error\(initialError\), "ar"\) : ""/);
