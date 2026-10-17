@@ -146,3 +146,6 @@
 
 .owner-header-logo{width:132px;height:52px;object-fit:contain;flex:0 0 auto}
 @media(max-width:760px){.owner-header-logo{width:108px;height:40px}}
+
+/* Keep nested analytics grids shrinkable on narrow owner viewports. */
+.owner-stat-grid{min-width:0}
