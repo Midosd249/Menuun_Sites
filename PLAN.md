@@ -1,3 +1,11 @@
+## Current delivery status — 2026-10-18
+
+PRs #17–#29 have since delivered the auth/workspace, tenant/RLS, booking, template, analytics, notification and browser-QA work that was planned below. The original Phase 1 checklist is a historical snapshot, not the current active milestone. Current release evidence and follow-up work are recorded in `PROJECT_STATE.md`, `TASKS.md`, and `docs/SESSION_HANDOFF.md`.
+
+**Active task:** PR #30 (PR E), fixing the false login error shown after anonymous access to `/owner/`. Do not merge until Static Quality and blocking Browser QA pass on the same head. No SQL changes are included, so RLS/pgTAP is not re-run by the path-filtered workflow.
+
+---
+
 # Active Plan
 
 ## IN_PROGRESS — Phase 1: Next.js public-platform foundation
@@ -22,7 +30,7 @@
 - [ ] Verify desktop/tablet/mobile rendering, Arabic RTL, English LTR, keyboard focus and reduced motion.
 - [ ] Record browser screenshots and interaction QA evidence before merge.
 
-## Later phases — not started
+## Original later-phase roadmap (historical snapshot; superseded by current delivery status)
 1. Reconcile the actual Supabase project schema/migration history and choose the auth provider from official current documentation.
 2. Implement server-side identity, secure cookies, account lifecycle and tenant provisioning.
 3. Implement business membership/roles and database-enforced RLS/tenant isolation.
@@ -33,4 +41,4 @@
 8. Add browser E2E, accessibility, performance, SEO and security release gates.
 9. Production launch and custom-domain verification after explicit approval.
 
-Only Phase 1 is authorized by the current task. Do not start database/auth/production changes without a reviewed scope and rollback plan.
+This original Phase 1 checklist is historical. Follow the current delivery status above and the active PR description; continue to require reviewed scope and rollback plans for production database, Auth, domain, or deployment changes.
