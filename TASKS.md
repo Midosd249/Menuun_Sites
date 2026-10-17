@@ -1,3 +1,16 @@
+## Current task — PR E auth redirect UX follow-up (2026-10-18)
+
+- [x] Merge PR #29 after all three blocking gates passed on its final head.
+- [x] Confirm production Vercel deployment READY for merged SHA `bb30b1ed3162e42a0728ee6b491c50c62793734d`.
+- [x] Read-only verify the two PR D migrations are present in live Supabase migration history.
+- [x] HTTP-smoke root, public salon Arabic/English, and login routes; check recent production runtime error logs.
+- [x] Identify false login failure alert on anonymous `/owner/` redirect.
+- [ ] PR #30: pass Static Quality and Browser QA on the same head; merge only after both are green.
+- [ ] After PR #30 merges, confirm the production deployment is READY for its merge SHA and repeat the `/owner/` redirect smoke check.
+- [ ] Full authenticated production browser QA remains outstanding; do not claim a real sign-in, upload, or booking was tested.
+
+---
+
 ## Current task — production QA follow-up (2026-10-15)
 
 - [x] Squash-merge PR #17 to main: fe24e9052cda5dfdc3b8c239fcb44a7cd8fe7195.
