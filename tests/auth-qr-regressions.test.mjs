@@ -70,3 +70,11 @@ test("local Auth fixture has a confirmed user and canonical email identity", asy
   assert.ok(seed.includes("email_confirmed_at"));
   assert.ok(seed.includes("'50000000-0000-4000-8000-000000000001','50000000-0000-4000-8000-000000000001'"));
 });
+
+
+test("browser CI verifies the seeded Auth fixture can password-sign-in before Playwright", async () => {
+  const workflow = await read("../.github/workflows/browser-qa.yml");
+  assert.ok(workflow.includes("Verify seeded local Auth fixture can sign in"));
+  assert.ok(workflow.includes("/auth/v1/token?grant_type=password"));
+  assert.ok(workflow.includes("curl --fail-with-body"));
+});
