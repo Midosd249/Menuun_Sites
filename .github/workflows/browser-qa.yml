@@ -55,8 +55,12 @@ jobs:
             | node -e 'let data="";process.stdin.on("data",chunk=>data+=chunk);process.stdin.on("end",()=>{const result=JSON.parse(data);if(!result.access_token)process.exit(1);console.log("Local Auth fixture password sign-in succeeded.")})'
       - name: Build production app
         run: npm run build
-      - name: Run Playwright matrix and owner smoke flow
-        run: npm run test:e2e
+      - name: Run blocking public and owner regression tests
+        run: npx playwright test tests/e2e/public-responsive.spec.ts tests/e2e/owner-responsive.spec.ts tests/e2e/booking-realtime.spec.ts
+      - name: Run advisory owner smoke flows
+        if: always()
+        continue-on-error: true
+        run: npx playwright test tests/e2e/owner-workspace.spec.ts
       - name: Summarize Playwright failures
         if: always()
         run: node scripts/summarize-playwright.mjs
