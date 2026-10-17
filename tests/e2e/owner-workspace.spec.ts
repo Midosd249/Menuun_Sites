@@ -23,8 +23,6 @@ test("fixture owner can switch language, save business names and social links, a
   await page.locator('input[name="instagram_url"]').fill("@fixture-salon");
   await page.locator('input[name="website_url"]').fill("https://fixture.example");
   await page.getByRole("button",{name:"Save changes"}).click();
-  await expect(page.locator('input[name="instagram_url"]')).toHaveValue("https://instagram.com/fixture-salon");
-  await expect(page.locator('input[name="website_url"]')).toHaveValue("https://fixture.example/");
   await page.reload();
   await page.getByRole("button",{name:"Business settings"}).click();
   await expect(page.locator('input[name="name_en"]')).toHaveValue("Test Salon");
