@@ -1,3 +1,17 @@
+## Current verified state — 2026-10-18 (PR D merged; PR E in review)
+
+- **Main SHA:** `bb30b1ed3162e42a0728ee6b491c50c62793734d` — PR #29 (PR D) squash-merged.
+- **PR D gates on final head `90f5ef7c84941e45ccd4cce7d4416059c1aae115`:** Static Quality run `39080315030` PASS; Supabase RLS/pgTAP run `39080315015` PASS; Browser QA run `39080315012` PASS (production build plus 44 blocking Playwright tests; advisory owner smoke passed).
+- **Production:** Vercel deployment `dpl_DFtbPjDs6bcrByLaEkR5eK8SrNcC` is READY for merged SHA `bb30b1ed3162e42a0728ee6b491c50c62793734d`; production alias `https://menuun-sites.vercel.app`. Runtime error logs for the first 30 minutes returned no matching errors.
+- **Post-deploy HTTP smoke:** root, `/s/atelier-09`, `/login`, and `/s/atelier-09?lang=en` returned HTTP 200. The public salon responds in Arabic RTL by default and English LTR for `?lang=en`. These were HTTP/server-render checks, not a full production browser visual run.
+- **Supabase:** project `kphypflbkbcvgcaupxxm` is ACTIVE_HEALTHY. Live migration history includes `20261016042920 owner_analytics_details` and `20261016042937 structured_notification_payload`. Read-only SQL confirms `public.notifications.payload`, `public.appointments`, and the analytics RPCs exist; anonymous execution is denied for the three inspected analytics functions and authenticated execution is granted.
+- **Post-deploy finding:** anonymous `/owner/` redirects to the login page but incorrectly shows the generic “sign-in unavailable” alert because middleware adds `error=login_required`. PR #30 (PR E) removes that false error and adds source plus blocking Playwright regression tests.
+- **Existing Supabase advisor findings (not changed here):** leaked-password protection is disabled; three authenticated SECURITY DEFINER analytics RPCs are flagged for review; performance advisor reports unused indexes and multiple permissive notification SELECT policies. The RPCs contain membership checks; do not change live Auth settings or grants without a reviewed security plan.
+- No production rows were modified, no real booking was submitted, and no Auth settings, migrations, DNS or Vercel settings were changed during the post-merge audit.
+- **Current PR:** #30, branch `fix/owner-login-redirect-ux`, head `0b7633683027297c226c17ca31d3ed71764ac9c2`. Static Quality run `39080967236` and Browser QA run `39080967286` are the current CI runs; inspect their final results before merge. RLS/pgTAP is not re-run for PR E because no SQL/migration files changed and the workflow is path-filtered.
+
+---
+
 ## Latest verified state — 2026-10-15 (PR #17 merged; production build READY)
 
 - **Main commit:** fe24e9052cda5dfdc3b8c239fcb44a7cd8fe7195 — squash-merged PR #17, “Owner workspace auth, canonical QR links, and legacy retirement.”
