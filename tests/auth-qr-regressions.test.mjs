@@ -38,8 +38,8 @@ test("salon QR uses a canonical origin and public previews require verified salo
 
 test("local Supabase owner fixture uses the email identity provider ID contract", async () => {
   const seed = await read("../supabase/seed.sql");
-  assert.match(seed, /INSERT INTO auth\.identities[\s\S]*?provider_id[\s\S]*?'50000000-0000-4000-8000-000000000001'/);
-  assert.doesNotMatch(seed, /'email','fixture-owner@menuun\.test'/);
+  assert.match(seed, /INSERT INTO auth\\.identities[\\s\\S]*?provider_id[\\s\\S]*?'fixture-owner@menuun\\.test'/);
+  assert.match(seed, /'email','fixture-owner@menuun\\.test'/);
 });
 
 
@@ -49,10 +49,12 @@ test("browser CI applies local migrations and seed fixtures before authenticated
 });
 
 
-test("browser CI provisions the password through local Supabase Auth before browser sign-in", async () => {
+test("browser CI uses the seeded password fixture without mutating Auth through the admin API", async () => {
   const workflow = await read("../.github/workflows/browser-qa.yml");
-  assert.match(workflow, /auth\/v1\/admin\/users\/50000000-0000-4000-8000-000000000001/);
-  assert.match(workflow, /FixturePass123!/);
+  const seed = await read("../supabase/seed.sql");
+  assert.match(seed, /FixturePass123!/);
+  assert.match(workflow, /supabase db reset/);
+  assert.doesNotMatch(workflow, /auth\\/v1\\/admin\\/users/);
 });
 
 
