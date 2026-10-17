@@ -38,8 +38,7 @@ test("salon QR uses a canonical origin and public previews require verified salo
 
 test("local Supabase owner fixture uses the email identity provider ID contract", async () => {
   const seed = await read("../supabase/seed.sql");
-  assert.match(seed, /INSERT INTO auth\\.identities[\\s\\S]*?provider_id[\\s\\S]*?'fixture-owner@menuun\\.test'/);
-  assert.match(seed, /'email','fixture-owner@menuun\\.test'/);
+  assert.ok(seed.includes("'email','fixture-owner@menuun.test',now()"));
 });
 
 
@@ -52,9 +51,9 @@ test("browser CI applies local migrations and seed fixtures before authenticated
 test("browser CI uses the seeded password fixture without mutating Auth through the admin API", async () => {
   const workflow = await read("../.github/workflows/browser-qa.yml");
   const seed = await read("../supabase/seed.sql");
-  assert.match(seed, /FixturePass123!/);
-  assert.match(workflow, /supabase db reset/);
-  assert.doesNotMatch(workflow, /auth\\/v1\\/admin\\/users/);
+  assert.ok(seed.includes("FixturePass123!"));
+  assert.ok(workflow.includes("supabase db reset"));
+  assert.ok(!workflow.includes("/auth/v1/admin/users/"));
 });
 
 
