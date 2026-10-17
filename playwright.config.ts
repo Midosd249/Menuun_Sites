@@ -5,7 +5,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: [["list"],["html",{outputFolder:"playwright-report",open:"never"}]],
+  reporter: [["list"],["github"],["html",{outputFolder:"playwright-report",open:"never"}],["json",{outputFile:"test-results/results.json"}]],
   outputDir: "test-results",
   use: {
     baseURL: "http://127.0.0.1:3000",

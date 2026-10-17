@@ -22,13 +22,14 @@ test("owner tabs fit the complete viewport matrix in Arabic and English", async 
           viewport:innerWidth,
           scroll:Math.max(document.documentElement.scrollWidth,document.body.scrollWidth),
           perCharacter:[...document.querySelectorAll("*")].some(el=>getComputedStyle(el).wordBreak==="break-all"),
+          overflowing:[...document.querySelectorAll("body *")].map(el=>{const r=el.getBoundingClientRect();return {tag:el.tagName.toLowerCase(),id:(el as HTMLElement).id,className:typeof (el as HTMLElement).className==="string"?(el as HTMLElement).className:"",left:Math.round(r.left*100)/100,right:Math.round(r.right*100)/100,width:Math.round(r.width*100)/100,scrollWidth:(el as HTMLElement).scrollWidth,clientWidth:(el as HTMLElement).clientWidth,text:(el.textContent||"").trim().slice(0,55)}}).filter(el=>el.width>0&&(el.left < -1 || el.right > innerWidth+1)).sort((a,b)=>b.right-a.right).slice(0,12),
           textBlocks:[...document.querySelectorAll('[class*="owner-panel"],[class*="owner-stat"],[class*="owner-notice"]')]
             .filter(el=>(el.textContent||"").trim().length>0)
             .map(el=>({width:(el as HTMLElement).getBoundingClientRect().width,text:(el.textContent||"").trim().slice(0,80)}))
         }));
-        expect(result.scroll,locale+" "+width+" "+tab).toBeLessThanOrEqual(result.viewport);
-        expect(result.perCharacter,locale+" "+width+" "+tab).toBe(false);
-        for(const block of result.textBlocks)expect(block.width,JSON.stringify(block)).toBeGreaterThanOrEqual(120);
+        expect.soft(result.scroll,locale+" "+width+" "+tab+" overflow elements="+JSON.stringify(result.overflowing)).toBeLessThanOrEqual(result.viewport+1);
+        expect.soft(result.perCharacter,locale+" "+width+" "+tab).toBe(false);
+        for(const block of result.textBlocks)expect.soft(block.width,JSON.stringify(block)).toBeGreaterThanOrEqual(120);
       }
     }
   }

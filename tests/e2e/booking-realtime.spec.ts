@@ -30,6 +30,10 @@ test("a real local public booking INSERT reaches the owner via Realtime and chim
 
   const bookingPage=await page.context().newPage();
   await bookingPage.goto("/s/fixture-atelier?lang=en");
+  const dateInput=bookingPage.getByLabel("Date");
+  const nextDate=new Date((await dateInput.inputValue())+"T12:00:00Z");
+  nextDate.setUTCDate(nextDate.getUTCDate()+1);
+  await dateInput.fill(nextDate.toISOString().slice(0,10));
   const slot=bookingPage.locator('section[id="booking"] button[aria-pressed]').first();
   await expect(slot).toBeVisible({timeout:20000});
   await slot.click();
