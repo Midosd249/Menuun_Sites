@@ -85,6 +85,6 @@ test("local Auth fixture explicitly seeds empty Auth token strings required by G
   for (const column of ["confirmation_token", "email_change", "email_change_token_new", "recovery_token", "email_change_token_current"]) {
     assert.match(seed, new RegExp(column), column + " must be explicitly seeded");
   }
-  assert.match(seed, /confirmation_token[\\s\\S]*?email_change[\\s\\S]*?email_change_token_new[\\s\\S]*?recovery_token/);
-  assert.match(seed, /SET[\\s\\S]*?confirmation_token=''/);
+  assert.match(seed, /confirmation_token[\s\S]*?email_change[\s\S]*?email_change_token_new[\s\S]*?recovery_token/);
+  assert.match(seed, /SET[\s\S]*?confirmation_token=''/);
 });
