@@ -138,7 +138,7 @@
 /* Owner statistics cards stay stacked until there is room for two readable columns. */
 .owner-stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 .owner-stat-grid>*{min-width:0;overflow-wrap:normal;word-break:normal}
-.owner-stat-grid .owner-panel{width:100%;min-width:min(280px,100%);box-sizing:border-box}
+.owner-stat-grid .owner-panel{width:100%;min-width:0;box-sizing:border-box}
 .owner-stat-grid input[type="range"]{width:min(150px,100%);max-width:100%;min-width:0;accent-color:var(--ow-green)}
 .owner-badge{max-width:100%;white-space:normal;overflow-wrap:anywhere}
 @media(max-width:900px){.owner-stat-grid{grid-template-columns:minmax(0,1fr)}}
