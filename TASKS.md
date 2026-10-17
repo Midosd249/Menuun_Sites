@@ -5,7 +5,7 @@
 - [x] Read-only verify the two PR D migrations are present in live Supabase migration history.
 - [x] HTTP-smoke root, public salon Arabic/English, and login routes; check recent production runtime error logs.
 - [x] Identify false login failure alert on anonymous `/owner/` redirect.
-- [ ] PR #30: pass Static Quality and Browser QA on the same head; merge only after both are green.
+- [ ] PR #30: pass Static Quality and Browser QA on the same final head; merge only after both are green.
 - [ ] After PR #30 merges, confirm the production deployment is READY for its merge SHA and repeat the `/owner/` redirect smoke check.
 - [ ] Full authenticated production browser QA remains outstanding; do not claim a real sign-in, upload, or booking was tested.
 
