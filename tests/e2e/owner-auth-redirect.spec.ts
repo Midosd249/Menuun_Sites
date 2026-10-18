@@ -4,5 +4,6 @@ test("anonymous owner access redirects to a clean sign-in page", async ({ page }
   await page.goto("/owner/");
   await expect(page).toHaveURL(/\/login\?next=%2Fowner$/);
   await expect(page.getByRole("heading", { name: "تسجيل الدخول" })).toBeVisible();
-  await expect(page.getByRole("alert")).toHaveCount(0);
+  const alerts = await page.getByRole("alert").allTextContents();
+  expect(alerts, `unexpected sign-in alert(s): ${alerts.join(" | ")}`).toHaveLength(0);
 });
