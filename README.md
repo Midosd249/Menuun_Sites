@@ -78,3 +78,8 @@ This branch adds the SSR client/session foundation only. The login and signup sc
 - `getVerifiedClaims()` validates identity with `auth.getClaims()`; it intentionally does not treat `getSession()` as proof of identity.
 - Auth callback and sign-out redirects are restricted to local same-origin paths.
 - **Not yet implemented:** login/signup form integration, verified business membership/role checks, tenant provisioning, RLS integration tests, real email delivery/recovery tests, browser E2E, and production enablement.
+
+
+## AI tools and workflow reference
+
+The Arabic catalog of connected tools, design/engineering workflows, practical Menuun examples, and verification boundaries is maintained in [`docs/AI_TOOLS_CATALOG_AR.md`](docs/AI_TOOLS_CATALOG_AR.md). Update that catalog when additional tools are documented; tool names alone do not prove a connector is available or has been executed.
