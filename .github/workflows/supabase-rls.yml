@@ -33,7 +33,7 @@ jobs:
         id: supabase-cli
         uses: supabase/setup-cli@v3
         with:
-          version: v2.stable
+          version: latest
 
       - name: Start disposable local Supabase database
         run: supabase start -x studio,mailpit,edge-runtime,logflare,vector
