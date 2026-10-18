@@ -96,5 +96,6 @@ test("anonymous owner redirect shows a clean sign-in form instead of a false aut
   assert.match(middleware, /if \(privateRoute && !hasVerifiedIdentity\)[\s\S]*?return loginRedirect\(request, response\);/);
   assert.match(middleware, /loginRedirect\(request, response, "auth_unavailable"\)/);
   assert.doesNotMatch(middleware, /loginRedirect\(request, response, "login_required"\)/);
+  assert.match(loginForm, /if \(\/login_required\/\.test\(message\)\) return ""/);
   assert.match(loginForm, /initialError \? messageFor\(new Error\(initialError\), "ar"\) : ""/);
 });
