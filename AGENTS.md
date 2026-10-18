@@ -40,3 +40,12 @@ Build Menuun as a professional Arabic-first, bilingual SaaS platform for appoint
 - Report exact files/commits, test/build results, deployment status, remaining unknowns, and next task.
 - Never claim `DEPLOYED` without direct Vercel evidence.
 - Keep the plan and research log consistent with implementation state.
+
+## Mandatory tool-catalog workflow
+- For every repository task, before deciding how to proceed, read `docs/AI_TOOLS_CATALOG_AR.md` and select the tools/workflows that materially help the specific task. This applies to coding, debugging, research, design, documentation, testing, deployment analysis, and repository maintenance—not only tasks that explicitly mention AI tools.
+- Do not wait for the user to name or tag a tool. Discover available connected tools, choose the best fit, and invoke them when relevant, authorized, and useful. Combine tools when the task benefits from it; for example, use Exa for external research and GitHub for repository inspection or changes.
+- Treat the catalog as a selection guide, not proof that a tool is currently connected or that every feature is authorized. Verify availability and permissions at the time of use; if unavailable or unsuccessful, state the limitation and use a safe alternative where possible.
+- Read the relevant tool entry before using an unfamiliar tool. Prefer evidence from the repository and primary/current sources; distinguish verified facts from proposals and assumptions.
+- After tool-assisted work, verify the resulting artifact or action where practical and report what was actually completed. Never claim an action succeeded without evidence.
+- Keep the catalog current: when a useful tool or workflow is discovered that is missing, propose or add a concise entry to `docs/AI_TOOLS_CATALOG_AR.md` as part of the relevant documentation work, without turning every task into unnecessary catalog maintenance.
+- These instructions govern work in this repository. To make the same rule durable in another repository, add an equivalent instruction to that repository's `AGENTS.md` (or its agent instruction file); a file in this repository cannot enforce behavior in unrelated repositories or override platform/tool availability.
