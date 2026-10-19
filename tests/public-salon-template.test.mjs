@@ -105,7 +105,7 @@ test("public salon uses the saved template unless an authenticated salon member 
   assert.match(page, /\.eq\("salon_id", salon\.id\)/);
   assert.match(page, /previewTemplate \|\| salon\.template_key \|\| "atelier"/);
   assert.match(picker, /\?template=/);
-  assert.match(qr, /templateName/);
+  assert.doesNotMatch(qr, /templateName|TEMPLATE_NAMES|Vercel|القالب\s+المحفوظ|saved\s+template|preview\s+address/i);
   assert.match(picker, /name: "Forge Men"/);
 });
 
