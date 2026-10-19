@@ -35,8 +35,8 @@ test("salon QR controls provide stable page URL, copy and download actions", () 
   assert.match(page, /waHref\(/);
   assert.match(page, /Book this service/);
   assert.match(qr, /create-qr-code/);
-  assert.doesNotMatch(qr, /templateName|TEMPLATE_NAMES|Vercel|القالب\s+المحفوظ|saved\s+template|preview\s+address/i);
-  assert.match(qr, /navigator\.share/);
+  assert.doesNotMatch(ownerQr, /templateName|TEMPLATE_NAMES|Vercel|القالب\s+المحفوظ|saved\s+template|preview\s+address/i);
+  assert.match(ownerQr, /navigator\.share/);
   assert.match(page, /templateName=\{english \? "Salon website" : "موقع الصالون"\}/);
   assert.match(qr, /navigator\.clipboard\.writeText/);
   assert.match(qr, /download/);
@@ -105,7 +105,7 @@ test("public salon uses the saved template unless an authenticated salon member 
   assert.match(page, /\.eq\("salon_id", salon\.id\)/);
   assert.match(page, /previewTemplate \|\| salon\.template_key \|\| "atelier"/);
   assert.match(picker, /\?template=/);
-  assert.doesNotMatch(qr, /templateName|TEMPLATE_NAMES|Vercel|القالب\s+المحفوظ|saved\s+template|preview\s+address/i);
+  assert.doesNotMatch(ownerQr, /templateName|TEMPLATE_NAMES|Vercel|القالب\s+المحفوظ|saved\s+template|preview\s+address/i);
   assert.match(picker, /name: "Forge Men"/);
 });
 
