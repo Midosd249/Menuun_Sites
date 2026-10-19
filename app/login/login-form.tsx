@@ -39,6 +39,7 @@ function messageFor(error: unknown, lang: Language): string {
   if (/invalid login credentials|invalid email or password/.test(message)) return c.invalid;
   if (/email not confirmed|email_not_confirmed/.test(message)) return c.unconfirmed;
   if (/rate limit|too many requests|over_email_send_rate_limit/.test(message)) return c.throttled;
+  if (/login_required/.test(message)) return "";
   if (/auth_unavailable/.test(message)) return c.auth_unavailable;
   if (/callback_failed/.test(message)) return c.callback_failed;
   if (/missing_code/.test(message)) return c.missing_code;
