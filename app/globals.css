@@ -158,3 +158,13 @@
 .owner-stat-grid input,.owner-stat-grid select,.owner-stat-grid button{max-width:100%;min-width:0}
 @media(max-width:900px){.owner-stat-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,9rem),1fr))}}
 @media(max-width:300px){.owner-stat-grid{grid-template-columns:minmax(0,1fr)}}
+
+
+/* Keep the owner QR card focused on the salon identity and sharing actions. */
+.owner-qr-card h2{margin:0 0 14px;font-size:18px}
+.owner-qr-card-content{display:grid;grid-template-columns:minmax(0,1fr) 150px;grid-template-rows:auto 1fr;gap:14px 18px;align-items:center;min-width:0}
+.owner-qr-card-link{grid-column:1;grid-row:1;margin:0;color:#36533d;font-size:12px;overflow-wrap:anywhere}
+.owner-qr-card-image{grid-column:2;grid-row:1/3;display:block;width:150px;height:150px;max-width:100%;box-sizing:border-box;background:#fff;border-radius:8px;padding:7px}
+.owner-qr-card-actions{grid-column:1;grid-row:2;display:flex;gap:8px;flex-wrap:wrap;align-items:center;min-width:0}
+.owner-qr-card-actions>*{max-width:100%;min-width:0}
+@media(max-width:480px){.owner-qr-card-content{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto}.owner-qr-card-link,.owner-qr-card-actions,.owner-qr-card-image{grid-column:1;grid-row:auto}.owner-qr-card-image{justify-self:center}}

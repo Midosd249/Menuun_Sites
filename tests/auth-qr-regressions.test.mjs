@@ -28,7 +28,8 @@ test("salon QR uses a canonical origin and public previews require verified salo
   const publicPage = await read("../app/s/[slug]/page.tsx");
   assert.match(qr, /MENUUN_PUBLIC_ORIGIN|publicOrigin/);
   assert.doesNotMatch(qr, /window\.location\.origin/);
-  assert.match(qr, /templateName|templateLabel/);
+  assert.doesNotMatch(qr, /templateName|templateLabel|Vercel|القالب\s+المحفوظ|saved\s+template|preview\s+address/i);
+  assert.match(qr, /navigator\.share/);
   assert.match(workspace, /template_key/);
   assert.match(publicPage, /authDb\.auth\.getClaims\(\)/);
   assert.match(publicPage, /from\("salon_members"\)/);

@@ -10,7 +10,7 @@ test("workspace supports RTL and narrow mobile layouts",async()=>{const s=await 
 test("login persists Supabase auth through the shared SSR cookie client",async()=>{const s=await read("../app/page.tsx");assert.match(s,/createSupabaseBrowserClient/);assert.doesNotMatch(s,/createClient\(url, key, \{ auth: \{ persistSession: true/)});
 test("Supabase public env vars are statically referenced for Next.js browser bundling",async()=>{const s=await read("../lib/supabase/config.ts");assert.ok(s.includes("process.env.NEXT_PUBLIC_SUPABASE_URL"));assert.ok(s.includes("process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"));assert.doesNotMatch(s,/env: NodeJS\.ProcessEnv = process\.env/)});
 
-test("owner QR uses canonical server origin and saved template state",async()=>{
+test("owner QR uses the canonical origin and customer-facing sharing actions",async()=>{
  const qr=await read("../app/owner/qr-card.tsx");
  const layout=await read("../app/owner/layout.tsx");
  const origin=await read("../lib/public-origin.ts");
@@ -20,7 +20,8 @@ test("owner QR uses canonical server origin and saved template state",async()=>{
  assert.match(layout,/getMenuunPublicOrigin/);
  assert.match(origin,/MENUUN_PUBLIC_ORIGIN/);
  assert.match(qr,/usePublicOrigin/);
- assert.match(qr,/TEMPLATE_NAMES\[templateKey \|\| "atelier"\]/);
+ assert.doesNotMatch(qr,/TEMPLATE_NAMES|templateKey|Vercel|القالب\s+المحفوظ|saved\s+template|preview\s+address/i);
+ assert.match(qr,/navigator\.share/);
  assert.doesNotMatch(qr,/window\.location\.origin/);
  assert.match(publicQr,/publicOrigin/);
  assert.doesNotMatch(publicQr,/window\.location\.origin/);
