@@ -5,7 +5,8 @@
   "git": {
     "deploymentEnabled": {
       "feat/*": false,
-      "fix/*": false
+      "fix/*": false,
+      "archive/*": false
     }
   }
 }
