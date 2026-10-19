@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { Facebook, Globe, ImagePlus, Instagram, MapPin, Trash2, Upload } from "lucide-react";
+import { normalizeSocialUrl } from "./social-links.mjs";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const BUCKET = "salon-public-media";
@@ -16,15 +17,6 @@ function safeName(name: string) { return name.normalize("NFKD").replace(/[^a-zA-
 function validateImage(file: File) {
   if (!["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type)) throw new Error("استخدم صورة بصيغة JPG أو PNG أو WebP أو AVIF.");
   if (file.size > MAX_FILE_SIZE) throw new Error("الحد الأقصى لحجم الصورة 10 ميجابايت.");
-}
-function normalizeUrl(value: string) {
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  const candidate = /^https?:\/\//i.test(trimmed) ? trimmed : "https://" + trimmed;
-  let parsed: URL;
-  try { parsed = new URL(candidate); } catch { throw new Error("أحد الروابط غير صالح."); }
-  if (parsed.protocol !== "https:" || !parsed.hostname.includes(".")) throw new Error("استخدم روابط آمنة تبدأ بـ https://.");
-  return parsed.toString();
 }
 function pathFromPublicUrl(url: string | null) {
   if (!url) return null;
@@ -253,12 +245,12 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl, lang = "ar" 
     try {
       if (!socialLinksAvailable) throw new Error("يلزم تطبيق تحديث قاعدة البيانات لتفعيل روابط التواصل.");
       const payload = {
-        instagram_url: normalizeUrl(links.instagram_url),
-        tiktok_url: normalizeUrl(links.tiktok_url),
-        snapchat_url: normalizeUrl(links.snapchat_url),
-        facebook_url: normalizeUrl(links.facebook_url),
-        google_maps_url: normalizeUrl(links.google_maps_url),
-        website_url: normalizeUrl(links.website_url)
+        instagram_url: normalizeSocialUrl("instagram", links.instagram_url),
+        tiktok_url: normalizeSocialUrl("tiktok", links.tiktok_url),
+        snapchat_url: normalizeSocialUrl("snapchat", links.snapchat_url),
+        facebook_url: normalizeSocialUrl("facebook", links.facebook_url),
+        google_maps_url: normalizeSocialUrl("google_maps", links.google_maps_url),
+        website_url: normalizeSocialUrl("website", links.website_url)
       };
       const { data, error } = await db.from("salons").update(payload).eq("id", salonId).select("id").maybeSingle();
       if (error) throw error;
