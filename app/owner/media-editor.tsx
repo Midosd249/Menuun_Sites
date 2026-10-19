@@ -312,7 +312,7 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl, lang = "ar" 
         <label><span><MapPin size={15}/> رابط خرائط Google</span><input type="url" name="google_maps_url" dir="ltr" placeholder="https://maps.google.com/..." value={links.google_maps_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,google_maps_url:e.target.value}))}/></label>
         <label><span><Globe size={15}/> الموقع الإلكتروني</span><input type="url" name="website_url" dir="ltr" placeholder="https://your-salon.com" value={links.website_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,website_url:e.target.value}))}/></label>
       </div>
-      <button type="submit" className="owner-primary" disabled={busy||!socialLinksAvailable}>{busy?"جارٍ الحفظ…":"حفظ روابط التواصل"}</button>
+      <button type="submit" className="owner-primary" disabled={busy||!socialLinksAvailable}>{busy?(lang === "ar" ? "جارٍ الحفظ…" : "Saving…"):(lang === "ar" ? "حفظ روابط التواصل" : "Save social links")}</button>
     </form>
     {notice&&<p role="status" className="owner-notice" style={{marginTop:14}}>{notice}</p>}
   </section>;
