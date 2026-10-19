@@ -79,7 +79,8 @@ export async function middleware(request: NextRequest) {
   }
 
   if (privateRoute && !hasVerifiedIdentity) {
-    return loginRedirect(request, response, "login_required");
+    // An anonymous visit needs a sign-in prompt, not an authentication failure banner.
+    return loginRedirect(request, response);
   }
 
   if (privateRoute) {
