@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 
 const owner = readFileSync(new URL("../app/owner/page.tsx", import.meta.url), "utf8");
+const mediaEditor = readFileSync(new URL("../app/owner/media-editor.tsx", import.meta.url), "utf8");
 const baseGrants = readFileSync(new URL("../supabase/migrations/20261015231139_salons_column_update_grants.sql", import.meta.url), "utf8");
 const socialGrants = readFileSync(new URL("../supabase/migrations/20261016040234_owner_social_link_grants_and_appointment_realtime.sql", import.meta.url), "utf8");
 const grantColumns = source => [...source.matchAll(/GRANT UPDATE \(([\s\S]*?)\) ON TABLE public\.salons TO authenticated;/g)].flatMap(match => match[1].split(",").map(x => x.trim()).filter(Boolean));
@@ -13,6 +14,11 @@ test("every owner salon-update field is covered by the narrow grant union", () =
     assert.ok(allowed.has(key), "missing salon UPDATE grant for owner field: " + key);
   }
   assert.match(owner, /from\("salons"\)\.update\(p\)/);
+  assert.doesNotMatch(owner, /instagram_url|tiktok_url|snapchat_url|facebook_url|google_maps_url|website_url/);
+  assert.match(mediaEditor, /from\("salons"\)\.update\(payload\)/);
+  for (const key of ["instagram_url","tiktok_url","snapchat_url","facebook_url","google_maps_url","website_url"]) {
+    assert.ok(mediaEditor.includes(key), "the Website & social media form must write " + key);
+  }
 });
 
 test("sensitive salon identity and publication columns are never granted by the new migration", () => {

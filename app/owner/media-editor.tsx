@@ -33,7 +33,7 @@ function pathFromPublicUrl(url: string | null) {
   return index >= 0 ? decodeURIComponent(url.slice(index + marker.length).split("?")[0]) : null;
 }
 
-export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId: string; initialLogoUrl: string | null }) {
+export default function SalonMediaEditor({ salonId, initialLogoUrl, lang = "ar" }: { salonId: string; initialLogoUrl: string | null; lang?: "ar" | "en" }) {
   const [db] = useState(() => createSupabaseBrowserClient());
   const [logoUrl, setLogoUrl] = useState(initialLogoUrl);
   const [media, setMedia] = useState<MediaAsset[]>([]);
@@ -301,16 +301,16 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl }: { salonId:
     <div className="menuun-gallery-grid">{media.map(item=><article className="menuun-gallery-item" key={item.id}>{item.public_url&&<img src={item.public_url} alt={item.alt_ar||"صورة من الصالون"}/>}<span>{item.alt_ar||"صورة الصالون"}</span><label>النص البديل بالعربية<input defaultValue={item.alt_ar||""} maxLength={250} onBlur={e=>saveAltText(item,"alt_ar",e.currentTarget.value)}/></label><label>Alt text in English<input defaultValue={item.alt_en||""} maxLength={250} onBlur={e=>saveAltText(item,"alt_en",e.currentTarget.value)}/></label><button type="button" className="owner-small-danger" disabled={busy} onClick={()=>removeImage(item)} aria-label="حذف الصورة"><Trash2 size={14}/> حذف</button></article>)}</div>
 
     <form onSubmit={saveSocialLinks} className="menuun-social-form">
-      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><Globe size={18}/><h3 style={{margin:0,fontSize:15}}>الموقع وروابط التواصل الاجتماعي</h3></div>
+      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}><Globe size={18}/><h3 style={{margin:0,fontSize:15}}>{lang === "ar" ? "الموقع ووسائل التواصل الاجتماعي" : "Website & social media"}</h3></div>
       <p style={{fontSize:12,color:"#697469",lineHeight:1.9,marginTop:0}}>أدخل الروابط الكاملة التي تريد عرضها للزوار. لا نعرض إلا الروابط الآمنة التي تبدأ بـ HTTPS.</p>
       {!socialLinksAvailable && <p role="status" className="owner-notice">تحديث قاعدة البيانات مطلوب لتفعيل روابط التواصل والموقع.</p>}
       <div className="menuun-social-grid">
-        <label><span><Instagram size={15}/> Instagram</span><input type="url" dir="ltr" placeholder="https://instagram.com/..." value={links.instagram_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,instagram_url:e.target.value}))}/></label>
-        <label><span><span style={{fontWeight:800}}>♪</span> TikTok</span><input type="url" dir="ltr" placeholder="https://tiktok.com/@..." value={links.tiktok_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,tiktok_url:e.target.value}))}/></label>
-        <label><span><span style={{fontWeight:800}}>S</span> Snapchat</span><input type="url" dir="ltr" placeholder="https://snapchat.com/add/..." value={links.snapchat_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,snapchat_url:e.target.value}))}/></label>
-        <label><span><Facebook size={15}/> Facebook</span><input type="url" dir="ltr" placeholder="https://facebook.com/..." value={links.facebook_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,facebook_url:e.target.value}))}/></label>
-        <label><span><MapPin size={15}/> رابط خرائط Google</span><input type="url" dir="ltr" placeholder="https://maps.google.com/..." value={links.google_maps_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,google_maps_url:e.target.value}))}/></label>
-        <label><span><Globe size={15}/> الموقع الإلكتروني</span><input type="url" dir="ltr" placeholder="https://your-salon.com" value={links.website_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,website_url:e.target.value}))}/></label>
+        <label><span><Instagram size={15}/> Instagram</span><input type="url" name="instagram_url" dir="ltr" placeholder="https://instagram.com/..." value={links.instagram_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,instagram_url:e.target.value}))}/></label>
+        <label><span><span style={{fontWeight:800}}>♪</span> TikTok</span><input type="url" name="tiktok_url" dir="ltr" placeholder="https://tiktok.com/@..." value={links.tiktok_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,tiktok_url:e.target.value}))}/></label>
+        <label><span><span style={{fontWeight:800}}>S</span> Snapchat</span><input type="url" name="snapchat_url" dir="ltr" placeholder="https://snapchat.com/add/..." value={links.snapchat_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,snapchat_url:e.target.value}))}/></label>
+        <label><span><Facebook size={15}/> Facebook</span><input type="url" name="facebook_url" dir="ltr" placeholder="https://facebook.com/..." value={links.facebook_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,facebook_url:e.target.value}))}/></label>
+        <label><span><MapPin size={15}/> رابط خرائط Google</span><input type="url" name="google_maps_url" dir="ltr" placeholder="https://maps.google.com/..." value={links.google_maps_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,google_maps_url:e.target.value}))}/></label>
+        <label><span><Globe size={15}/> الموقع الإلكتروني</span><input type="url" name="website_url" dir="ltr" placeholder="https://your-salon.com" value={links.website_url} disabled={busy||!socialLinksAvailable} onChange={e=>setLinks(v=>({...v,website_url:e.target.value}))}/></label>
       </div>
       <button type="submit" className="owner-primary" disabled={busy||!socialLinksAvailable}>{busy?"جارٍ الحفظ…":"حفظ روابط التواصل"}</button>
     </form>
