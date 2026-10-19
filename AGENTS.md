@@ -49,3 +49,10 @@ Build Menuun as a professional Arabic-first, bilingual SaaS platform for appoint
 - After tool-assisted work, verify the resulting artifact or action where practical and report what was actually completed. Never claim an action succeeded without evidence.
 - Keep the catalog current: when a useful tool or workflow is discovered that is missing, propose or add a concise entry to `docs/AI_TOOLS_CATALOG_AR.md` as part of the relevant documentation work, without turning every task into unnecessary catalog maintenance.
 - These instructions govern work in this repository. To make the same rule durable in another repository, add an equivalent instruction to that repository's `AGENTS.md` (or its agent instruction file); a file in this repository cannot enforce behavior in unrelated repositories or override platform/tool availability.
+
+
+## Branch and merge policy
+- Use squash merges only; do not create merge commits when merging pull requests.
+- Start every task on a new short-lived branch created from the current `main`; do not continue work on an old task branch.
+- Never merge long-lived or historical development branches into `main`. Preserve their exact tips with `archive/2026-10-18/<original-branch-name>` branches instead.
+- Archive branches are preservation-only: never merge them and never deploy them. Keep `archive/*` disabled in Vercel deployment settings.
