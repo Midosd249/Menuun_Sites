@@ -73,7 +73,7 @@ export default function SalonAiAssistant({ slug, language }: { slug: string; lan
             <input id={`salon-ai-input-${slug}`} value={input} onChange={(event) => setInput(event.target.value)} maxLength={700} placeholder={text.placeholder} disabled={busy} autoComplete="off" />
             <button type="submit" disabled={busy || !input.trim()} aria-label={text.send}><Send size={18} /></button>
           </form>
-          <p className={styles.disclaimer}>{english ? "AI answers may be incomplete. Confirm booking details with the salon." : "قد تكون إجابات الذكاء الاصطناعي غير مكتملة؛ أكّد تفاصيل الحجز مع الصالون."}</p>
+          <p className={styles.disclaimer}>{english ? "AI answers may be incomplete. Confirm booking details with the salon. Don’t share personal or sensitive information." : "قد تكون إجابات الذكاء الاصطناعي غير مكتملة؛ أكّد تفاصيل الحجز مع الصالون، ولا ترسل بيانات شخصية أو حساسة."}</p>
         </section>
       )}
       <button className={styles.launcher} type="button" onClick={() => setOpen((value) => !value)} aria-expanded={open} aria-label={open ? (english ? "Close AI assistant" : "إغلاق مساعد الذكاء الاصطناعي") : text.title}>
