@@ -42,14 +42,14 @@ Request JSON:
 
 ## Provider support and known limits
 The adapter currently recognizes these server-side variables, in this provider order:
-- `CODE_CRAFT_API` → CodeCraft OpenAI-compatible API, `https://codecraftapi.com/v1/chat/completions`, model `qwen3.8-27b`.
+- `CODE_CRAFT_API` → CodeCraft OpenAI-compatible API, `https://www.codecraftapi.com/v1/chat/completions`, model `qwen3.8-27b`.
 - `ITERACOMPUTE_API` → IteraCompute `POST https://api.iteracompute.com/v1/chat/completions`, model `qwen/qwen3.8-27b`.
 - `INCEPTION_API_KEY`, `INCEPTION_API_KEY2`, `INCEPTION_API_KEY3` → Inception Labs `/v1/chat/completions`, model `mercury-2.5`.
 - `CEREBRAS_API` → Cerebras `/v1/chat/completions`, model `qwen-3.8-27b`.
 - `GROK_API` → xAI `/v1/chat/completions`, model `grok-3-mini`.
 - `NVIDIA_NIM_API` → NVIDIA NIM `/v1/chat/completions`, model `meta/llama-3.3-70b-instruct`.
 
-CodeCraft's official page documents an OpenAI-compatible base URL and Chat Completions SDK usage; the `/chat/completions` path is the OpenAI-compatible route. IteraCompute explicitly documents the endpoint, bearer authentication, response shape, and model ID above. Model catalogs and account entitlements can change. Environment-variable presence alone does not prove a key is valid, funded, or entitled to the selected model. Provider failures are intentionally not logged with raw details.
+CodeCraft's official docs specify `https://www.codecraftapi.com/v1/chat/completions` (including `www`) and state that model IDs must come from its current `/v1/models` catalog. The configured `qwen3.8-27b` ID was not independently confirmed from the documentation excerpt reviewed here and remains a verification item; do not assume it is available to the account. IteraCompute explicitly documents the endpoint, bearer authentication, response shape, and model ID above. Model catalogs and account entitlements can change. Environment-variable presence alone does not prove a key is valid, funded, or entitled to the selected model. Provider failures are intentionally not logged with raw details.
 
 Official docs:
 - CodeCraft: https://codecraftapi.com/
