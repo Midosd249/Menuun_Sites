@@ -41,7 +41,7 @@ function configuredProviders(): Provider[] {
   const providers: Provider[] = [];
   // Prefer the additional OpenAI-compatible gateways whose contracts were checked
   // against their current official documentation. Keep all credentials server-side.
-  if (env.CODE_CRAFT_API) providers.push({ name: "codecraft", endpoint: "https://codecraftapi.com/v1/chat/completions", key: env.CODE_CRAFT_API, model: "qwen3.8-27b" });
+  if (env.CODE_CRAFT_API) providers.push({ name: "codecraft", endpoint: "https://www.codecraftapi.com/v1/chat/completions", key: env.CODE_CRAFT_API, model: "qwen3.8-27b" });
   if (env.ITERACOMPUTE_API) providers.push({ name: "iteracompute", endpoint: "https://api.iteracompute.com/v1/chat/completions", key: env.ITERACOMPUTE_API, model: "qwen/qwen3.8-27b" });
   const inceptionKeys = [env.INCEPTION_API_KEY, env.INCEPTION_API_KEY2, env.INCEPTION_API_KEY3].filter((key): key is string => Boolean(key?.trim()));
   for (const key of inceptionKeys) {
@@ -125,15 +125,19 @@ export async function POST(request: NextRequest) {
     return jsonError("تم تجاوز عدد الرسائل المسموح مؤقتًا. حاول بعد دقيقة.", 429);
   }
 
-  let input: { slug?: unknown; language?: unknown; messages?: unknown };
+  let parsed: unknown;
   try {
     const raw = await request.text();
     if (!raw || raw.length > 12_000) return jsonError("حجم الطلب غير صالح.", 413);
-    input = JSON.parse(raw);
+    parsed = JSON.parse(raw);
   } catch {
     return jsonError("تعذر قراءة الطلب.", 400);
   }
 
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return jsonError("صيغة الطلب غير صالحة.", 400);
+  }
+  const input = parsed as { slug?: unknown; language?: unknown; messages?: unknown };
   const slug = typeof input.slug === "string" ? input.slug.trim() : "";
   const language = input.language === "en" ? "en" : "ar";
   if (!/^[a-z0-9][a-z0-9-]{0,99}$/i.test(slug)) return jsonError("معرّف الصالون غير صالح.", 400);
