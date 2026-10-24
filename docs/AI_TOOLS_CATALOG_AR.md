@@ -240,4 +240,4 @@ Menuun منصة عربية أولًا وثنائية اللغة لخدمات ا�
 | **GitHub** | فحص المصدر وفتح فرع مستقل وإضافة route وواجهة عائمة واختبارات ووثيقة عقد. | لا يعني إنشاء الملفات أن البناء أو CI أو Preview قد نجح؛ يلزم دليل مباشر من CI/Vercel. |
 | **Vercel** | التحقق لاحقًا من Preview وإعدادات Environment Variable names فقط. | لا كشف لقيم الأسرار، ولا redeploy أو تغيير إعدادات المشروع دون تفويض. |
 
-تفاصيل العقد وحدود الأمان في `docs/ai/public-salon-assistant.md`. المتغيرات `CODE_CRAFT_API` و`ITERACOMPUTE_API` و`JEF_TYPE_SAFE` غير مستخدمة حتى تتوفر وثائق رسمية موثوقة.
+تفاصيل العقد وحدود الأمان في `docs/ai/public-salon-assistant.md`. تمت مراجعة الوثائق الرسمية لـ CodeCraft وIteraCompute وإضافة المتغيرين `CODE_CRAFT_API` و`ITERACOMPUTE_API` إلى مسار Chat Completions مع معرفي النموذج الموثقين في وثيقة الميزة. المتغير `JEF_TYPE_SAFE` يعود إلى TypeSafe Jev، لكن Jev واجهة قرارات منظمة (`state` + `questions`) وليست واجهة محادثة نصية؛ لذلك لم يُوصل خطأً بمسار Chat Completions. يمكن تقييمه لاحقًا لمهمة مستقلة مثل تصنيف النية إذا ظهرت حاجة واضحة.
