@@ -7,10 +7,10 @@ const widget = await readFile(new URL("../app/s/[slug]/ai-assistant.tsx", import
 const page = await readFile(new URL("../app/s/[slug]/page.tsx", import.meta.url), "utf8");
 
 test("AI provider credentials and upstream requests remain server-side", () => {
-  assert.match(route, /process\.env\.INCEPTION_API_KEY/);
-  assert.match(route, /process\.env\.CEREBRAS_API/);
-  assert.match(route, /process\.env\.GROK_API/);
-  assert.match(route, /process\.env\.NVIDIA_NIM_API/);
+  assert.match(route, /env\.INCEPTION_API_KEY/);
+  assert.match(route, /env\.CEREBRAS_API/);
+  assert.match(route, /env\.GROK_API/);
+  assert.match(route, /env\.NVIDIA_NIM_API/);
   assert.doesNotMatch(widget, /INCEPTION_API_KEY|CEREBRAS_API|GROK_API|NVIDIA_NIM_API/);
   assert.match(route, /Authorization:\s*\`Bearer/);
 });
