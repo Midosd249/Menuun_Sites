@@ -54,3 +54,8 @@ test("CodeCraft and IteraCompute use documented chat endpoints and model identif
 test("TypeSafe Jev is not incorrectly treated as a free-form chat-completions provider", () => {
   assert.doesNotMatch(route, /JEF_TYPE_SAFE|TYPESAFE_API_KEY|api\.typesafe\.ai/);
 });
+
+
+test("request JSON rejects null, arrays, and primitives before reading fields", () => {
+  assert.match(route, /if\s*\(\s*!input\s*\|\|\s*typeof input !== ["']object["']\s*\|\|\s*Array\.isArray\(input\)\s*\)\s*return jsonError/);
+});
