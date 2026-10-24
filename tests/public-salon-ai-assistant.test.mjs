@@ -7,11 +7,13 @@ const widget = await readFile(new URL("../app/s/[slug]/ai-assistant.tsx", import
 const page = await readFile(new URL("../app/s/[slug]/page.tsx", import.meta.url), "utf8");
 
 test("AI provider credentials and upstream requests remain server-side", () => {
+  assert.match(route, /env\.CODE_CRAFT_API/);
+  assert.match(route, /env\.ITERACOMPUTE_API/);
   assert.match(route, /env\.INCEPTION_API_KEY/);
   assert.match(route, /env\.CEREBRAS_API/);
   assert.match(route, /env\.GROK_API/);
   assert.match(route, /env\.NVIDIA_NIM_API/);
-  assert.doesNotMatch(widget, /INCEPTION_API_KEY|CEREBRAS_API|GROK_API|NVIDIA_NIM_API/);
+  assert.doesNotMatch(widget, /CODE_CRAFT_API|ITERACOMPUTE_API|INCEPTION_API_KEY|CEREBRAS_API|GROK_API|NVIDIA_NIM_API|JEF_TYPE_SAFE/);
   assert.match(route, /Authorization:\s*\`Bearer/);
 });
 
@@ -39,4 +41,16 @@ test("public salon page mounts the floating assistant without changing booking f
   assert.match(page, /SalonAiAssistant/);
   assert.match(page, /<SalonAiAssistant\s+slug=\{salon\.slug\}/);
   assert.match(page, /<PublicBookingForm slug=\{salon\.slug\}/);
+});
+
+
+test("CodeCraft and IteraCompute use documented chat endpoints and model identifiers", () => {
+  assert.match(route, /https:\/\/codecraftapi\.com\/v1\/chat\/completions/);
+  assert.match(route, /model: "qwen3\.8-27b"/);
+  assert.match(route, /https:\/\/api\.iteracompute\.com\/v1\/chat\/completions/);
+  assert.match(route, /model: "qwen\/qwen3\.8-27b"/);
+});
+
+test("TypeSafe Jev is not incorrectly treated as a free-form chat-completions provider", () => {
+  assert.doesNotMatch(route, /JEF_TYPE_SAFE|TYPESAFE_API_KEY|api\.typesafe\.ai/);
 });
