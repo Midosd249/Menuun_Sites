@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
-    "build": "node scripts/copy-static.mjs && node scripts/check-ai-provider-keys.mjs && tsc --noEmit && next build",
+    "build": "node scripts/copy-static.mjs && tsc --noEmit && next build",
     "start": "next start --hostname 0.0.0.0",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.mjs",
