@@ -57,5 +57,5 @@ test("TypeSafe Jev is not incorrectly treated as a free-form chat-completions pr
 
 
 test("request JSON rejects null, arrays, and primitives before reading fields", () => {
-  assert.match(route, /if\s*\(\s*!input\s*\|\|\s*typeof input !== ["']object["']\s*\|\|\s*Array\.isArray\(input\)\s*\)\s*return jsonError/);
+  assert.match(route, /if\s*\(\s*!parsed\s*\|\|\s*typeof parsed !== ["']object["']\s*\|\|\s*Array\.isArray\(parsed\)\s*\)\s*return jsonError/);
 });
