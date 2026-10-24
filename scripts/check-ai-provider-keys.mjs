@@ -7,9 +7,10 @@ if (!enabled) {
 }
 
 const timeoutMs = 7_000;
+const iteraTimeoutMs = 25_000;
 const message = [{ role: "user", content: "Reply with exactly: OK" }];
 
-async function requestJson(url, key, body) {
+async function requestJson(url, key, body, timeout = timeoutMs) {
   try {
     const response = await fetch(url, {
       method: body ? "POST" : "GET",
@@ -18,24 +19,28 @@ async function requestJson(url, key, body) {
         ...(body ? { "Content-Type": "application/json" } : {}),
       },
       ...(body ? { body: JSON.stringify(body) } : {}),
-      signal: AbortSignal.timeout(timeoutMs),
+      signal: AbortSignal.timeout(timeout),
       cache: "no-store",
     });
     let payload = null;
-    if (response.ok) {
-      try {
-        payload = await response.json();
-      } catch {
-        payload = null;
-      }
+    try {
+      payload = await response.json();
+    } catch {
+      payload = null;
     }
-    return { status: response.status, payload };
+    const error = payload?.error;
+    return {
+      status: response.status,
+      payload,
+      errorType: typeof error?.type === "string" ? error.type : undefined,
+      errorCode: typeof error?.code === "string" ? error.code : undefined,
+    };
   } catch {
     return { status: "NETWORK_ERROR", payload: null };
   }
 }
 
-async function chatTest(name, envKey, endpoint, model, extra = {}) {
+async function chatTest(name, envKey, endpoint, model, extra = {}, timeout = timeoutMs) {
   const key = process.env[envKey]?.trim();
   if (!key) return { provider: name, result: "MISSING_IN_PREVIEW" };
 
@@ -46,9 +51,9 @@ async function chatTest(name, envKey, endpoint, model, extra = {}) {
     temperature: 0,
     stream: false,
     ...extra,
-  });
+  }, timeout);
 
-  if (response.status === 404 && name === "xAI") {
+  if ((response.status === 400 || response.status === 404) && name === "xAI") {
     const retry = await requestJson(endpoint, key, {
       model: "grok-4.7",
       messages: message,
@@ -58,13 +63,13 @@ async function chatTest(name, envKey, endpoint, model, extra = {}) {
     });
     if (retry.status === 200 && typeof retry.payload?.choices?.[0]?.message?.content === "string"
       && retry.payload.choices[0].message.content.trim()) {
-      return { provider: name, configuredModel: model, result: "KEY_OK_CONFIGURED_MODEL_UNAVAILABLE", fallbackModel: "grok-4.7", fallbackResult: "PASS" };
+      return { provider: name, configuredModel: model, result: "KEY_OK_CONFIGURED_MODEL_REJECTED", configuredHttpStatus: response.status, fallbackModel: "grok-4.7", fallbackResult: "PASS" };
     }
-    return { provider: name, configuredModel: model, result: `HTTP_${response.status}`, fallbackModel: "grok-4.7", fallbackResult: retry.status === "NETWORK_ERROR" ? "NETWORK_ERROR" : `HTTP_${retry.status}` };
+    return { provider: name, configuredModel: model, result: response.status === "NETWORK_ERROR" ? "NETWORK_ERROR" : `HTTP_${response.status}`, errorType: response.errorType, errorCode: response.errorCode, fallbackModel: "grok-4.7", fallbackResult: retry.status === "NETWORK_ERROR" ? "NETWORK_ERROR" : `HTTP_${retry.status}`, fallbackErrorType: retry.errorType, fallbackErrorCode: retry.errorCode };
   }
 
   if (response.status !== 200) {
-    return { provider: name, model, result: response.status === "NETWORK_ERROR" ? "NETWORK_ERROR" : `HTTP_${response.status}` };
+    return { provider: name, model, result: response.status === "NETWORK_ERROR" ? "NETWORK_ERROR" : `HTTP_${response.status}`, errorType: response.errorType, errorCode: response.errorCode };
   }
   const answer = response.payload?.choices?.[0]?.message?.content;
   return { provider: name, model, result: typeof answer === "string" && answer.trim() ? "PASS" : "HTTP_200_EMPTY_RESPONSE" };
@@ -75,20 +80,24 @@ async function codeCraftTest() {
   if (!key) return { provider: "CodeCraft", result: "MISSING_IN_PREVIEW" };
 
   const catalog = await requestJson("https://www.codecraftapi.com/v1/models", key);
-  if (catalog.status !== 200) {
-    return { provider: "CodeCraft", result: catalog.status === "NETWORK_ERROR" ? "NETWORK_ERROR" : `CATALOG_HTTP_${catalog.status}` };
-  }
-  const models = Array.isArray(catalog.payload?.data) ? catalog.payload.data : [];
   const configuredModel = "qwen3.8-27b";
-  if (!models.some((model) => model?.id === configuredModel)) {
-    return { provider: "CodeCraft", result: "KEY_OK_CATALOG_ACCESS", configuredModel, modelStatus: "NOT_IN_CATALOG", inferenceTest: "SKIPPED" };
+  if (catalog.status === 200) {
+    const models = Array.isArray(catalog.payload?.data) ? catalog.payload.data : [];
+    if (!models.some((model) => model?.id === configuredModel)) {
+      return { provider: "CodeCraft", result: "KEY_OK_CATALOG_ACCESS", configuredModel, modelStatus: "NOT_IN_CATALOG", inferenceTest: "SKIPPED" };
+    }
+    return chatTest("CodeCraft", "CODE_CRAFT_API", "https://www.codecraftapi.com/v1/chat/completions", configuredModel);
   }
-  return chatTest("CodeCraft", "CODE_CRAFT_API", "https://www.codecraftapi.com/v1/chat/completions", configuredModel);
+  if (catalog.status === 403) {
+    const inference = await chatTest("CodeCraft", "CODE_CRAFT_API", "https://www.codecraftapi.com/v1/chat/completions", configuredModel);
+    return { ...inference, catalogResult: "HTTP_403", catalogErrorType: catalog.errorType, catalogErrorCode: catalog.errorCode };
+  }
+  return { provider: "CodeCraft", result: catalog.status === "NETWORK_ERROR" ? "NETWORK_ERROR" : `CATALOG_HTTP_${catalog.status}`, errorType: catalog.errorType, errorCode: catalog.errorCode };
 }
 
 const results = await Promise.all([
   codeCraftTest(),
-  chatTest("IteraCompute", "ITERACOMPUTE_API", "https://api.iteracompute.com/v1/chat/completions", "qwen/qwen3.8-27b", { reasoning: false }),
+  chatTest("IteraCompute", "ITERACOMPUTE_API", "https://api.iteracompute.com/v1/chat/completions", "qwen/qwen3.8-27b", { reasoning: false }, iteraTimeoutMs),
   chatTest("Inception-1", "INCEPTION_API_KEY", "https://api.inceptionlabs.ai/v1/chat/completions", "mercury-2.5"),
   chatTest("Inception-2", "INCEPTION_API_KEY2", "https://api.inceptionlabs.ai/v1/chat/completions", "mercury-2.5"),
   chatTest("Inception-3", "INCEPTION_API_KEY3", "https://api.inceptionlabs.ai/v1/chat/completions", "mercury-2.5"),
