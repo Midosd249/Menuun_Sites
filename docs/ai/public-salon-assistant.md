@@ -41,21 +41,26 @@ Request JSON:
 - No persistent conversation history is stored.
 
 ## Provider support and known limits
-The adapter currently recognizes these server-side variables:
+The adapter currently recognizes these server-side variables, in this provider order:
+- `CODE_CRAFT_API` → CodeCraft OpenAI-compatible API, `https://codecraftapi.com/v1/chat/completions`, model `qwen3.8-27b`.
+- `ITERACOMPUTE_API` → IteraCompute `POST https://api.iteracompute.com/v1/chat/completions`, model `qwen/qwen3.8-27b`.
 - `INCEPTION_API_KEY`, `INCEPTION_API_KEY2`, `INCEPTION_API_KEY3` → Inception Labs `/v1/chat/completions`, model `mercury-2.5`.
 - `CEREBRAS_API` → Cerebras `/v1/chat/completions`, model `qwen-3.8-27b`.
 - `GROK_API` → xAI `/v1/chat/completions`, model `grok-3-mini`.
 - `NVIDIA_NIM_API` → NVIDIA NIM `/v1/chat/completions`, model `meta/llama-3.3-70b-instruct`.
 
-These model IDs and availability must be validated by CI/runtime checks and may change with provider catalogs. Environment-variable presence alone does not prove a key is valid, funded, or entitled to the selected model. Provider failures are intentionally not logged with raw details.
+CodeCraft's official page documents an OpenAI-compatible base URL and Chat Completions SDK usage; the `/chat/completions` path is the OpenAI-compatible route. IteraCompute explicitly documents the endpoint, bearer authentication, response shape, and model ID above. Model catalogs and account entitlements can change. Environment-variable presence alone does not prove a key is valid, funded, or entitled to the selected model. Provider failures are intentionally not logged with raw details.
 
 Official docs:
+- CodeCraft: https://codecraftapi.com/
+- IteraCompute: https://iteracompute.com/docs.html
 - Cerebras: https://inference-docs.cerebras.ai/api-reference/chat-completions and https://inference-docs.cerebras.ai/resources/openai
 - Inception Labs: https://docs.inceptionlabs.ai/api-reference/chat/create-a-chat-completion
 - xAI: https://docs.x.ai/developers/rest-api-reference/inference/chat-completions
 - NVIDIA NIM: https://docs.api.nvidia.com/nim/reference/llm-apis
+- TypeSafe Jev: https://learnjev.com/tutorials/first-call and https://typesafe.ai/
 
-`CODE_CRAFT_API`, `ITERACOMPUTE_API`, and `JEF_TYPE_SAFE` are deliberately not used: no authoritative API contract for these variables was established. Do not guess endpoints or authentication rules.
+`JEF_TYPE_SAFE` is recognized as the user's TypeSafe/Jev credential by its environment-variable name, but Jev is intentionally **not** wired into this free-form chat provider list. Its documented API is `POST https://api.typesafe.ai/v1/systemone`, which accepts `state` plus typed `questions` and returns structured `choice`, `score`, or `noul` decisions/probabilities; it does not generate conversational text or expose a Chat Completions endpoint. It may suit a separate future task such as structured intent classification, but substituting it for the visitor-facing chat model would break the current response contract. The current assistant therefore does not send this key to any provider.
 
 ## Verification gates
 - Run `npm test`, `npm run typecheck`, and `npm run build` on the PR head.
