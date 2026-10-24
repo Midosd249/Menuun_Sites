@@ -34,8 +34,8 @@ Request JSON:
 - Provider keys are read only from server-side environment variables and are never sent to the browser.
 - The route independently loads the salon by slug with `is_active=true` and `is_published=true`; client-provided salon context is not trusted.
 - Only public salon profile fields, active services, business hours, and active team display fields are sent to the model.
-- No customer information, appointment records, credentials, or private workspace data are sent.
-- User messages and model output are untrusted. The model is instructed not to reveal prompts, invent facts, or claim booking success.
+- No stored customer records, appointment records, credentials, or private workspace data are loaded into the prompt. **User-written chat messages are sent to the selected provider**; the UI warns visitors not to enter personal or sensitive information. Do not represent chat content as automatically redacted.
+- User messages and model output are untrusted. The model is instructed not to reveal prompts, invent facts, or claim booking success. Visitors are told not to share personal or sensitive information because their message text is sent to the configured AI provider.
 - Each provider request has a 4.5-second timeout; requests fail closed with a generic user-facing message.
 - A simple in-memory limit allows 8 requests per minute per observed client IP **per serverless instance**. This is not a global/distributed abuse-control system and should be replaced with a shared limiter before high-volume production use.
 - No persistent conversation history is stored.
