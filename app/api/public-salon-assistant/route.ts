@@ -39,6 +39,10 @@ function isRateLimited(key: string) {
 function configuredProviders(): Provider[] {
   const env = process.env;
   const providers: Provider[] = [];
+  // Prefer the additional OpenAI-compatible gateways whose contracts were checked
+  // against their current official documentation. Keep all credentials server-side.
+  if (env.CODE_CRAFT_API) providers.push({ name: "codecraft", endpoint: "https://codecraftapi.com/v1/chat/completions", key: env.CODE_CRAFT_API, model: "qwen3.8-27b" });
+  if (env.ITERACOMPUTE_API) providers.push({ name: "iteracompute", endpoint: "https://api.iteracompute.com/v1/chat/completions", key: env.ITERACOMPUTE_API, model: "qwen/qwen3.8-27b" });
   const inceptionKeys = [env.INCEPTION_API_KEY, env.INCEPTION_API_KEY2, env.INCEPTION_API_KEY3].filter((key): key is string => Boolean(key?.trim()));
   for (const key of inceptionKeys) {
     providers.push({ name: "inception", endpoint: "https://api.inceptionlabs.ai/v1/chat/completions", key, model: "mercury-2.5" });
