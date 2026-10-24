@@ -1,5 +1,5 @@
 .root{position:fixed;z-index:40;inset-inline-end:clamp(14px,3vw,28px);bottom:clamp(14px,3vw,28px);font-family:inherit;color:#1b211d}
-.launcher{display:flex;align-items:center;justify-content:center;gap:10px;min-width:56px;height:56px;padding:0 18px;border:1px solid #ffffff45;border-radius:999px;background:#1b382e;color:#fff;box-shadow:0 10px 35px #0004;cursor:pointer;font:600 13px inherit;transition:transform .18s,box-shadow .18s}
+.launcher{display:flex;align-items:center;justify-content:center;gap:10px;min-width:56px;height:56px;padding:0 18px;border:1px solid #ffffff45;border-radius:999px;background:#1b382e;color:#fff;box-shadow:0 10px 35px #0004;cursor:pointer;font:inherit;font-size:13px;font-weight:600;transition:transform .18s,box-shadow .18s}
 .launcher:hover{transform:translateY(-2px);box-shadow:0 14px 40px #0005}
 .launcher:focus-visible,.close:focus-visible,.form button:focus-visible,.form input:focus-visible{outline:3px solid #d3f36b;outline-offset:3px}
 .panel{position:absolute;inset-inline-end:0;bottom:calc(100% + 12px);display:flex;flex-direction:column;width:min(370px,calc(100vw - 28px));height:min(520px,calc(100dvh - 120px));overflow:hidden;background:#fffdf7;border:1px solid #deded4;border-radius:18px;box-shadow:0 24px 70px #0004}
