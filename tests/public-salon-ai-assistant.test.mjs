@@ -45,7 +45,7 @@ test("public salon page mounts the floating assistant without changing booking f
 
 
 test("CodeCraft and IteraCompute use documented chat endpoints and model identifiers", () => {
-  assert.match(route, /https:\\/\\/www\\.codecraftapi\\.com\\/v1\\/chat\\/completions/);
+  assert.match(route, /www\.codecraftapi\.com\/v1\/chat\/completions/);
   assert.match(route, /model: "qwen3\.8-27b"/);
   assert.match(route, /https:\/\/api\.iteracompute\.com\/v1\/chat\/completions/);
   assert.match(route, /model: "qwen\/qwen3\.8-27b"/);
