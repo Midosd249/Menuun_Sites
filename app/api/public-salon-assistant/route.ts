@@ -120,6 +120,83 @@ async function loadPublicSalonContext(slug: string) {
   return safeSalon;
 }
 
+
+function groundedSalonFallback(
+  question: string,
+  salon: NonNullable<Awaited<ReturnType<typeof loadPublicSalonContext>>>,
+  language: "ar" | "en",
+) {
+  const q = question.toLocaleLowerCase();
+  const asksHours = /hours|opening|open|close|وقت|ساعات|يفتح|متى يغلق|مواعيد العمل/.test(q);
+  const asksTeam = /team|barber|staff|stylist|حلاق|حلاقين|فريق|موظف|مختص/.test(q);
+  const asksContact = /contact|phone|call|whatsapp|رقم|اتصال|تواصل|واتساب|جوال/.test(q);
+  const asksBooking = /book|booking|appointment|reserve|حجز|احجز|موعد|مواعيد/.test(q);
+  const asksService = /service|services|price|cost|how much|سعر|بكم|كم|خدمة|خدمات|تكلفة/.test(q);
+
+  if (asksHours) {
+    const rows = salon.hours.filter((item) => item.is_closed || (item.opens_at && item.closes_at));
+    if (rows.length) {
+      const details = rows.map((item) => item.is_closed
+        ? (language === "en" ? `Day ${item.weekday}: closed` : `اليوم ${item.weekday}: مغلق`)
+        : (language === "en" ? `Day ${item.weekday}: ${item.opens_at}–${item.closes_at}` : `اليوم ${item.weekday}: ${item.opens_at}–${item.closes_at}`));
+      return (language === "en" ? "The published business-hours table says: " : "وفق جدول ساعات العمل المنشور: ") + details.join(language === "en" ? "; " : "؛ ") + ".";
+    }
+  }
+
+  if (asksTeam && salon.team.length) {
+    const details = salon.team.slice(0, 8).map((person) => {
+      const name = language === "en" ? (person.name_en || person.name_ar || "") : (person.name_ar || person.name_en || "");
+      const title = language === "en" ? (person.title_en || person.title_ar || "") : (person.title_ar || person.title_en || "");
+      const specialties = language === "en" ? (person.specialties_en || person.specialties_ar || "") : (person.specialties_ar || person.specialties_en || "");
+      return [name, title, specialties].filter(Boolean).join(" — ");
+    }).filter(Boolean);
+    if (details.length) return (language === "en" ? "Published team information: " : "معلومات الفريق المنشورة: ") + details.join(language === "en" ? "; " : "؛ ") + ".";
+  }
+
+  if (asksContact) {
+    const contact = [
+      salon.phone ? (language === "en" ? `Phone: ${salon.phone}` : `الهاتف: ${salon.phone}`) : "",
+      salon.whatsapp ? (language === "en" ? `WhatsApp: ${salon.whatsapp}` : `واتساب: ${salon.whatsapp}`) : "",
+    ].filter(Boolean);
+    if (contact.length) return contact.join(language === "en" ? ". " : "؛ ") + ".";
+  }
+
+  if (asksBooking) {
+    const contact = salon.whatsapp || salon.phone;
+    if (language === "en") {
+      return "I can’t create or confirm an appointment in this chat. Please use the booking form on this page" + (contact ? ` or contact the salon at ${contact}` : "") + ".";
+    }
+    return "لا أستطيع إنشاء موعد أو تأكيده من خلال هذه المحادثة. استخدم نموذج الحجز الموجود في الصفحة" + (contact ? ` أو تواصل مع الصالون على ${contact}` : "") + ".";
+  }
+
+  if (asksService && salon.services.length) {
+    const details = salon.services.slice(0, 8).map((service) => {
+      const name = language === "en" ? (service.name_en || service.name_ar) : (service.name_ar || service.name_en);
+      const description = language === "en" ? service.description_en : service.description_ar;
+      const price = `${service.price_sar} SAR`;
+      const duration = service.duration_minutes ? (language === "en" ? `, ${service.duration_minutes} min` : `، ${service.duration_minutes} دقيقة`) : "";
+      return `${name}${description ? ` — ${description}` : ""}: ${price}${duration}`;
+    });
+    return (language === "en" ? "Here is the published service information: " : "هذه معلومات الخدمات المنشورة: ") + details.join(language === "en" ? "; " : "؛ ") + ".";
+  }
+
+  const name = language === "en" ? (salon.name_en || salon.name_ar) : (salon.name_ar || salon.name_en);
+  const services = salon.services.slice(0, 5).map((service) => {
+    const serviceName = language === "en" ? (service.name_en || service.name_ar) : (service.name_ar || service.name_en);
+    return `${serviceName} (${service.price_sar} SAR)`;
+  });
+  const intro = language === "en"
+    ? `The AI service is temporarily unavailable, but I can share verified information for ${name || "this salon"}.`
+    : `خدمة المساعد الذكي غير متاحة مؤقتًا، لكن يمكنني عرض المعلومات المنشورة والموثوقة عن ${name || "هذا الصالون"}.`;
+  const summary = services.length
+    ? (language === "en" ? ` Available services: ${services.join(", ")}.` : ` الخدمات المتاحة: ${services.join("، ")}.`)
+    : "";
+  const booking = language === "en"
+    ? " For appointments, use the booking form on this page or contact the salon directly."
+    : " للحجز، استخدم نموذج الحجز الموجود في الصفحة أو تواصل مع الصالون مباشرة.";
+  return (intro + summary + booking).slice(0, 1_200);
+}
+
 export async function POST(request: NextRequest) {
   if (isRateLimited(clientKey(request))) {
     return jsonError("تم تجاوز عدد الرسائل المسموح مؤقتًا. حاول بعد دقيقة.", 429);
