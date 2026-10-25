@@ -74,3 +74,19 @@ test("sequential provider fallback respects its shared 11-second deadline", () =
   assert.ok(route.includes('askProvider(provider, providerMessages, Math.min(4_500, remainingMs))'));
   assert.ok(route.includes('timeoutMs = 4_500'));
 });
+
+
+test("salon assistant falls back to grounded published salon data when AI providers are unavailable", () => {
+  assert.match(route, /function groundedSalonFallback/);
+  assert.match(route, /groundedSalonFallback\(messages\[messages\.length - 1\]\.content, salon, language\)/);
+  assert.match(route, /fallback: true/);
+  assert.match(route, /asksHours/);
+  assert.match(route, /asksTeam/);
+  assert.match(route, /asksContact/);
+  assert.match(route, /asksBooking/);
+  assert.match(route, /asksService/);
+  assert.match(route, /cannot create or confirm an appointment/);
+  assert.match(route, /لا أستطيع إنشاء موعد أو تأكيده/);
+  assert.match(route, /AI service is temporarily unavailable/);
+  assert.match(route, /خدمة المساعد الذكي غير متاحة مؤقتًا/);
+});
