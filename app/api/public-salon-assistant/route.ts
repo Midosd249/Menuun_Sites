@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
-type Provider = { name: string; endpoint: string; key: string; model: string };
+type Provider = { name: string; endpoint: string; key: string; model: string; reasoning?: false };
 
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 8;
@@ -41,21 +41,21 @@ function configuredProviders(): Provider[] {
   const providers: Provider[] = [];
   // Prefer the additional OpenAI-compatible gateways whose contracts were checked
   // against their current official documentation. Keep all credentials server-side.
-  if (env.CODE_CRAFT_API) providers.push({ name: "codecraft", endpoint: "https://www.codecraftapi.com/v1/chat/completions", key: env.CODE_CRAFT_API, model: "qwen3.8-27b" });
-  if (env.ITERACOMPUTE_API) providers.push({ name: "iteracompute", endpoint: "https://api.iteracompute.com/v1/chat/completions", key: env.ITERACOMPUTE_API, model: "qwen/qwen3.8-27b" });
-  const inceptionKeys = [env.INCEPTION_API_KEY, env.INCEPTION_API_KEY2, env.INCEPTION_API_KEY3].filter((key): key is string => Boolean(key?.trim()));
+  if (env.CODE_CRAFT_API?.trim()) providers.push({ name: "codecraft", endpoint: "https://www.codecraftapi.com/v1/chat/completions", key: env.CODE_CRAFT_API.trim(), model: "qwen3.8-27b" });
+  if (env.ITERACOMPUTE_API?.trim()) providers.push({ name: "iteracompute", endpoint: "https://api.iteracompute.com/v1/chat/completions", key: env.ITERACOMPUTE_API.trim(), model: "qwen/qwen3.8-27b", reasoning: false });
+  const inceptionKeys = [env.INCEPTION_API_KEY, env.INCEPTION_API_KEY2, env.INCEPTION_API_KEY3].map((key) => key?.trim()).filter((key): key is string => Boolean(key));
   for (const key of inceptionKeys) {
     providers.push({ name: "inception", endpoint: "https://api.inceptionlabs.ai/v1/chat/completions", key, model: "mercury-2.5" });
   }
-  if (env.CEREBRAS_API) providers.push({ name: "cerebras", endpoint: "https://api.cerebras.ai/v1/chat/completions", key: env.CEREBRAS_API, model: "qwen-3.8-27b" });
-  if (env.GROK_API) providers.push({ name: "xai", endpoint: "https://api.x.ai/v1/chat/completions", key: env.GROK_API, model: "grok-3-mini" });
-  if (env.NVIDIA_NIM_API) providers.push({ name: "nvidia-nim", endpoint: "https://integrate.api.nvidia.com/v1/chat/completions", key: env.NVIDIA_NIM_API, model: "meta/llama-3.3-70b-instruct" });
+  if (env.CEREBRAS_API?.trim()) providers.push({ name: "cerebras", endpoint: "https://api.cerebras.ai/v1/chat/completions", key: env.CEREBRAS_API.trim(), model: "qwen-3.8-27b" });
+  if (env.GROK_API?.trim()) providers.push({ name: "xai", endpoint: "https://api.x.ai/v1/chat/completions", key: env.GROK_API.trim(), model: "grok-3-mini" });
+  if (env.NVIDIA_NIM_API?.trim()) providers.push({ name: "nvidia-nim", endpoint: "https://integrate.api.nvidia.com/v1/chat/completions", key: env.NVIDIA_NIM_API.trim(), model: "meta/llama-3.3-70b-instruct" });
   return providers;
 }
 
-async function askProvider(provider: Provider, messages: Array<{ role: string; content: string }>) {
+async function askProvider(provider: Provider, messages: Array<{ role: string; content: string }>, timeoutMs = 4_500) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 4_500);
+  const timeout = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
   try {
     const response = await fetch(provider.endpoint, {
       method: "POST",
@@ -63,7 +63,7 @@ async function askProvider(provider: Provider, messages: Array<{ role: string; c
         Authorization: `Bearer ${provider.key}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ model: provider.model, messages, max_tokens: 280, temperature: 0.5, stream: false }),
+      body: JSON.stringify({ model: provider.model, messages, max_tokens: 280, temperature: 0.5, stream: false, ...(provider.reasoning === false ? { reasoning: false } : {}) }),
       signal: controller.signal,
       cache: "no-store",
     });
@@ -177,9 +177,10 @@ export async function POST(request: NextRequest) {
 
   const startedAt = Date.now();
   for (const provider of providers) {
-    if (Date.now() - startedAt > 11_000) break;
+    const remainingMs = 11_000 - (Date.now() - startedAt);
+    if (remainingMs <= 0) break;
     try {
-      const answer = await askProvider(provider, providerMessages);
+      const answer = await askProvider(provider, providerMessages, Math.min(4_500, remainingMs));
       return NextResponse.json({ answer }, { headers: { "Cache-Control": "no-store" } });
     } catch {
       // Provider errors may include sensitive request details; intentionally do not log them.

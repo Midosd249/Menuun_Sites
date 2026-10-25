@@ -59,3 +59,18 @@ test("TypeSafe Jev is not incorrectly treated as a free-form chat-completions pr
 test("request JSON rejects null, arrays, and primitives before reading fields", () => {
   assert.match(route, /if\s*\(\s*!parsed\s*\|\|\s*typeof parsed !== ["']object["']\s*\|\|\s*Array\.isArray\(parsed\)\s*\)\s*\{\s*return jsonError/);
 });
+
+
+test("provider keys are trimmed and IteraCompute uses its documented request option", () => {
+  assert.ok(route.includes('env.CODE_CRAFT_API?.trim()'));
+  assert.ok(route.includes('env.ITERACOMPUTE_API?.trim()'));
+  assert.ok(route.includes('key: env.ITERACOMPUTE_API.trim(), model: "qwen/qwen3.8-27b", reasoning: false'));
+  assert.ok(route.includes('provider.reasoning === false ? { reasoning: false }'));
+  assert.ok(route.includes('map((key) => key?.trim())'));
+});
+
+test("sequential provider fallback respects its shared 11-second deadline", () => {
+  assert.ok(route.includes('const remainingMs = 11_000 - (Date.now() - startedAt)'));
+  assert.ok(route.includes('askProvider(provider, providerMessages, Math.min(4_500, remainingMs))'));
+  assert.ok(route.includes('timeoutMs = 4_500'));
+});
