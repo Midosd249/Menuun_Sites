@@ -85,7 +85,7 @@ test("salon assistant falls back to grounded published salon data when AI provid
   assert.match(route, /asksContact/);
   assert.match(route, /asksBooking/);
   assert.match(route, /asksService/);
-  assert.match(route, /cannot create or confirm an appointment/);
+  assert.match(route, /can’t create or confirm an appointment/);
   assert.match(route, /لا أستطيع إنشاء موعد أو تأكيده/);
   assert.match(route, /AI service is temporarily unavailable/);
   assert.match(route, /خدمة المساعد الذكي غير متاحة مؤقتًا/);
