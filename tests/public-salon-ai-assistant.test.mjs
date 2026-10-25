@@ -90,3 +90,14 @@ test("salon assistant falls back to grounded published salon data when AI provid
   assert.match(route, /AI service is temporarily unavailable/);
   assert.match(route, /خدمة المساعد الذكي غير متاحة مؤقتًا/);
 });
+
+
+test("grounded price fallback handles missing prices and honors the salon currency", () => {
+  assert.match(route, /function formatServicePrice\(price: unknown, currencyCode: unknown/);
+  assert.match(route, /typeof price !== "number" \|\| !Number\.isFinite\(price\)/);
+  assert.match(route, /Price not listed/);
+  assert.match(route, /السعر غير محدد/);
+  assert.match(route, /new Intl\.NumberFormat\(language === "en" \? "en-SA" : "ar-SA"/);
+  assert.match(route, /formatServicePrice\(service\.price_sar, salon\.currency_code, language\)/);
+  assert.doesNotMatch(route, /\$\{service\.price_sar\} SAR/);
+});

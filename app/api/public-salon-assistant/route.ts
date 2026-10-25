@@ -121,6 +121,26 @@ async function loadPublicSalonContext(slug: string) {
 }
 
 
+function formatServicePrice(price: unknown, currencyCode: unknown, language: "ar" | "en") {
+  if (typeof price !== "number" || !Number.isFinite(price)) {
+    return language === "en" ? "Price not listed" : "السعر غير محدد";
+  }
+
+  const currency = typeof currencyCode === "string" && /^[A-Za-z]{3}$/.test(currencyCode.trim())
+    ? currencyCode.trim().toUpperCase()
+    : "SAR";
+
+  try {
+    return new Intl.NumberFormat(language === "en" ? "en-SA" : "ar-SA", {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 2,
+    }).format(price);
+  } catch {
+    return `${price} ${currency}`;
+  }
+}
+
 function groundedSalonFallback(
   question: string,
   salon: NonNullable<Awaited<ReturnType<typeof loadPublicSalonContext>>>,
@@ -173,7 +193,7 @@ function groundedSalonFallback(
     const details = salon.services.slice(0, 8).map((service) => {
       const name = language === "en" ? (service.name_en || service.name_ar) : (service.name_ar || service.name_en);
       const description = language === "en" ? service.description_en : service.description_ar;
-      const price = `${service.price_sar} SAR`;
+      const price = formatServicePrice(service.price_sar, salon.currency_code, language);
       const duration = service.duration_minutes ? (language === "en" ? `, ${service.duration_minutes} min` : `، ${service.duration_minutes} دقيقة`) : "";
       return `${name}${description ? ` — ${description}` : ""}: ${price}${duration}`;
     });
@@ -183,7 +203,7 @@ function groundedSalonFallback(
   const name = language === "en" ? (salon.name_en || salon.name_ar) : (salon.name_ar || salon.name_en);
   const services = salon.services.slice(0, 5).map((service) => {
     const serviceName = language === "en" ? (service.name_en || service.name_ar) : (service.name_ar || service.name_en);
-    return `${serviceName} (${service.price_sar} SAR)`;
+    return `${serviceName} (${formatServicePrice(service.price_sar, salon.currency_code, language)})`;
   });
   const intro = language === "en"
     ? `The AI service is temporarily unavailable, but I can share verified information for ${name || "this salon"}.`

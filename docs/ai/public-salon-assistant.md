@@ -1,6 +1,6 @@
 # Public Salon AI Assistant — Implementation Contract
 
-**Status:** Implemented on branch `feat/public-salon-ai-assistant`; awaiting CI and review.  
+**Status:** Implemented on branch `feat/public-salon-ai-assistant`; CI passed on the previously reviewed head and the owner manually tested the preview. The current follow-up hardens fallback price display; its new head must pass CI before merge. No production deployment, merge, schema change, or booking mutation.  
 **Scope:** Floating bilingual assistant on published `/s/[slug]` salon pages. No production deployment, merge, schema change, or booking mutation.
 
 ## User experience
@@ -37,7 +37,7 @@ Request JSON:
 - No stored customer records, appointment records, credentials, or private workspace data are loaded into the prompt. **User-written chat messages are sent to the selected provider**; the UI warns visitors not to enter personal or sensitive information. Do not represent chat content as automatically redacted.
 - User messages and model output are untrusted. The model is instructed not to reveal prompts, invent facts, or claim booking success. Visitors are told not to share personal or sensitive information because their message text is sent to the configured AI provider.
 - Each provider request has a maximum 4.5-second timeout inside a shared 11-second sequential fallback budget. Provider failures are not logged with raw details. When all configured providers fail or no provider is configured, the endpoint returns a deterministic answer based only on published services, hours, team, and contact data; booking questions are directed to the existing page form/contact details. It never claims a booking was created or confirmed. This fallback is intentionally informational, not a substitute for a working AI provider.
-- A simple in-memory limit allows 8 requests per minute per observed client IP **per serverless instance**. This is not a global/distributed abuse-control system and should be replaced with a shared limiter before high-volume production use.
+- A simple in-memory limit allows 8 requests per minute per observed client IP **per serverless instance**. This is only a best-effort local guard: instances do not share counters and the map is not a durable global abuse-control system. It is acceptable as a low-complexity initial guard, but a shared limiter should be added before high-volume production use. Do not treat it as a cost/quota boundary.
 - No persistent conversation history is stored.
 
 ## Provider support and known limits
@@ -63,8 +63,9 @@ Official docs:
 `JEF_TYPE_SAFE` is recognized as the user's TypeSafe/Jev credential by its environment-variable name, but Jev is intentionally **not** wired into this free-form chat provider list. Its documented API is `POST https://api.typesafe.ai/v1/systemone`, which accepts `state` plus typed `questions` and returns structured `choice`, `score`, or `noul` decisions/probabilities; it does not generate conversational text or expose a Chat Completions endpoint. It may suit a separate future task such as structured intent classification, but substituting it for the visitor-facing chat model would break the current response contract. The current assistant therefore does not send this key to any provider.
 
 ## Verification gates
-- Run `npm test`, `npm run typecheck`, and `npm run build` on the PR head.
+- On the latest PR head, verify GitHub Actions reports passing test/static-quality, typecheck, production build, browser QA, and inline-assets checks. Previous green results do not automatically validate a later commit.
 - Confirm a Vercel Preview is READY before manual browser QA.
 - Test Arabic and English, mobile viewport, closed/open/close states, empty message, long input, provider failure, unpublished slug, rate limiting, and keyboard focus.
 - Confirm the provider environment values are configured in the target Vercel environment without exposing their values.
-- Do not merge or deploy production until CI and review pass. This connector session did not run local commands or verify provider credentials.
+- The owner has manually tested the Preview and reported that the feature works; provider selection and every provider credential/model remain unverified unless explicitly smoke-tested.
+- Do not merge or deploy production until the latest head passes CI and review. This connector session does not run local commands or independently verify provider credentials.
