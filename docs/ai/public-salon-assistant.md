@@ -26,8 +26,8 @@ Request JSON:
 - `language`: `ar` or `en`; other values default to Arabic.
 - `messages`: 1–8 messages; roles are only `user` or `assistant`; each content is 1–700 characters; final message must be from the user.
 - Raw request body is limited to 12,000 characters.
-- Success: `200 { "answer": string }`.
-- Errors: `400` invalid request, `413` oversized body, `404` unpublished/unavailable salon, `429` rate limited, `503` unavailable provider or public context.
+- Success: `200 { "answer": string, "fallback"?: true }`. The optional `fallback: true` marks a deterministic answer grounded in the published salon data when no provider responds.
+- Errors: `400` invalid request, `413` oversized body, `404` unpublished/unavailable salon, `429` rate limited, `503` when public salon context cannot be loaded or no salon is available. Provider failures alone do not produce a `503` when grounded fallback data can answer.
 - Responses are marked `Cache-Control: no-store`.
 
 ## Data and security boundaries
@@ -36,7 +36,7 @@ Request JSON:
 - Only public salon profile fields, active services, business hours, and active team display fields are sent to the model.
 - No stored customer records, appointment records, credentials, or private workspace data are loaded into the prompt. **User-written chat messages are sent to the selected provider**; the UI warns visitors not to enter personal or sensitive information. Do not represent chat content as automatically redacted.
 - User messages and model output are untrusted. The model is instructed not to reveal prompts, invent facts, or claim booking success. Visitors are told not to share personal or sensitive information because their message text is sent to the configured AI provider.
-- Each provider request has a 4.5-second timeout; requests fail closed with a generic user-facing message.
+- Each provider request has a maximum 4.5-second timeout inside a shared 11-second sequential fallback budget. Provider failures are not logged with raw details. When all configured providers fail or no provider is configured, the endpoint returns a deterministic answer based only on published services, hours, team, and contact data; booking questions are directed to the existing page form/contact details. It never claims a booking was created or confirmed. This fallback is intentionally informational, not a substitute for a working AI provider.
 - A simple in-memory limit allows 8 requests per minute per observed client IP **per serverless instance**. This is not a global/distributed abuse-control system and should be replaced with a shared limiter before high-volume production use.
 - No persistent conversation history is stored.
 
