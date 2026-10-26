@@ -1,0 +1,103 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+
+const route = await readFile(new URL("../app/api/public-salon-assistant/route.ts", import.meta.url), "utf8");
+const widget = await readFile(new URL("../app/s/[slug]/ai-assistant.tsx", import.meta.url), "utf8");
+const page = await readFile(new URL("../app/s/[slug]/page.tsx", import.meta.url), "utf8");
+
+test("AI provider credentials and upstream requests remain server-side", () => {
+  assert.match(route, /env\.CODE_CRAFT_API/);
+  assert.match(route, /env\.ITERACOMPUTE_API/);
+  assert.match(route, /env\.INCEPTION_API_KEY/);
+  assert.match(route, /env\.CEREBRAS_API/);
+  assert.match(route, /env\.GROK_API/);
+  assert.match(route, /env\.NVIDIA_NIM_API/);
+  assert.doesNotMatch(widget, /CODE_CRAFT_API|ITERACOMPUTE_API|INCEPTION_API_KEY|CEREBRAS_API|GROK_API|NVIDIA_NIM_API|JEF_TYPE_SAFE/);
+  assert.match(route, /Authorization:\s*\`Bearer/);
+});
+
+test("endpoint validates request size, history, message roles and per-instance rate limit", () => {
+  assert.match(route, /raw\.length > 12_000/);
+  assert.match(route, /MAX_REQUESTS = 8/);
+  assert.match(route, /input\.messages\.length > 8/);
+  assert.match(route, /content\.length > 700/);
+  assert.match(route, /messages\[messages\.length - 1\]\?\.role !== "user"/);
+});
+
+test("assistant context is loaded server-side from active published salon data", () => {
+  assert.match(route, /\.eq\("is_active", true\)/);
+  assert.match(route, /\.eq\("is_published", true\)/);
+  assert.match(route, /loadPublicSalonContext\(slug\)/);
+});
+
+test("assistant explicitly cannot create or confirm bookings and never claims booking success", () => {
+  assert.match(route, /cannot create, modify, confirm or cancel bookings/);
+  assert.match(route, /لا يمكنك إنشاء الحجوزات أو تعديلها أو تأكيدها أو إلغاؤها/);
+  assert.match(route, /Cache-Control.*no-store/);
+});
+
+test("public salon page mounts the floating assistant without changing booking form contracts", () => {
+  assert.match(page, /SalonAiAssistant/);
+  assert.match(page, /<SalonAiAssistant\s+slug=\{salon\.slug\}/);
+  assert.match(page, /<PublicBookingForm slug=\{salon\.slug\}/);
+});
+
+
+test("CodeCraft and IteraCompute use documented chat endpoints and model identifiers", () => {
+  assert.match(route, /www\.codecraftapi\.com\/v1\/chat\/completions/);
+  assert.match(route, /model: "qwen3\.8-27b"/);
+  assert.match(route, /https:\/\/api\.iteracompute\.com\/v1\/chat\/completions/);
+  assert.match(route, /model: "qwen\/qwen3\.8-27b"/);
+});
+
+test("TypeSafe Jev is not incorrectly treated as a free-form chat-completions provider", () => {
+  assert.doesNotMatch(route, /JEF_TYPE_SAFE|TYPESAFE_API_KEY|api\.typesafe\.ai/);
+});
+
+
+test("request JSON rejects null, arrays, and primitives before reading fields", () => {
+  assert.match(route, /if\s*\(\s*!parsed\s*\|\|\s*typeof parsed !== ["']object["']\s*\|\|\s*Array\.isArray\(parsed\)\s*\)\s*\{\s*return jsonError/);
+});
+
+
+test("provider keys are trimmed and IteraCompute uses its documented request option", () => {
+  assert.ok(route.includes('env.CODE_CRAFT_API?.trim()'));
+  assert.ok(route.includes('env.ITERACOMPUTE_API?.trim()'));
+  assert.ok(route.includes('key: env.ITERACOMPUTE_API.trim(), model: "qwen/qwen3.8-27b", reasoning: false'));
+  assert.ok(route.includes('provider.reasoning === false ? { reasoning: false }'));
+  assert.ok(route.includes('map((key) => key?.trim())'));
+});
+
+test("sequential provider fallback respects its shared 11-second deadline", () => {
+  assert.ok(route.includes('const remainingMs = 11_000 - (Date.now() - startedAt)'));
+  assert.ok(route.includes('askProvider(provider, providerMessages, Math.min(4_500, remainingMs))'));
+  assert.ok(route.includes('timeoutMs = 4_500'));
+});
+
+
+test("salon assistant falls back to grounded published salon data when AI providers are unavailable", () => {
+  assert.match(route, /function groundedSalonFallback/);
+  assert.match(route, /groundedSalonFallback\(messages\[messages\.length - 1\]\.content, salon, language\)/);
+  assert.match(route, /fallback: true/);
+  assert.match(route, /asksHours/);
+  assert.match(route, /asksTeam/);
+  assert.match(route, /asksContact/);
+  assert.match(route, /asksBooking/);
+  assert.match(route, /asksService/);
+  assert.match(route, /can’t create or confirm an appointment/);
+  assert.match(route, /لا أستطيع إنشاء موعد أو تأكيده/);
+  assert.match(route, /AI service is temporarily unavailable/);
+  assert.match(route, /خدمة المساعد الذكي غير متاحة مؤقتًا/);
+});
+
+
+test("grounded price fallback handles missing prices and honors the salon currency", () => {
+  assert.match(route, /function formatServicePrice\(price: unknown, currencyCode: unknown/);
+  assert.match(route, /typeof price !== "number" \|\| !Number\.isFinite\(price\)/);
+  assert.match(route, /Price not listed/);
+  assert.match(route, /السعر غير محدد/);
+  assert.match(route, /new Intl\.NumberFormat\(language === "en" \? "en-SA" : "ar-SA"/);
+  assert.match(route, /formatServicePrice\(service\.price_sar, salon\.currency_code, language\)/);
+  assert.doesNotMatch(route, /\$\{service\.price_sar\} SAR/);
+});
