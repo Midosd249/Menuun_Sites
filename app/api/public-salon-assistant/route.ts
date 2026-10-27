@@ -115,9 +115,10 @@ async function selectProviderWithJev(question: string, providers: Provider[], ti
 }
 
 function defaultFallbackOrder(providers: Provider[], selectedId: string | null): Provider[] {
-  const unique = Array.from(new Map(providers.map((provider) => [provider.id, provider])).values());
-  if (!selectedId || !unique.some((provider) => provider.id === selectedId)) return unique;
-  return [...unique.filter((provider) => provider.id === selectedId), ...unique.filter((provider) => provider.id !== selectedId)];
+  const eligibleIds = Array.from(new Set(providers.map((provider) => provider.id)));
+  if (!selectedId || !eligibleIds.includes(selectedId)) return providers;
+  // Keep every credential entry for a selected family (notably Inception key rotation).
+  return [...providers.filter((provider) => provider.id === selectedId), ...providers.filter((provider) => provider.id !== selectedId)];
 }
 
 async function askProvider(provider: Provider, messages: Array<{ role: string; content: string }>, timeoutMs = 4_500) {
