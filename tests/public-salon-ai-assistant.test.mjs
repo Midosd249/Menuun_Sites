@@ -52,6 +52,12 @@ test("CodeCraft and IteraCompute use documented chat endpoints and model identif
   assert.match(route, /model: "qwen\/qwen3\.8-27b"/);
 });
 
+test("TypeSafe System One request uses named question objects as required by the API schema", () => {
+  assert.match(route, /questions:\s*\{\s*provider:\s*\{/);
+  assert.doesNotMatch(route, /questions:\s*\[\s*\{/);
+  assert.match(route, /criteria,\s*\n\s*\},\s*\n\s*\},/);
+});
+
 test("TypeSafe Jev is used strictly as a Choice decision/routing model, not as chat completions", () => {
   assert.match(route, /JEF_TYPE_SAFE/);
   assert.match(route, /api\.typesafe\.ai\/v1\/systemone/);
