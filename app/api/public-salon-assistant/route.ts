@@ -75,7 +75,9 @@ async function selectProviderWithJev(question: string, providers: Provider[], ti
   const eligibleIds = unique.map((provider) => provider.id);
   const criteria: Record<string, string> = {};
   for (const provider of unique) {
-    criteria[provider.id] = `Provider family ${provider.name}; choose only when best suited to generate a concise, grounded answer to the visitor's question.`;
+    // Include the actual configured model, not just the gateway name, so Jev can
+    // distinguish candidates. Avoid asserting undocumented capabilities or pricing.
+    criteria[provider.id] = `${provider.name} gateway using configured model "${provider.model}". Select this candidate only if this model is the best fit for the visitor's latest question; otherwise compare the other listed model IDs. Do not assume capabilities beyond what the model identifier supports.`;
   }
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
