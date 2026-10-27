@@ -5,7 +5,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
-type Provider = { name: string; endpoint: string; key: string; model: string; reasoning?: false };
+type Provider = { id: string; name: string; endpoint: string; key: string; model: string; reasoning?: false };
 
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 8;
@@ -41,16 +41,87 @@ function configuredProviders(): Provider[] {
   const providers: Provider[] = [];
   // Prefer the additional OpenAI-compatible gateways whose contracts were checked
   // against their current official documentation. Keep all credentials server-side.
-  if (env.CODE_CRAFT_API?.trim()) providers.push({ name: "codecraft", endpoint: "https://www.codecraftapi.com/v1/chat/completions", key: env.CODE_CRAFT_API.trim(), model: "qwen3.8-27b" });
-  if (env.ITERACOMPUTE_API?.trim()) providers.push({ name: "iteracompute", endpoint: "https://api.iteracompute.com/v1/chat/completions", key: env.ITERACOMPUTE_API.trim(), model: "qwen/qwen3.8-27b", reasoning: false });
-  const inceptionKeys = [env.INCEPTION_API_KEY, env.INCEPTION_API_KEY2, env.INCEPTION_API_KEY3].map((key) => key?.trim()).filter((key): key is string => Boolean(key));
+  if (env.CODE_CRAFT_API?.trim()) providers.push({ id: "codecraft", name: "codecraft", endpoint: "https://www.codecraftapi.com/v1/chat/completions", key: env.CODE_CRAFT_API.trim(), model: "qwen3.8-27b" });
+  if (env.ITERACOMPUTE_API?.trim()) providers.push({ id: "iteracompute", name: "iteracompute", endpoint: "https://api.iteracompute.com/v1/chat/completions", key: env.ITERACOMPUTE_API.trim(), model: "qwen/qwen3.8-27b", reasoning: false });
+  const inceptionKeys = [env.INCEPTION_API_KEY, env.INCEPTION_API_KEY2, env.INCEPTION_API_KEY3].map((k) => k?.trim()).filter((key): key is string => Boolean(key));
   for (const key of inceptionKeys) {
-    providers.push({ name: "inception", endpoint: "https://api.inceptionlabs.ai/v1/chat/completions", key, model: "mercury-2.5" });
+    providers.push({ id: "inception", name: "inception", endpoint: "https://api.inceptionlabs.ai/v1/chat/completions", key, model: "mercury-2.5" });
   }
-  if (env.CEREBRAS_API?.trim()) providers.push({ name: "cerebras", endpoint: "https://api.cerebras.ai/v1/chat/completions", key: env.CEREBRAS_API.trim(), model: "qwen-3.8-27b" });
-  if (env.GROK_API?.trim()) providers.push({ name: "xai", endpoint: "https://api.x.ai/v1/chat/completions", key: env.GROK_API.trim(), model: "grok-3-mini" });
-  if (env.NVIDIA_NIM_API?.trim()) providers.push({ name: "nvidia-nim", endpoint: "https://integrate.api.nvidia.com/v1/chat/completions", key: env.NVIDIA_NIM_API.trim(), model: "meta/llama-3.3-70b-instruct" });
+  if (env.CEREBRAS_API?.trim()) providers.push({ id: "cerebras", name: "cerebras", endpoint: "https://api.cerebras.ai/v1/chat/completions", key: env.CEREBRAS_API.trim(), model: "qwen-3.8-27b" });
+  if (env.GROK_API?.trim()) providers.push({ id: "xai", name: "xai", endpoint: "https://api.x.ai/v1/chat/completions", key: env.GROK_API.trim(), model: "grok-3-mini" });
+  if (env.NVIDIA_NIM_API?.trim()) providers.push({ id: "nvidia-nim", name: "nvidia-nim", endpoint: "https://integrate.api.nvidia.com/v1/chat/completions", key: env.NVIDIA_NIM_API.trim(), model: "meta/llama-3.3-70b-instruct" });
   return providers;
+}
+
+
+type JevChoicePayload = {
+  type?: unknown;
+  answers?: Record<string, { choice?: unknown; type?: unknown }>;
+};
+
+const TOTAL_BUDGET_MS = 11_000;
+const JEV_TIMEOUT_MS = 2_200;
+const PROVIDER_TIMEOUT_MS = 4_500;
+
+/**
+ * Jev selects an allowlisted provider family; that provider generates the final answer.
+ * Never sends credentials, salon context, or conversation history to Jev—only the
+ * latest visitor question and non-secret provider capability descriptions.
+ */
+async function selectProviderWithJev(question: string, providers: Provider[], timeoutMs = JEV_TIMEOUT_MS): Promise<string | null> {
+  const key = process.env.JEF_TYPE_SAFE?.trim();
+  if (!key || providers.length === 0) return null;
+  const unique = Array.from(new Map(providers.map((provider) => [provider.id, provider])).values());
+  const eligibleIds = unique.map((provider) => provider.id);
+  const criteria: Record<string, string> = {};
+  for (const provider of unique) {
+    // Include the actual configured model, not just the gateway name, so Jev can
+    // distinguish candidates. Avoid asserting undocumented capabilities or pricing.
+    criteria[provider.id] = `${provider.name} gateway using configured model "${provider.model}". Select this candidate only if this model is the best fit for the visitor's latest question; otherwise compare the other listed model IDs. Do not assume capabilities beyond what the model identifier supports.`;
+  }
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
+  try {
+    const response = await fetch("https://api.typesafe.ai/v1/systemone", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "jev-latest",
+        state: { visitor_question: question.slice(0, 700), eligible_provider_ids: eligibleIds },
+        questions: {
+          provider: {
+            type: "choice",
+            instructions: "Select one provider candidate ID to generate the final response. Do not answer the visitor. Select only from the listed criteria.",
+            criteria,
+          },
+        },
+      }),
+      signal: controller.signal,
+      cache: "no-store",
+    });
+    if (!response.ok) throw new Error(`jev_http_${response.status}`);
+    const payload: unknown = await response.json();
+    if (!payload || typeof payload !== "object") throw new Error("invalid_response");
+    const typed = payload as JevChoicePayload;
+    const answer = typed.answers?.provider;
+    if (!answer || (typed.type !== "choice" && answer.type !== "choice")) throw new Error("invalid_response");
+    const choice = typeof answer.choice === "string" ? answer.choice : "";
+    if (!choice) throw new Error("invalid_response");
+    if (!eligibleIds.includes(choice)) throw new Error("unknown_choice");
+    return choice;
+  } catch {
+    // Routing failure is intentionally silent; deterministic provider fallback remains available.
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function defaultFallbackOrder(providers: Provider[], selectedId: string | null): Provider[] {
+  const eligibleIds = Array.from(new Set(providers.map((provider) => provider.id)));
+  if (!selectedId || !eligibleIds.includes(selectedId)) return providers;
+  // Keep every credential entry for a selected family (notably Inception key rotation).
+  return [...providers.filter((provider) => provider.id === selectedId), ...providers.filter((provider) => provider.id !== selectedId)];
 }
 
 async function askProvider(provider: Provider, messages: Array<{ role: string; content: string }>, timeoutMs = 4_500) {
@@ -278,11 +349,13 @@ export async function POST(request: NextRequest) {
   ];
 
   const startedAt = Date.now();
-  for (const provider of providers) {
-    const remainingMs = 11_000 - (Date.now() - startedAt);
+  const jevRemainingMs = Math.max(1, Math.min(JEV_TIMEOUT_MS, TOTAL_BUDGET_MS - (Date.now() - startedAt)));
+  const selectedProviderId = await selectProviderWithJev(messages[messages.length - 1].content, providers, jevRemainingMs);
+  for (const provider of defaultFallbackOrder(providers, selectedProviderId)) {
+    const remainingMs = TOTAL_BUDGET_MS - (Date.now() - startedAt);
     if (remainingMs <= 0) break;
     try {
-      const answer = await askProvider(provider, providerMessages, Math.min(4_500, remainingMs));
+      const answer = await askProvider(provider, providerMessages, Math.min(PROVIDER_TIMEOUT_MS, remainingMs));
       return NextResponse.json({ answer }, { headers: { "Cache-Control": "no-store" } });
     } catch {
       // Provider errors may include sensitive request details; intentionally do not log them.
