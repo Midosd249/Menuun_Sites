@@ -26,6 +26,15 @@ function normalizeUrl(value: string) {
   if (parsed.protocol !== "https:" || !parsed.hostname.includes(".")) throw new Error("استخدم روابط آمنة تبدأ بـ https://.");
   return parsed.toString();
 }
+function normalizeInstagramUrl(value: string) {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const handle = trimmed.replace(/^@/, "");
+  if (/^[A-Za-z0-9._]{1,30}$/.test(handle) && !/^https?:\/\//i.test(trimmed)) {
+    return "https://instagram.com/" + handle;
+  }
+  return normalizeUrl(trimmed);
+}
 function pathFromPublicUrl(url: string | null) {
   if (!url) return null;
   const marker = "/object/public/" + BUCKET + "/";
@@ -253,7 +262,7 @@ export default function SalonMediaEditor({ salonId, initialLogoUrl, lang = "ar" 
     try {
       if (!socialLinksAvailable) throw new Error("يلزم تطبيق تحديث قاعدة البيانات لتفعيل روابط التواصل.");
       const payload = {
-        instagram_url: normalizeUrl(links.instagram_url),
+        instagram_url: normalizeInstagramUrl(links.instagram_url),
         tiktok_url: normalizeUrl(links.tiktok_url),
         snapchat_url: normalizeUrl(links.snapchat_url),
         facebook_url: normalizeUrl(links.facebook_url),
