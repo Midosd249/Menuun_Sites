@@ -86,12 +86,13 @@ async function selectProviderWithJev(question: string, providers: Provider[], ti
       body: JSON.stringify({
         model: "jev-latest",
         state: { visitor_question: question.slice(0, 700), eligible_provider_ids: eligibleIds },
-        questions: [{
-          id: "provider",
-          type: "choice",
-          instructions: "Select one provider candidate ID to generate the final response. Do not answer the visitor. Select only from the listed criteria.",
-          criteria,
-        }],
+        questions: {
+          provider: {
+            type: "choice",
+            instructions: "Select one provider candidate ID to generate the final response. Do not answer the visitor. Select only from the listed criteria.",
+            criteria,
+          },
+        },
       }),
       signal: controller.signal,
       cache: "no-store",
