@@ -43,7 +43,7 @@ test("a real local public booking INSERT reaches the owner via Realtime and chim
   await bookingPage.locator('input[name="customer_phone"]').fill("+966555500123");
   await bookingPage.getByRole("button",{name:/Submit booking request/}).click();
   await expect(bookingPage.getByRole("status")).toContainText("Booking request sent",{timeout:20000});
-  await expect(page.getByText("New booking",{exact:false})).toBeVisible({timeout:20000});
+  await expect(page.getByText("New booking",{exact:true})).toBeVisible({timeout:20000});
   await expect.poll(()=>page.evaluate(()=>(window as any).__soundStarts||0),{timeout:20000}).toBe(4);
   await page.waitForTimeout(1000);
   expect(await page.evaluate(()=>(window as any).__soundStarts||0)).toBe(4);
