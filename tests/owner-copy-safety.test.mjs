@@ -23,6 +23,9 @@ test("the social, map and website columns have one owner form writer", () => {
     assert.ok(mediaEditor.includes(key), "Website & social media form should own " + key);
   }
   assert.match(mediaEditor, /async function saveSocialLinks/);
+  assert.doesNotMatch(mediaEditor, /function normalizeUrl/);
+  assert.match(mediaEditor, /normalizeSocialUrl\("instagram", links\.instagram_url\)/);
+  assert.match(mediaEditor, /normalizeSocialUrl\("website", links\.website_url\)/);
   assert.match(mediaEditor, /from\("salons"\)\.update\(payload\)/);
   assert.match(mediaEditor, /الموقع ووسائل التواصل الاجتماعي/);
   assert.match(mediaEditor, /Website & social media/);
