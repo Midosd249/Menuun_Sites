@@ -466,7 +466,7 @@ function AppContent() {
           <p className="homepage-product-micro"><Check size={15} />{isArabic ? "عربي وإنجليزي • صفحة عامة بهوية الصالون • تحكم من مساحة المالك" : "Arabic and English • Branded public page • Owner-controlled content"}</p>
         </div>
 
-        <div className="homepage-product-stage" aria-label={content.preview}>
+        <div className="homepage-product-stage" role="group" aria-label={content.preview}>
           <div className="homepage-product-preview-label"><Sparkles size={14} />{content.preview}</div>
           <div className="homepage-product-linkline"><span />{content.connection}<span /></div>
           <div className="homepage-product-surfaces">
