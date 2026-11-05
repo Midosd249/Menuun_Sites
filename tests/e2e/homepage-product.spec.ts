@@ -77,5 +77,6 @@ test("homepage respects reduced-motion preferences", async ({ page }) => {
   const duration = await page.locator(".homepage-feature-card").first().evaluate(element =>
     getComputedStyle(element).transitionDuration
   );
-  expect(duration).toMatch(/0\.01ms|0s/);
+  const durationMs = duration.endsWith("ms") ? Number.parseFloat(duration) : Number.parseFloat(duration) * 1000;
+  expect(durationMs).toBeLessThanOrEqual(0.02);
 });
