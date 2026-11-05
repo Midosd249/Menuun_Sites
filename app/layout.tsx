@@ -7,30 +7,46 @@ const cairo = Cairo({ subsets: ["arabic", "latin"], display: "swap", preload: tr
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.menuun.com";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Menuun — تجربة رقمية أفضل لأعمال الخدمات",
-    template: "%s | Menuun"
-  },
-  description: "Menuun منصة رقمية تساعد أعمال الخدمات على بناء حضور احترافي وتقديم تجربة أوضح لعملائها.",
-  applicationName: "Menuun",
-  alternates: { canonical: "/" },
-  openGraph: {
-    type: "website",
-    siteName: "Menuun",
-    title: "Menuun — تجربة رقمية أفضل لأعمال الخدمات",
-    description: "حضور رقمي أنيق وتجربة أوضح لأعمال الخدمات.",
-    locale: "ar_SA",
-    url: "/"
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Menuun — تجربة رقمية أفضل لأعمال الخدمات",
-    description: "حضور رقمي أنيق وتجربة أوضح لأعمال الخدمات."
-  },
-  robots: { index: true, follow: true }
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = (await cookies()).get("menuun-locale")?.value === "en" ? "en" : "ar";
+  const copy = locale === "en"
+    ? {
+        title: "Menuun — Salon management and branded salon websites",
+        description: "Manage salon services, your team and appointments, then publish a bilingual salon page that reflects your brand.",
+        socialTitle: "Menuun — Run your salon and its digital presence",
+        socialDescription: "One owner workspace for salon operations and a branded public page for customers.",
+        locale: "en_US"
+      }
+    : {
+        title: "Menuun — إدارة الصالونات وصفحاتها الرقمية",
+        description: "أدر خدمات الصالون وفريق العمل والمواعيد، وانشر صفحة رقمية ثنائية اللغة تحمل هوية صالونك.",
+        socialTitle: "Menuun — إدارة صالونك وحضوره الرقمي",
+        socialDescription: "مساحة واحدة لإدارة الصالون وصفحة عامة تحمل هويته وتخدم عملاءه.",
+        locale: "ar_SA"
+      };
+
+  return {
+    metadataBase: new URL(siteUrl),
+    title: { default: copy.title, template: "%s | Menuun" },
+    description: copy.description,
+    applicationName: "Menuun",
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      siteName: "Menuun",
+      title: copy.socialTitle,
+      description: copy.socialDescription,
+      locale: copy.locale,
+      url: "/"
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: copy.socialTitle,
+      description: copy.socialDescription
+    },
+    robots: { index: true, follow: true }
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
