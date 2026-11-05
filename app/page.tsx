@@ -52,9 +52,9 @@ const copy = {
     templatesLabel: "مصممة لتناسب هويتك",
     templatesTitle: "أسلوبك أولاً. والقالب يتبعه.",
     templatesText: "نعمل على مجموعة قوالب متنوعة، من الهادئ والبسيط إلى التحريري والجريء، لتبدأ من تصميم مناسب لطبيعة عملك.",
-    templateNames: ["Essential", "Editorial", "Atelier"],
-    templateTaglines: ["واضح ومتوازن", "تحريري وأنيق", "حرفية معاصرة"],
-    templateNote: "معاينة القوالب ستكون متاحة ضمن مساحة العميل.",
+    templateNames: ["Atelier", "Oasis", "Forge Men"],
+    templateTaglines: ["تحريري داكن", "طبيعي هادئ", "فورج للرجال"],
+    templateNote: "القوالب الثلاثة متاحة من مساحة المالك.",
     faqLabel: "أسئلة شائعة",
     faqTitle: "قبل أن تبدأ.",
     faqs: [
@@ -120,9 +120,9 @@ const copy = {
     templatesLabel: "Made to fit your identity",
     templatesTitle: "Your style comes first.",
     templatesText: "We are building a varied template collection, from quiet minimalism to expressive editorial styles, so your business can start with the right feel.",
-    templateNames: ["Essential", "Editorial", "Atelier"],
-    templateTaglines: ["Clear & balanced", "Editorial & refined", "Contemporary craft"],
-    templateNote: "Template previews will be available in the customer workspace.",
+    templateNames: ["Atelier", "Oasis", "Forge Men"],
+    templateTaglines: ["Dark editorial", "Calm and natural", "Forge Men"],
+    templateNote: "All three templates are available in the owner workspace.",
     faqLabel: "Frequently asked questions",
     faqTitle: "Before you begin.",
     faqs: [
@@ -243,113 +243,304 @@ function AppContent() {
   const [lang, setLang] = useState<Language>("ar");
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
-  const path = usePathname().replace(/\/+$/, "") || "/";
+  const path = (usePathname() || "/").replace(/\/+$/, "") || "/";
   const isAccount = path === "/login" || path === "/signup";
   const mode = path === "/signup" ? "signup" : "login";
   const t = copy[lang];
+  const isArabic = lang === "ar";
 
   useEffect(() => {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
     document.title = isAccount
       ? (mode === "login" ? t.signInTitle : t.signUpTitle) + " — Menuun"
-      : "Menuun — تجربة رقمية أفضل لأعمال الخدمات";
+      : isArabic
+        ? "Menuun — إدارة صالونك وصفحته الرقمية من مكان واحد"
+        : "Menuun — Run your salon and its digital presence in one place";
     const description = document.querySelector('meta[name="description"]');
-    description?.setAttribute("content", lang === "ar"
-      ? "Menuun منصة رقمية تساعد أعمال الخدمات على بناء حضور احترافي وتقديم تجربة أوضح لعملائها."
-      : "Menuun helps service businesses build a professional digital presence and a clearer customer experience.");
-  }, [lang, isAccount, mode, t.signInTitle, t.signUpTitle]);
+    description?.setAttribute("content", isArabic
+      ? "أدر الخدمات والفريق والمواعيد، وانشر صفحة صالون تحمل هويتك وتعرض المعلومات التي تختار نشرها."
+      : "Manage services, your team and appointments, then publish a salon website that reflects your brand and the information you choose to share.");
+  }, [lang, isAccount, mode, t.signInTitle, t.signUpTitle, isArabic]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [menuOpen]);
 
   if (isAccount) return <AccountPage lang={lang} mode={mode} />;
 
-  const navIds = ["how-it-works", "benefits", "templates", "faq"];
+  const content = isArabic ? {
+    nav: [["المنتج", "#product"], ["كيف يعمل", "#how-it-works"], ["القوالب", "#templates"], ["الأسئلة الشائعة", "#faq"]],
+    badge: "منصة لإدارة الصالونات والحلاقة",
+    titleA: "أدر صالونك",
+    titleB: "وامنحه حضورًا يليق به.",
+    lead: "من الخدمات والفريق والمواعيد إلى صفحة رقمية تحمل هويتك؛ Menuun يجمع إدارة الصالون وتجربة العميل في مساحة واحدة.",
+    login: "دخول المالك",
+    sample: "استكشف صفحة صالون",
+    preview: "معاينة توضيحية ببيانات نموذجية",
+    workspace: "مساحة المالك",
+    workspaceSub: "تحكم في تفاصيل عملك",
+    overview: "نظرة عامة",
+    appointments: "المواعيد",
+    services: "الخدمات",
+    team: "الفريق",
+    settings: "الإعدادات",
+    today: "متابعة المواعيد",
+    pending: "بانتظار التأكيد",
+    confirmed: "مؤكد",
+    serviceName: "الخدمات والأسعار",
+    serviceOne: "قص الشعر",
+    serviceTwo: "العناية باللحية",
+    publicSite: "صفحة الصالون العامة",
+    publicSub: "ما يراه عميلك",
+    publicName: "ATELIER 09",
+    publicTitle: "العناية بالتفاصيل تصنع الفرق",
+    publicText: "اكتشف الخدمات واختر ما يناسبك",
+    publicCta: "اطلب موعدك",
+    connection: "تحدّث عن عملك هنا — وانشر ما تختاره لعميلك هناك",
+    productLabel: "مساحة واحدة، تجربتان مترابطتان",
+    productTitle: "إدارة واضحة لك. وتجربة مريحة لعميلك.",
+    productLead: "تتحكم في معلومات الصالون ومحتواه من مساحة المالك، بينما تعرض الصفحة العامة المعلومات المنشورة فقط وتمنح العميل طريقًا واضحًا للتعرّف على خدماتك وطلب موعد.",
+    ownerTitle: "أدِر تفاصيل العمل",
+    ownerText: "حدّث بيانات الصالون، الخدمات ومددها وأسعارها، ملفات الفريق، ساعات العمل والصور من مساحة واحدة.",
+    bookingTitle: "تابع طلبات المواعيد",
+    bookingText: "راجع الطلبات، وابحث بينها، وحدّث حالاتها من لوحة المالك مع إشعارات ومتابعة للنشاط.",
+    insightTitle: "افهم أداء العمل",
+    insightText: "راجع مؤشرات المواعيد والتحصيل والخدمات الأكثر طلبًا والفترات الأكثر نشاطًا ضمن التحليلات المتاحة.",
+    mediaTitle: "اجعل الصفحة تحمل هويتك",
+    mediaText: "أضف الشعار والصور ومعرض الأعمال، واختر صورة أو فيديو للواجهة الرئيسية.",
+    teamTitle: "عرّف العملاء بفريقك",
+    teamText: "اعرض ملفات أعضاء الفريق وتخصصاتهم ومعلوماتهم التي تختار نشرها.",
+    shareTitle: "انشر وشارك بسهولة",
+    shareText: "اختر القالب، وانشر رابط الصالون، وشارك رمز QR للوصول إلى صفحتك.",
+    publicLabel: "تجربة العميل",
+    publicTitle2: "صفحة واحدة تجمع ما يحتاج العميل إلى معرفته.",
+    publicLead: "هوية الصالون، الخدمات ومددها وأسعارها، الفريق، الصور، ساعات العمل، الموقع ووسائل التواصل — وفق المعلومات التي تنشرها.",
+    publicList: ["عرض الخدمات والتفاصيل", "التعرّف على الفريق", "مشاهدة الصور والهوية", "معرفة ساعات العمل والموقع", "التواصل وطلب موعد"],
+    templatesLabel: "ثلاث هويات تصميم فعلية",
+    templatesTitle: "اختر الأسلوب الذي يشبه صالونك.",
+    templatesLead: "القوالب المتاحة في مساحة المالك، وكل قالب يقدم اتجاهًا بصريًا مختلفًا دون تغيير خدماتك أو مواعيدك.",
+    template1: "تحريري داكن بلمسات ليمونية",
+    template2: "عاجي هادئ ولمسات خضراء",
+    template3: "فحمي وزيتوني ولمسات نحاسية",
+    howLabel: "من الإعداد إلى النشر",
+    howTitle: "خطوات واضحة لإطلاق صفحة صالونك.",
+    steps: [
+      ["أضف بيانات الصالون", "أدخل الاسم ومعلومات التواصل والموقع وساعات العمل."],
+      ["جهّز الخدمات والفريق", "أضف الخدمات والأسعار والمدد وملفات أعضاء الفريق."],
+      ["اختر القالب والوسائط", "خصص المظهر وأضف الشعار والصور أو فيديو الواجهة."],
+      ["انشر وابدأ المتابعة", "شارك الرابط ورمز QR، وتابع طلبات المواعيد من مساحة المالك."]
+    ],
+    faqLabel: "إجابات واضحة قبل البدء",
+    faqTitle: "أسئلة يطرحها أصحاب الصالونات.",
+    faqs: [
+      ["ما هي Menuun؟", "منصة تساعد أصحاب الصالونات ومحلات الحلاقة على إدارة تفاصيل العمل وإنشاء صفحة عامة تحمل هوية الصالون."],
+      ["ما الذي يمكنني إدارته؟", "يمكنك إدارة بيانات الصالون، الخدمات والأسعار والمدد، الفريق، ساعات العمل، الوسائط، القالب، المواعيد والإشعارات والتحليلات المتاحة."],
+      ["ماذا يرى العميل في الصفحة العامة؟", "يرى المعلومات التي نشرتها: الهوية والخدمات والفريق والصور وساعات العمل والموقع ووسائل التواصل، ويمكنه استخدام مسار طلب الموعد المتاح."],
+      ["هل تدعم Menuun العربية والإنجليزية؟", "نعم، تتوفر تجربة عربية باتجاه RTL وتجربة إنجليزية باتجاه LTR في الواجهات العامة المدعومة."],
+      ["هل تعالج Menuun المدفوعات إلكترونيًا؟", "لا تعرض المنصة حاليًا بوابة دفع إلكتروني. يمكن للمالك تسجيل طريقة التحصيل مثل النقد أو البطاقة أو التحويل عند إكمال الموعد."],
+      ["كيف أدخل إلى مساحة المالك؟", "استخدم زر دخول المالك. وإذا لم يكن لديك حساب، يمكنك الانتقال إلى إنشاء حساب."]
+    ],
+    ctaTitle: "اجعل إدارة صالونك أوضح، وحضوره أقوى.",
+    ctaText: "ابدأ من مساحة المالك، وشاهد كيف يمكن أن تبدو صفحة صالونك.",
+    ctaButton: "الدخول إلى مساحة المالك",
+    footer: "إدارة الصالون وصفحته الرقمية، في تجربة واحدة.",
+    note: "المعاينات المرئية توضيحية وليست بيانات تشغيلية حقيقية."
+  } : {
+    nav: [["The product", "#product"], ["How it works", "#how-it-works"], ["Templates", "#templates"], ["FAQs", "#faq"]],
+    badge: "Salon and barbershop management",
+    titleA: "Run your salon.",
+    titleB: "Give it a presence worth remembering.",
+    lead: "From services, team and appointments to a branded digital page, Menuun brings salon management and the customer experience together.",
+    login: "Owner sign in",
+    sample: "Explore a salon page",
+    preview: "Illustrative preview with sample content",
+    workspace: "Owner workspace",
+    workspaceSub: "Manage the details of your business",
+    overview: "Overview",
+    appointments: "Appointments",
+    services: "Services",
+    team: "Team",
+    settings: "Settings",
+    today: "Appointment activity",
+    pending: "Awaiting confirmation",
+    confirmed: "Confirmed",
+    serviceName: "Services and pricing",
+    serviceOne: "Haircut",
+    serviceTwo: "Beard care",
+    publicSite: "Public salon page",
+    publicSub: "What your customers see",
+    publicName: "ATELIER 09",
+    publicTitle: "Care is found in the details",
+    publicText: "Explore the services and find what suits you",
+    publicCta: "Request an appointment",
+    connection: "Manage your business here — publish the details you choose to share",
+    productLabel: "One workspace. Two connected experiences.",
+    productTitle: "Clarity for you. A better visit for your customers.",
+    productLead: "Manage salon information and content in your owner workspace. Your public page displays only the information you publish and gives customers a clear way to explore your services and request an appointment.",
+    ownerTitle: "Manage the details",
+    ownerText: "Update salon information, service names, durations and prices, team profiles, opening hours and media in one place.",
+    bookingTitle: "Stay on top of appointments",
+    bookingText: "Review requests, search appointments and update their status from the owner workspace, with notifications and activity updates.",
+    insightTitle: "Understand your business activity",
+    insightText: "Review available appointment, collection, popular-service and busy-period insights.",
+    mediaTitle: "Make the page feel like your brand",
+    mediaText: "Add your logo, photography and gallery, then choose an image or video for the hero.",
+    teamTitle: "Introduce your team",
+    teamText: "Present team profiles, specialties and the information you choose to publish.",
+    shareTitle: "Publish and share",
+    shareText: "Choose a template, publish your salon link and share its QR code.",
+    publicLabel: "The customer experience",
+    publicTitle2: "One page for the details customers need.",
+    publicLead: "Your salon identity, services and durations, team, imagery, opening hours, location and contact options — based on the information you choose to publish.",
+    publicList: ["Explore services and details", "Meet the team", "View imagery and salon identity", "Find opening hours and location", "Contact the salon or request an appointment"],
+    templatesLabel: "Three live design directions",
+    templatesTitle: "Choose a look that feels like your salon.",
+    templatesLead: "These are the templates available in the owner workspace. Each has its own visual direction without changing your services or appointments.",
+    template1: "Dark editorial with lime accents",
+    template2: "Calm ivory with sage details",
+    template3: "Charcoal, olive and copper",
+    howLabel: "From setup to publishing",
+    howTitle: "A clear path to your salon page.",
+    steps: [
+      ["Add your salon details", "Enter your name, contact information, location and opening hours."],
+      ["Set up services and team", "Add services, prices, durations and team profiles."],
+      ["Choose a template and media", "Personalise the look with your logo, images or a hero video."],
+      ["Publish and manage", "Share your link and QR code, then follow appointment requests in your workspace."]
+    ],
+    faqLabel: "Clear answers before you begin",
+    faqTitle: "Questions salon owners ask.",
+    faqs: [
+      ["What is Menuun?", "Menuun helps salon and barbershop owners manage business details and create a public page that reflects their brand."],
+      ["What can I manage?", "You can manage salon details, services, prices and durations, team profiles, opening hours, media, templates, appointments, notifications and available insights."],
+      ["What do customers see?", "Customers see the information you publish: your brand, services, team, images, opening hours, location and contact options, along with the supported appointment request flow."],
+      ["Does Menuun support Arabic and English?", "Yes. Supported public experiences are available in Arabic RTL and English LTR."],
+      ["Does Menuun process online payments?", "There is no online payment gateway at present. Owners can record a collection method such as cash, card or transfer when completing an appointment."],
+      ["How do I access the owner workspace?", "Use Owner sign in. If you do not have an account yet, you can continue to account creation."]
+    ],
+    ctaTitle: "Make salon management clearer — and your presence stronger.",
+    ctaText: "Open your owner workspace and explore how your salon page can look.",
+    ctaButton: "Go to the owner workspace",
+    footer: "Your salon operations and digital presence, working together.",
+    note: "Visual previews are illustrative and contain no live operational data."
+  };
 
-  return <div className="site-shell">
-    <a className="skip-link" href="#main">{lang === "ar" ? "تجاوز إلى المحتوى" : "Skip to content"}</a>
-    <header className="topbar">
+  const features = [
+    { number: "01", title: content.ownerTitle, text: content.ownerText, icon: "01 / WORKSPACE" },
+    { number: "02", title: content.bookingTitle, text: content.bookingText, icon: "02 / APPOINTMENTS" },
+    { number: "03", title: content.insightTitle, text: content.insightText, icon: "03 / INSIGHTS" },
+    { number: "04", title: content.mediaTitle, text: content.mediaText, icon: "04 / BRAND" },
+    { number: "05", title: content.teamTitle, text: content.teamText, icon: "05 / TEAM" },
+    { number: "06", title: content.shareTitle, text: content.shareText, icon: "06 / PUBLISH" }
+  ];
+
+  return <div className="site-shell homepage-product">
+    <a className="skip-link" href="#main">{isArabic ? "تجاوز إلى المحتوى" : "Skip to content"}</a>
+    <header className="topbar homepage-product-header">
       <Logo lang={lang} />
-      <nav className={menuOpen ? "nav-links open" : "nav-links"} aria-label={lang === "ar" ? "التنقل الرئيسي" : "Main navigation"}>
-        {t.nav.map((label, i) => <a key={label} href={"#" + navIds[i]} onClick={() => setMenuOpen(false)}>{label}</a>)}
+      <nav id="homepage-navigation" className={menuOpen ? "nav-links open" : "nav-links"} aria-label={isArabic ? "التنقل الرئيسي" : "Main navigation"}>
+        {content.nav.map(([label, href]) => <a key={href} href={href} onClick={() => setMenuOpen(false)}>{label}</a>)}
       </nav>
       <div className="top-actions">
-        <button className="language-toggle" onClick={() => setLang(lang === "ar" ? "en" : "ar")} aria-label={lang === "ar" ? "Switch to English" : "التبديل إلى العربية"}>{lang === "ar" ? "EN" : "عربي"} <span>↗</span></button>
-        <a className="login-link" href="/login/">{t.login}</a>
-        <a className="button button-dark top-cta" href="/signup/">{t.signup}<ArrowUpLeft size={16} /></a>
-        <button className="mobile-menu" aria-label={menuOpen ? t.closeLabel : t.menuLabel} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
+        <button type="button" className="language-toggle" onClick={() => setLang(lang === "ar" ? "en" : "ar")} aria-label={isArabic ? "Switch to English" : "التبديل إلى العربية"}>{isArabic ? "EN" : "عربي"} <span aria-hidden="true">↗</span></button>
+        <a className="login-link" href="/login/">{content.login}</a>
+        <button type="button" className="mobile-menu" aria-label={menuOpen ? (isArabic ? "إغلاق القائمة" : "Close menu") : (isArabic ? "فتح القائمة" : "Open menu")} aria-expanded={menuOpen} aria-controls="homepage-navigation" onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? <X /> : <Menu />}</button>
       </div>
     </header>
 
     <main id="main">
-      <section className="hero section-wrap">
-        <div className="hero-copy">
-          <div className="eyebrow"><span className="eyebrow-dot" />{t.badge}</div>
-          <h1>{t.heroA}<br /><span>{t.heroB}</span></h1>
-          <p className="hero-description">{t.heroText}</p>
-          <div className="hero-actions">
-            <a className="button button-dark" href="#how-it-works">{t.primary}<ArrowUpLeft size={17} /></a>
-            <a className="text-link" href="#benefits"><CirclePlay size={18} />{t.secondary}</a>
+      <section className="homepage-product-hero section-wrap" aria-labelledby="homepage-title">
+        <div className="homepage-product-copy">
+          <p className="homepage-product-eyebrow"><span />{content.badge}</p>
+          <h1 id="homepage-title">{content.titleA}<br /><em>{content.titleB}</em></h1>
+          <p className="homepage-product-lead">{content.lead}</p>
+          <div className="homepage-product-actions">
+            <a className="button button-dark" href="/login/">{content.login}<ArrowUpLeft size={17} /></a>
+            <a className="homepage-product-secondary" href="/s/atelier-09" target="_blank" rel="noreferrer"><CirclePlay size={18} />{content.sample}</a>
           </div>
-          <div className="hero-note"><span className="note-line" />{t.note}</div>
+          <p className="homepage-product-micro"><Check size={15} />{isArabic ? "عربي وإنجليزي • صفحة عامة بهوية الصالون • تحكم من مساحة المالك" : "Arabic and English • Branded public page • Owner-controlled content"}</p>
         </div>
 
-        <div className="hero-visual" aria-label={lang === "ar" ? "معاينة توضيحية لمساحة عمل Menuun" : "Illustrative preview of a Menuun workspace"}>
-          <div className="visual-orbit orbit-one" /><div className="visual-orbit orbit-two" />
-          <div className="floating-chip chip-top"><Sparkles size={15} />{t.previewLabel}</div>
-          <div className="product-window">
-            <div className="window-bar"><div className="window-dots"><i /><i /><i /></div><span>menuun.com</span><span className="window-lock">✳</span></div>
-            <div className="salon-preview">
-              <div className="preview-head"><span className="preview-monogram">A<span>09</span></span><span className="preview-status">{t.previewStatus}</span></div>
-              <div className="preview-hero"><span className="preview-kicker">ATELIER / 09</span><h2>{t.previewTitle}</h2><p>{t.previewSub}</p><div className="preview-rule" /></div>
-              <div className="preview-stats"><div><span>{t.bookings}</span><strong>—</strong></div><div><span>{t.services}</span><strong>03</strong></div><div><span>{t.team}</span><strong>02</strong></div></div>
-              <div className="preview-list">
-                <div className="preview-list-heading"><strong>{t.today}</strong><span>↗</span></div>
-                {[t.serviceOne, t.serviceTwo, t.serviceThree].map((service, i) => <div className="preview-service" key={service}><span className={"service-index index-" + i}>0{i + 1}</span><span>{service}</span><span className="service-dot" /></div>)}
+        <div className="homepage-product-stage" role="group" aria-label={content.preview}>
+          <div className="homepage-product-preview-label"><Sparkles size={14} />{content.preview}</div>
+          <div className="homepage-product-linkline"><span />{content.connection}<span /></div>
+          <div className="homepage-product-surfaces">
+            <article className="homepage-product-window owner-workspace" aria-label={content.workspace}>
+              <div className="homepage-window-bar"><span className="homepage-window-brand">menuun <i>●</i></span><span className="homepage-window-dots">•••</span></div>
+              <div className="homepage-owner-layout">
+                <aside className="homepage-owner-nav" aria-hidden="true"><b>m.</b><span className="selected">▦</span><span>◷</span><span>◇</span><span>⚙</span></aside>
+                <div className="homepage-owner-content">
+                  <div className="homepage-owner-heading"><div><small>{content.workspace}</small><strong>{content.workspaceSub}</strong></div><span className="homepage-owner-avatar">A</span></div>
+                  <div className="homepage-owner-tabs"><span>{content.overview}</span><span>{content.appointments}</span><span>{content.services}</span></div>
+                  <div className="homepage-owner-stats"><div><small>{content.appointments}</small><b>◷</b></div><div><small>{content.services}</small><b>◇</b></div><div><small>{content.team}</small><b>♙</b></div></div>
+                  <div className="homepage-owner-list"><strong>{content.today}</strong><div><span className="homepage-status-dot" />{content.pending}<small>•••</small></div><div><span className="homepage-status-dot confirmed" />{content.confirmed}<small>•••</small></div></div>
+                  <div className="homepage-owner-services"><strong>{content.serviceName}</strong><span>{content.serviceOne}<i>↗</i></span><span>{content.serviceTwo}<i>↗</i></span></div>
+                </div>
               </div>
-            </div>
+              <span className="homepage-window-caption">{content.workspace}</span>
+            </article>
+
+            <article className="homepage-product-window public-salon-preview" aria-label={content.publicSite}>
+              <div className="homepage-public-top"><span className="homepage-public-monogram">A.</span><span>{content.publicName}</span><span>☰</span></div>
+              <div className="homepage-public-hero"><small>EST. / ATELIER</small><h2>{content.publicTitle}</h2><p>{content.publicText}</p><span className="homepage-public-cta">{content.publicCta}</span></div>
+              <div className="homepage-public-details" data-capability="opening-hours"><small>{content.publicSite}</small><strong>{content.serviceName}</strong><div><span>{content.serviceOne}</span><i>↗</i></div><div><span>{content.serviceTwo}</span><i>↗</i></div><div className="homepage-public-gallery"><i /><i /><i /></div></div>
+              <span className="homepage-window-caption">{content.publicSite}</span>
+            </article>
           </div>
-          <div className="floating-chip chip-bottom"><span className="live-dot" />{t.open}</div>
-          <div className="visual-caption">{lang === "ar" ? "تصميم مبدئي — ليس صفحة منشورة" : "Concept design — not a published page"}</div>
+          <p className="homepage-product-note">{content.note}</p>
         </div>
       </section>
 
-      <section className="intro-band">
-        <div className="section-wrap intro-inner"><span className="intro-symbol">✳</span><p>{lang === "ar" ? "مساحة رقمية واحدة، مصممة حول الطريقة التي يكتشف بها عملاؤك خدمتك." : "One digital space, shaped around how customers discover your service."}</p><ArrowDownLeft size={20} /></div>
-      </section>
-
-      <section className="benefits section-wrap section-pad" id="benefits">
-        <div className="section-heading"><p className="eyebrow">{t.sectionEyebrow}</p><h2>{t.sectionTitle}</h2><p className="section-description">{t.sectionText}</p></div>
-        <div className="feature-grid">
-          <article className="feature-card feature-dark"><span className="feature-number">01 / PRESENCE</span><div className="feature-art art-presence"><span className="art-frame"><i /><i /><i /></span><span className="art-stamp">m.</span></div><h3>{t.feature1Title}</h3><p>{t.feature1Text}</p><ArrowUpLeft className="feature-arrow" size={18} /></article>
-          <article className="feature-card feature-green"><span className="feature-number">02 / EXPERIENCE</span><div className="feature-art art-experience"><span className="art-path"><i /><i /><i /></span><span className="art-spark">✳</span></div><h3>{t.feature2Title}</h3><p>{t.feature2Text}</p><ArrowUpLeft className="feature-arrow" size={18} /></article>
-          <article className="feature-card feature-light"><span className="feature-number">03 / GROWTH</span><div className="feature-art art-growth"><span className="growth-bars"><i /><i /><i /><i /></span><span className="growth-circle">↗</span></div><h3>{t.feature3Title}</h3><p>{t.feature3Text}</p><ArrowUpLeft className="feature-arrow" size={18} /></article>
+      <section className="homepage-product-proof" aria-label={isArabic ? "مبادئ المنصة" : "Platform principles"}>
+        <div className="section-wrap homepage-proof-inner">
+          <span>{isArabic ? "مصممة للصالونات ومحلات الحلاقة" : "Built for salons and barbershops"}</span>
+          <span>{isArabic ? "تجربة عربية وإنجليزية" : "Arabic and English experiences"}</span>
+          <span>{isArabic ? "محتوى عام يتحكم به المالك" : "Owner-controlled public content"}</span>
+          <span>{isArabic ? "رابط صفحة ورمز QR للمشاركة" : "Shareable page link and QR"}</span>
         </div>
       </section>
 
-      <section className="steps-section" id="how-it-works">
-        <div className="section-wrap steps-layout">
-          <div className="steps-intro"><p className="eyebrow">{t.stepsLabel}</p><h2>{t.stepsTitle}</h2><p className="section-description">{lang === "ar" ? "نرتّب البداية لتكون واضحة، ثم نمنحك مساحة للتطور دون الحاجة إلى البدء من جديد." : "A clear first step, with room to evolve without starting over."}</p><a className="text-link" href="/signup/">{t.signup}<ArrowUpLeft size={17} /></a></div>
-          <div className="step-list">
-            {[[t.step1Title, t.step1Text], [t.step2Title, t.step2Text], [t.step3Title, t.step3Text]].map(([title, text], i) => <article className="step-item" key={title}><span className="step-number">0{i + 1}</span><div><h3>{title}</h3><p>{text}</p></div><span className="step-check">{i === 0 ? <Check size={17} /> : <ArrowUpLeft size={17} />}</span></article>)}
-          </div>
+      <section className="homepage-product-section section-wrap" id="product" data-section="benefits">
+        <div className="homepage-section-heading"><p className="homepage-product-eyebrow">{content.productLabel}</p><h2>{content.productTitle}</h2><p>{content.productLead}</p></div>
+        <div className="homepage-feature-grid">
+          {features.map(feature => <article className="homepage-feature-card" key={feature.number}><span className="homepage-feature-number">{feature.number}</span><small>{feature.icon}</small><h3>{feature.title}</h3><p>{feature.text}</p><span className="homepage-feature-arrow" aria-hidden="true">↗</span></article>)}
         </div>
       </section>
 
-      <section className="templates-section section-wrap section-pad" id="templates">
-        <div className="templates-heading"><div><p className="eyebrow">{t.templatesLabel}</p><h2>{t.templatesTitle}</h2></div><p className="section-description">{t.templatesText}</p></div>
-        <div className="template-grid">
-          {t.templateNames.map((name, i) => <article className={"template-card template-" + i} key={name}><div className="template-art"><div className="template-paper"><span className="paper-brand">{i === 2 ? "N." : i === 3 ? "H /" : "m."}</span><span className="paper-title">{["Essential", "Editorial", "ATELIER"][i]}</span><span className="paper-line" /><span className="paper-line short" /><span className="paper-shape" /></div><span className="template-number">0{i + 1}</span></div><div className="template-meta"><div><h3>{name}</h3><p>{t.templateTaglines[i]}</p></div><ArrowUpLeft size={17} /></div></article>)}
+      <section className="homepage-public-section">
+        <div className="section-wrap homepage-public-layout">
+          <div className="homepage-public-copy"><p className="homepage-product-eyebrow">{content.publicLabel}</p><h2>{content.publicTitle2}</h2><p>{content.publicLead}</p><ul>{content.publicList.map(item => <li key={item}><Check size={16} />{item}</li>)}</ul><a className="button button-dark" href="/s/atelier-09" target="_blank" rel="noreferrer">{content.sample}<ArrowUpLeft size={17} /></a></div>
+          <div className="homepage-public-card" aria-hidden="true"><div className="homepage-public-card-image"><span>ATELIER 09</span><b>THE ART OF DETAIL</b></div><div className="homepage-public-card-body"><small>{isArabic ? "الخدمات المختارة" : "SELECTED SERVICES"}</small><h3>{isArabic ? "خدمات مصممة لتفاصيلك" : "Services shaped around you"}</h3><div><span>{content.serviceOne}</span><i>01</i></div><div><span>{content.serviceTwo}</span><i>02</i></div><div className="homepage-public-card-footer"><span>{isArabic ? "ساعات العمل والموقع والتواصل" : "Hours, location and contact"}</span><span>↗</span></div></div></div>
         </div>
-        <p className="template-note"><Sparkles size={16} />{t.templateNote}</p>
       </section>
 
-      <section className="faq-section" id="faq">
-        <div className="section-wrap faq-layout"><div><p className="eyebrow">{t.faqLabel}</p><h2>{t.faqTitle}</h2></div><div className="faq-list">{t.faqs.map(([question, answer], i) => <article className={openFaq === i ? "faq-item active" : "faq-item"} key={question}><button aria-expanded={openFaq === i} onClick={() => setOpenFaq(openFaq === i ? null : i)}><span>{question}</span><ChevronDown size={18} /></button>{openFaq === i && <p>{answer}</p>}</article>)}</div></div>
+      <section className="homepage-templates section-wrap" id="templates">
+        <div className="homepage-section-heading"><p className="homepage-product-eyebrow">{content.templatesLabel}</p><h2>{content.templatesTitle}</h2><p>{content.templatesLead}</p></div>
+        <div className="homepage-template-grid">
+          <article className="homepage-template-card atelier"><div className="homepage-template-art"><span>ATELIER</span><b>CRAFT<br />& DETAIL</b><i /></div><h3>Atelier</h3><p>{content.template1}</p></article>
+          <article className="homepage-template-card oasis"><div className="homepage-template-art"><span>OASIS</span><b>YOUR<br />RITUAL</b><i /></div><h3>Oasis</h3><p>{content.template2}</p></article>
+          <article className="homepage-template-card forge"><div className="homepage-template-art"><span>FORGE MEN</span><b>BUILT ON<br />PRECISION</b><i /></div><h3>Forge Men</h3><p>{content.template3}</p></article>
+        </div>
       </section>
 
-      <section className="final-cta section-wrap"><div className="final-cta-inner"><span className="final-star">✳</span><div><p className="eyebrow">{lang === "ar" ? "خطوتك التالية" : "YOUR NEXT STEP"}</p><h2>{t.finalTitle}</h2><p>{t.finalText}</p></div><a className="button button-lime" href="/signup/">{t.finalCta}<ArrowUpLeft size={17} /></a></div></section>
+      <section className="homepage-how" id="how-it-works">
+        <div className="section-wrap"><div className="homepage-section-heading"><p className="homepage-product-eyebrow">{content.howLabel}</p><h2>{content.howTitle}</h2></div><div className="homepage-step-grid">{content.steps.map(([title, text], index) => <article className="homepage-step" key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></div>
+      </section>
+
+      <section className="homepage-faq section-wrap" id="faq">
+        <div className="homepage-faq-heading"><p className="homepage-product-eyebrow">{content.faqLabel}</p><h2>{content.faqTitle}</h2></div>
+        <div className="homepage-faq-list">{content.faqs.map(([question, answer], index) => <article className="homepage-faq-item" key={question}><h3><button type="button" aria-expanded={openFaq === index} aria-controls={"homepage-faq-answer-" + index} onClick={() => setOpenFaq(openFaq === index ? null : index)}>{question}<ChevronDown size={18} /></button></h3>{openFaq === index && <p id={"homepage-faq-answer-" + index}>{answer}</p>}</article>)}</div>
+      </section>
+
+      <section className="homepage-final-cta section-wrap"><div><p className="homepage-product-eyebrow">{isArabic ? "ابدأ من مساحة المالك" : "START IN YOUR OWNER WORKSPACE"}</p><h2>{content.ctaTitle}</h2><p>{content.ctaText}</p></div><a className="button button-lime" href="/login/">{content.ctaButton}<ArrowUpLeft size={17} /></a></section>
     </main>
 
-    <footer className="footer"><div className="section-wrap footer-main"><div className="footer-brand"><Logo lang={lang} /><p>{t.footerText}</p></div><div className="footer-links">{t.footerLinks.map((label, i) => <a key={label} href={i === 0 ? "#main" : i === 1 ? "#templates" : "#faq"}>{label}</a>)}</div><a className="back-top" href="#main" aria-label={lang === "ar" ? "العودة للأعلى" : "Back to top"}><ArrowRight size={17} /></a></div><div className="section-wrap footer-bottom"><span>© {new Date().getFullYear()} Menuun</span><span>{lang === "ar" ? "صُنع بعناية." : "Made with care."}</span></div></footer>
+    <footer className="homepage-footer"><div className="section-wrap homepage-footer-inner"><div><Logo lang={lang} /><p>{content.footer}</p></div><nav aria-label={isArabic ? "روابط الصفحة" : "Page links"}>{content.nav.map(([label, href]) => <a key={href} href={href}>{label}</a>)}<a href="/login/">{content.login}</a></nav><small>© {new Date().getFullYear()} Menuun</small></div></footer>
   </div>;
 }
 
