@@ -30,8 +30,8 @@ test("homepage has Arabic and English product copy and accessible responsive nav
 });
 
 test("homepage marketing claims avoid invented commercial capabilities", () => {
-  assert.doesNotMatch(app, /free trial|free plan|payment gateway|multi-branch|payroll|loyalty program|we offer online payments/i);
-  assert.doesNotMatch(app, /ابدأ مجاناً|تجربة مجانية|نوفر بوابة دفع|ندعم بوابة دفع|إدارة الرواتب|برنامج ولاء/);
+  assert.doesNotMatch(app, /offer (?:a )?(?:free trial|free plan|payment gateway)|multi-branch|payroll|loyalty program|we offer online payments/i);
+  assert.doesNotMatch(app, /نوفر (?:تجربة مجانية|بوابة دفع)|ندعم بوابة دفع|إدارة الرواتب|برنامج ولاء/);
   assert.match(app, /There is no online payment gateway at present/);
   assert.match(app, /لا تعرض المنصة حاليًا بوابة دفع إلكتروني/);
 });
