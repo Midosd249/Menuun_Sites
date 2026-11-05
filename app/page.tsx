@@ -505,7 +505,7 @@ function AppContent() {
         </div>
       </section>
 
-      <section className="homepage-product-section section-wrap" id="product">
+      <section className="homepage-product-section section-wrap" id="product" data-section="benefits">
         <div className="homepage-section-heading"><p className="homepage-product-eyebrow">{content.productLabel}</p><h2>{content.productTitle}</h2><p>{content.productLead}</p></div>
         <div className="homepage-feature-grid">
           {features.map(feature => <article className="homepage-feature-card" key={feature.number}><span className="homepage-feature-number">{feature.number}</span><small>{feature.icon}</small><h3>{feature.title}</h3><p>{feature.text}</p><span className="homepage-feature-arrow" aria-hidden="true">↗</span></article>)}
