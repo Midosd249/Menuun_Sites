@@ -251,7 +251,7 @@ function AppContent() {
 
   useEffect(() => {
     document.documentElement.lang = lang;
-    document.documentElement.dir = isArabic ? "rtl" : "ltr";
+    document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
     document.title = isAccount
       ? (mode === "login" ? t.signInTitle : t.signUpTitle) + " — Menuun"
       : isArabic
