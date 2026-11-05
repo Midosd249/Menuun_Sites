@@ -24,6 +24,7 @@ test("homepage has Arabic and English product copy and accessible responsive nav
   assert.match(app, /Illustrative preview/);
   assert.match(app, /aria-expanded=\{menuOpen\}/);
   assert.match(app, /aria-controls="homepage-navigation"/);
+  assert.match(app, /aria-controls=\{"homepage-faq-answer-" \+ index\}/);
   assert.match(styles, /homepage-product/);
   assert.match(styles, /prefers-reduced-motion/);
   assert.match(styles, /:focus-visible/);
