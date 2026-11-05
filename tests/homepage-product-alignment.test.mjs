@@ -7,7 +7,7 @@ const styles = readFileSync(new URL("../app/globals.css", import.meta.url), "utf
 
 test("homepage explains the real owner-workspace to public-salon workflow", () => {
   for (const phrase of ["owner-workspace", "public-salon-preview", "appointments", "services", "team", "opening-hours", "QR"]) {
-    assert.ok(app.includes(phrase), \`homepage is missing product evidence: \${phrase}\`);
+    assert.ok(app.includes(phrase), "homepage is missing product evidence: " + phrase);
   }
   assert.match(app, /\/s\/atelier-09/);
   assert.match(app, /\/login\//);
