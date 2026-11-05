@@ -35,14 +35,14 @@ test("homepage language switch updates content and document direction", async ({
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Run your salon");
-  await expect(page.getByRole("link", { name: "Owner sign in" })).toHaveAttribute("href", "/login/");
+  await expect(page.locator("#main").getByRole("link", { name: "Owner sign in" })).toHaveAttribute("href", "/login/");
   await expect(page.getByRole("link", { name: "Explore a salon page" })).toHaveAttribute("href", "/s/atelier-09");
 });
 
 test("mobile navigation supports open, selection and Escape", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  const toggle = page.getByRole("button", { name: "فتح القائمة" });
+  const toggle = page.locator(".mobile-menu");
   const navigation = page.locator("#homepage-navigation");
   await expect(toggle).toHaveAttribute("aria-expanded", "false");
   await toggle.click();
