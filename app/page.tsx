@@ -53,7 +53,7 @@ const copy = {
     templatesTitle: "أسلوبك أولاً. والقالب يتبعه.",
     templatesText: "نعمل على مجموعة قوالب متنوعة، من الهادئ والبسيط إلى التحريري والجريء، لتبدأ من تصميم مناسب لطبيعة عملك.",
     templateNames: ["Atelier", "Oasis", "Forge Men"],
-    templateTaglines: ["واضح ومتوازن", "تحريري وأنيق", "حرفية معاصرة"],
+    templateTaglines: ["تحريري داكن", "طبيعي هادئ", "فورج للرجال"],
     templateNote: "القوالب الثلاثة متاحة من مساحة المالك.",
     faqLabel: "أسئلة شائعة",
     faqTitle: "قبل أن تبدأ.",
@@ -121,7 +121,7 @@ const copy = {
     templatesTitle: "Your style comes first.",
     templatesText: "We are building a varied template collection, from quiet minimalism to expressive editorial styles, so your business can start with the right feel.",
     templateNames: ["Atelier", "Oasis", "Forge Men"],
-    templateTaglines: ["Clear & balanced", "Editorial & refined", "Contemporary craft"],
+    templateTaglines: ["Dark editorial", "Calm and natural", "Forge Men"],
     templateNote: "All three templates are available in the owner workspace.",
     faqLabel: "Frequently asked questions",
     faqTitle: "Before you begin.",
@@ -443,7 +443,7 @@ function AppContent() {
     <a className="skip-link" href="#main">{isArabic ? "تجاوز إلى المحتوى" : "Skip to content"}</a>
     <header className="topbar homepage-product-header">
       <Logo lang={lang} />
-      <nav className={menuOpen ? "nav-links open" : "nav-links"} aria-label={isArabic ? "التنقل الرئيسي" : "Main navigation"}>
+      <nav id="homepage-navigation" className={menuOpen ? "nav-links open" : "nav-links"} aria-label={isArabic ? "التنقل الرئيسي" : "Main navigation"}>
         {content.nav.map(([label, href]) => <a key={href} href={href} onClick={() => setMenuOpen(false)}>{label}</a>)}
       </nav>
       <div className="top-actions">
@@ -488,7 +488,7 @@ function AppContent() {
             <article className="homepage-product-window public-salon-preview" aria-label={content.publicSite}>
               <div className="homepage-public-top"><span className="homepage-public-monogram">A.</span><span>{content.publicName}</span><span>☰</span></div>
               <div className="homepage-public-hero"><small>EST. / ATELIER</small><h2>{content.publicTitle}</h2><p>{content.publicText}</p><span className="homepage-public-cta">{content.publicCta}</span></div>
-              <div className="homepage-public-details"><small>{content.publicSite}</small><strong>{content.serviceName}</strong><div><span>{content.serviceOne}</span><i>↗</i></div><div><span>{content.serviceTwo}</span><i>↗</i></div><div className="homepage-public-gallery"><i /><i /><i /></div></div>
+              <div className="homepage-public-details" data-capability="opening-hours"><small>{content.publicSite}</small><strong>{content.serviceName}</strong><div><span>{content.serviceOne}</span><i>↗</i></div><div><span>{content.serviceTwo}</span><i>↗</i></div><div className="homepage-public-gallery"><i /><i /><i /></div></div>
               <span className="homepage-window-caption">{content.publicSite}</span>
             </article>
           </div>
