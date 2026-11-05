@@ -60,7 +60,19 @@ Official docs:
 - NVIDIA NIM: https://docs.api.nvidia.com/nim/reference/llm-apis
 - TypeSafe Jev: https://learnjev.com/tutorials/first-call and https://typesafe.ai/
 
-`JEF_TYPE_SAFE` is recognized as the user's TypeSafe/Jev credential by its environment-variable name, but Jev is intentionally **not** wired into this free-form chat provider list. Its documented API is `POST https://api.typesafe.ai/v1/systemone`, which accepts `state` plus typed `questions` and returns structured `choice`, `score`, or `noul` decisions/probabilities; it does not generate conversational text or expose a Chat Completions endpoint. It may suit a separate future task such as structured intent classification, but substituting it for the visitor-facing chat model would break the current response contract. The current assistant therefore does not send this key to any provider.
+`JEF_TYPE_SAFE` enables TypeSafe Jev as a **provider-selection layer**. The route calls `POST https://api.typesafe.ai/v1/systemone` with `model: "jev-latest"`, a `choice` question, the latest visitor question, and an allowlist of configured provider IDs plus non-secret capability descriptions. It does not send provider credentials, salon context, or full conversation history to Jev. The returned choice is validated against the allowlist. The selected provider then generates the actual visitor-facing answer using the current published salon context and conversation. If Jev is missing, times out, returns malformed data, or selects an unknown ID, the route falls back to the configured provider order; if provider generation fails, it uses the grounded deterministic response.
+
+Provider IDs used for routing are `codecraft`, `iteracompute`, `inception`, `cerebras`, `xai`, and `nvidia-nim`. The three Inception keys are credentials for the same provider family, not separate model candidates; they remain provider credential failover entries. Jev receives no API keys or other secret material. The route reserves up to 2.2 seconds for Jev within the shared 11-second request budget and caps each provider attempt at 4.5 seconds or the remaining budget, whichever is smaller.
+
+Official docs:
+- CodeCraft: https://codecraftapi.com/
+- IteraCompute: https://iteracompute.com/docs.html
+- Cerebras: https://inference-docs.cerebras.ai/api-reference/chat-completions and https://inference-docs.cerebras.ai/resources/openai
+- Inception Labs: https://docs.inceptionlabs.ai/api-reference/chat/create-a-chat-completion
+- xAI: https://docs.x.ai/developers/rest-api-reference/inference/chat-completions
+- NVIDIA NIM: https://docs.api.nvidia.com/nim/reference/llm-apis
+- TypeSafe Jev System One: https://docs.typesafe.ai/api/system-one
+- TypeSafe Choice primitive: https://docs.typesafe.ai/primitives/choice
 
 ## Verification gates
 - On the latest PR head, verify GitHub Actions reports passing test/static-quality, typecheck, production build, browser QA, and inline-assets checks. Previous green results do not automatically validate a later commit.
